@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.darrenfinch.appointmentmanager/com.darrenfinch.appointmentmanager.HelloApplication
+                                com.darrenfinch.appointmentmanager/com.darrenfinch.appointmentmanager.Application
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
