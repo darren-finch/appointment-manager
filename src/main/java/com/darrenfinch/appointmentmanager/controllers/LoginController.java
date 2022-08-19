@@ -1,14 +1,8 @@
 package com.darrenfinch.appointmentmanager.controllers;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+public class LoginController extends BaseController {
+    @Override
+    public void setupUI() {
 
-public class LoginController {
-    @FXML
-    private Label welcomeText;
-
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
     }
 }

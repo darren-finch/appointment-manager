@@ -1,20 +1,19 @@
 package com.darrenfinch.appointmentmanager;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import com.darrenfinch.appointmentmanager.di.BaseControllerConfig;
+import com.darrenfinch.appointmentmanager.services.DialogManager;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class Application extends javafx.application.Application {
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("reports.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 600);
-        stage.setResizable(false);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
+    public void start(Stage stage) {
+        ScreenNavigator screenNavigator = new ScreenNavigator(stage);
+        DialogManager dialogManager = new DialogManager();
+
+        BaseControllerConfig controllerConfig = new BaseControllerConfig(screenNavigator, dialogManager);
+        screenNavigator.setControllerConfig(controllerConfig);
+
+        screenNavigator.switchToLoginScreen();
     }
 
     public static void main(String[] args) {

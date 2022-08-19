@@ -7,4 +7,6 @@ module com.darrenfinch.appointmentmanager {
     exports com.darrenfinch.appointmentmanager;
     exports com.darrenfinch.appointmentmanager.controllers;
     opens com.darrenfinch.appointmentmanager.controllers to javafx.fxml;
+    exports com.darrenfinch.appointmentmanager.services;
+    opens com.darrenfinch.appointmentmanager.services to javafx.fxml;
 }
