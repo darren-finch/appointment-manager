@@ -14,13 +14,18 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ToolBar prefHeight="40.0" prefWidth="600.0">
+      <ToolBar maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="600.0">
          <items>
-            <Label text="Edit Customer">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
+            <HBox spacing="10.0">
+               <children>
+                  <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Back" />
+                  <Label maxHeight="1.7976931348623157E308" text="Edit Customer">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
          </items>
       </ToolBar>
       <VBox layoutY="40.0" prefHeight="560.0" prefWidth="600.0" spacing="20.0">
@@ -28,7 +33,7 @@
             <VBox spacing="5.0" VBox.vgrow="NEVER">
                <children>
                   <Label text="Customer ID" />
-                  <TextField disable="true" editable="false" maxWidth="200.0" text="0" />
+                  <TextField fx:id="customerIDTextField" disable="true" editable="false" maxWidth="200.0" text="0" />
                </children>
             </VBox>
             <HBox spacing="20.0">
@@ -36,13 +41,13 @@
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Customer Name" />
-                        <TextField maxWidth="1.7976931348623157E308" promptText="Enter customer name..." />
+                        <TextField fx:id="customerNameTextField" maxWidth="1.7976931348623157E308" promptText="Enter customer name..." />
                      </children>
                   </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Phone Number" />
-                        <TextField maxWidth="1.7976931348623157E308" promptText="Enter customer phone number..." />
+                        <TextField fx:id="phoneNumberTextField" maxWidth="1.7976931348623157E308" promptText="Enter customer phone number..." />
                      </children>
                   </VBox>
                </children>
@@ -52,13 +57,13 @@
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Address" />
-                        <TextField maxWidth="1.7976931348623157E308" promptText="Enter customer address..." />
+                        <TextField fx:id="addressTextField" maxWidth="1.7976931348623157E308" promptText="Enter customer address..." />
                      </children>
                   </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Postal Code" />
-                        <TextField maxWidth="1.7976931348623157E308" promptText="Enter customer postal code..." />
+                        <TextField fx:id="postalCodeTextField" maxWidth="1.7976931348623157E308" promptText="Enter customer postal code..." />
                      </children>
                   </VBox>
                </children>
@@ -68,21 +73,21 @@
                   <VBox prefWidth="200.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Country" />
-                        <ComboBox maxWidth="1.7976931348623157E308" />
+                        <ComboBox fx:id="countryComboBox" maxWidth="1.7976931348623157E308" />
                      </children>
                   </VBox>
                   <VBox prefWidth="200.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Division (District, State, etc)" />
-                        <ComboBox maxWidth="1.7976931348623157E308" />
+                        <ComboBox fx:id="divisionComboBox" maxWidth="1.7976931348623157E308" />
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <Label text="Error text" textFill="RED" />
+            <Label fx:id="errorLabel" text="Error text" textFill="RED" />
             <ButtonBar buttonOrder="" prefHeight="40.0" prefWidth="200.0">
               <buttons>
-                  <Button mnemonicParsing="false" text="Save" />
+                  <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
               </buttons>
             </ButtonBar>
          </children>

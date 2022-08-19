@@ -1,14 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.darrenfinch.appointmentmanager.controllers.ReportsController"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+<Pane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ToolBar maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="600.0">
+         <items>
+            <HBox spacing="10.0">
+               <children>
+                  <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Back" />
+                  <Label maxHeight="1.7976931348623157E308" text="Reports">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </items>
+      </ToolBar>
+      <ScrollPane fitToWidth="true" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minViewportHeight="560.0" minViewportWidth="600.0" minWidth="-Infinity" pannable="true" prefHeight="560.0" prefWidth="600.0">
+         <content>
+            <VBox spacing="20.0">
+               <children>
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label text="# Of Customer Appointments" />
+                        <TableView fx:id="numberOfCustomerAppointmentsTableView" prefHeight="200.0" prefWidth="200.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="C1" />
+                            <TableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label text="Contact Schedules" />
+                        <TableView fx:id="contactSchedulesTableView" prefHeight="200.0" prefWidth="200.0">
+                           <columns>
+                              <TableColumn prefWidth="75.0" text="C1" />
+                              <TableColumn prefWidth="75.0" text="C2" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label text="Report 3" />
+                        <TableView prefHeight="200.0" prefWidth="200.0">
+                           <columns>
+                              <TableColumn prefWidth="75.0" text="C1" />
+                              <TableColumn prefWidth="75.0" text="C2" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+</Pane>
