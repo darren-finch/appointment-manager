@@ -1,5 +1,13 @@
 package com.darrenfinch.appointmentmanager.screens.reports;
 
-public class ReportsController {
+import com.darrenfinch.appointmentmanager.services.ScreenNavigator;
 
+public class ReportsController {
+    private final ScreenNavigator screenNavigator;
+    private final ReportsModel model;
+
+    public ReportsController(ScreenNavigator screenNavigator, ReportsModel model) {
+        this.screenNavigator = screenNavigator;
+        this.model = model;
+    }
 }
