@@ -1,4 +1,3 @@
 package com.darrenfinch.appointmentmanager.data.models;
 
-public class Country {
-}
+public record Country(int id, String name, LogMetaData logMetaData) {}

@@ -1,4 +1,4 @@
 package com.darrenfinch.appointmentmanager.data.models;
 
-public class Customer {
-}
+public record Customer(int id, String name, String address, String postalCode, String phoneNumber, int divisonId,
+                       LogMetaData logMetaData) {}

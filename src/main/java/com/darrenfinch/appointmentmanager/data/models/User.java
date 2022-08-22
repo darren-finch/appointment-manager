@@ -1,4 +1,3 @@
 package com.darrenfinch.appointmentmanager.data.models;
 
-public class User {
-}
+public record User(int id, String name, String password, LogMetaData logMetaData) {}

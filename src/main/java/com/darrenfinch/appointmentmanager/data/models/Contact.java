@@ -1,4 +1,3 @@
 package com.darrenfinch.appointmentmanager.data.models;
 
-public class Contact {
-}
+public record Contact(int id, String name, String email) {}
