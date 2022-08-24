@@ -4,31 +4,47 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class LoginModel {
-    private final StringProperty locationProperty = new SimpleStringProperty();
-    private final StringProperty userNameProperty = new SimpleStringProperty();
-    private final StringProperty passwordProperty = new SimpleStringProperty();
-    private final StringProperty errorProperty = new SimpleStringProperty();
+    private final StringProperty location = new SimpleStringProperty();
+    private final StringProperty userName = new SimpleStringProperty();
+    private final StringProperty password = new SimpleStringProperty();
+    private final StringProperty error = new SimpleStringProperty();
 
     public LoginModel() {
-        locationProperty.set("");
-        userNameProperty.set("");
-        passwordProperty.set("");
-        errorProperty.set("");
+        location.set("");
+        userName.set("");
+        password.set("");
+        error.set("");
+    }
+
+    public String getLocation() {
+        return location.get();
     }
 
     public StringProperty locationProperty() {
-        return locationProperty;
+        return location;
+    }
+
+    public String getUserName() {
+        return userName.get();
     }
 
     public StringProperty userNameProperty() {
-        return userNameProperty;
+        return userName;
+    }
+
+    public String getPassword() {
+        return password.get();
     }
 
     public StringProperty passwordProperty() {
-        return passwordProperty;
+        return password;
+    }
+
+    public String getError() {
+        return error.get();
     }
 
     public StringProperty errorProperty() {
-        return errorProperty;
+        return error;
     }
 }

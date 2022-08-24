@@ -53,7 +53,7 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
-    public void getUserByUserName(String userName) {
-
+    public User getUserByUserName(String userName) {
+        return null;
     }
 }

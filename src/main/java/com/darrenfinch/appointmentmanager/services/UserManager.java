@@ -4,19 +4,24 @@ import com.darrenfinch.appointmentmanager.data.MainRepository;
 import com.darrenfinch.appointmentmanager.data.models.User;
 
 public class UserManager {
-    private final MainRepository repository;
+    private final MainRepository mainRepository;
     private User currentUser = null;
 
-    UserManager(MainRepository repository) {
-        this.repository = repository;
+    public UserManager(MainRepository mainRepository) {
+        this.mainRepository = mainRepository;
     }
 
-    void loginWithUserNameAndPassword(String userName, String password) {
-        // TODO: Implement with real database
-//        currentUser = new User();
+    public boolean loginWithUserNameAndPassword(String userName, String password) {
+        User requestedUser = mainRepository.getUserByUserName(userName);
+        if (requestedUser.password().equals(password)) {
+            currentUser = requestedUser;
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    User getCurrentUser() {
+    public User getCurrentUser() {
         return currentUser;
     }
 }

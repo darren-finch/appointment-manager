@@ -1,3 +1,3 @@
 package com.darrenfinch.appointmentmanager.data.models;
 
-public record Country(int id, String name, LogMetaData logMetaData) {}
+public record Country(int id, String name) {}

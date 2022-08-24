@@ -26,7 +26,7 @@ public class AppointmentManagerApplication extends javafx.application.Applicatio
     private void setupControllerFactories(ApplicationConfig config) {
         ControllerDependencyInjector.addInjectionMethod(
                 LoginController.class,
-                p -> new LoginController(config.getScreenNavigator(), new LoginModel())
+                p -> new LoginController(config.getScreenNavigator(), config.getUserManager(), new LoginModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 DashboardController.class,

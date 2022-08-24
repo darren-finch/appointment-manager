@@ -40,7 +40,7 @@
                <children>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Customer Name" />
+                        <Label text="Name" />
                         <TextField fx:id="customerNameTextField" maxWidth="1.7976931348623157E308" promptText="Enter customer name..." />
                      </children>
                   </VBox>

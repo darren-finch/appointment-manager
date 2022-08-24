@@ -1,3 +1,3 @@
 package com.darrenfinch.appointmentmanager.data.models;
 
-public record FirstLevelDivision(int id, String name, int countryId, LogMetaData logMetaData) {}
+public record FirstLevelDivision(int id, String name, int countryId) {}

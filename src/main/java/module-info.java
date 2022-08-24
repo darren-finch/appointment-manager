@@ -19,4 +19,6 @@ module com.darrenfinch.appointmentmanager {
     opens com.darrenfinch.appointmentmanager.screens.reports to javafx.fxml;
     exports com.darrenfinch.appointmentmanager.utils;
     opens com.darrenfinch.appointmentmanager.utils to javafx.fxml;
+    exports com.darrenfinch.appointmentmanager.data.services;
+    opens com.darrenfinch.appointmentmanager.data.services to javafx.fxml;
 }

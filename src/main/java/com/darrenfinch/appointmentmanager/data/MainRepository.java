@@ -29,5 +29,5 @@ public interface MainRepository {
     void removeCustomer(int customerId);
 
     //User
-    void getUserByUserName(String userName);
+    User getUserByUserName(String userName);
 }
