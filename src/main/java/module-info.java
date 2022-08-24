@@ -1,9 +1,9 @@
 module com.darrenfinch.appointmentmanager {
     requires javafx.controls;
     requires javafx.fxml;
+    requires mysql.connector.java;
+    requires java.sql;
 
-
-    opens com.darrenfinch.appointmentmanager to javafx.fxml;
     exports com.darrenfinch.appointmentmanager;
     exports com.darrenfinch.appointmentmanager.services;
     opens com.darrenfinch.appointmentmanager.services to javafx.fxml;
@@ -19,6 +19,4 @@ module com.darrenfinch.appointmentmanager {
     opens com.darrenfinch.appointmentmanager.screens.reports to javafx.fxml;
     exports com.darrenfinch.appointmentmanager.utils;
     opens com.darrenfinch.appointmentmanager.utils to javafx.fxml;
-    exports com.darrenfinch.appointmentmanager.data.services;
-    opens com.darrenfinch.appointmentmanager.data.services to javafx.fxml;
 }

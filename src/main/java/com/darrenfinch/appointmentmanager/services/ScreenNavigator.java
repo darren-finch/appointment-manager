@@ -1,9 +1,11 @@
 package com.darrenfinch.appointmentmanager.services;
 
 import com.darrenfinch.appointmentmanager.di.ControllerDependencyInjector;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class ScreenNavigator {
     private final Stage stage;
@@ -30,6 +32,12 @@ public class ScreenNavigator {
 
     public void switchToReportsScreen() {
         switchToScreen("reports.fxml");
+    }
+
+    public void setOnCloseRequestListener(Runnable listener) {
+        stage.setOnCloseRequest((windowEvent) -> {
+            listener.run();
+        });
     }
 
     private void switchToScreen(String screenResourceName) {

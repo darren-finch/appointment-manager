@@ -15,15 +15,30 @@ import com.darrenfinch.appointmentmanager.screens.reports.ReportsModel;
 import javafx.stage.Stage;
 
 public class AppointmentManagerApplication extends javafx.application.Application {
+
+    private ApplicationConfig config;
+
     @Override
     public void start(Stage stage) {
-        ApplicationConfig config = new ApplicationConfig(stage);
-        setupControllerFactories(config);
+        config = new ApplicationConfig(stage);
 
+        setupControllerFactories();
+
+        config.getScreenNavigator().setOnCloseRequestListener(this::closeDbConnection);
         config.getScreenNavigator().switchToLoginScreen();
     }
 
-    private void setupControllerFactories(ApplicationConfig config) {
+    private void closeDbConnection() {
+        if(config.getDbConnection() != null) {
+            try {
+                config.getDbConnection().close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void setupControllerFactories() {
         ControllerDependencyInjector.addInjectionMethod(
                 LoginController.class,
                 p -> new LoginController(config.getScreenNavigator(), config.getUserManager(), new LoginModel())
