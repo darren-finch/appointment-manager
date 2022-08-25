@@ -1,6 +1,5 @@
 package com.darrenfinch.appointmentmanager.screens.login;
 
-import com.darrenfinch.appointmentmanager.data.models.User;
 import com.darrenfinch.appointmentmanager.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.services.UserManager;
 import javafx.application.Platform;
@@ -50,10 +49,10 @@ public class LoginController {
                     } else {
                         return false;
                     }
-                } catch (IllegalArgumentException e) {
-                    model.errorProperty().set("Incorrect username and/or password.");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Platform.runLater(() -> {
+                        model.errorProperty().set(e.getLocalizedMessage());
+                    });
                 }
 
                 return false;

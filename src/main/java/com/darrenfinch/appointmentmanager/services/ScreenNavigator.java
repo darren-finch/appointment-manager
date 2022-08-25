@@ -34,12 +34,6 @@ public class ScreenNavigator {
         switchToScreen("reports.fxml");
     }
 
-    public void setOnCloseRequestListener(Runnable listener) {
-        stage.setOnCloseRequest((windowEvent) -> {
-            listener.run();
-        });
-    }
-
     private void switchToScreen(String screenResourceName) {
         try {
             Parent root = ControllerDependencyInjector.load(screenResourceName);

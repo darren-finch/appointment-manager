@@ -64,18 +64,19 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public User getUserByUserName(String userName) {
-        try {
-            //TODO: Vulnerable to SQL injection, use Prepared Statements
-            String query = "SELECT * FROM users WHERE username =" + userName;
-            Statement statement = dbConnection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-            // There should only be one result
-            resultSet.next();
-            return new User(
-                    resultSet.getInt("user_id"),
-                    resultSet.getString("user_name"),
-                    resultSet.getString("user_password")
-            );
+        try (Statement statement = dbConnection.createStatement()) {
+            String query = "SELECT * FROM users WHERE User_Name = \"" + userName + "\" LIMIT 1;";
+            try (ResultSet resultSet = statement.executeQuery(query);) {
+                //TODO: Vulnerable to SQL injection, use Prepared Statements
+                // There should only be one result
+                if (resultSet.next()) {
+                    return new User(
+                            resultSet.getInt("User_ID"),
+                            resultSet.getString("User_Name"),
+                            resultSet.getString("Password")
+                    );
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

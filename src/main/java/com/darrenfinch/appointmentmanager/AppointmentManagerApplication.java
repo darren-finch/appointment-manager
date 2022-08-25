@@ -24,18 +24,7 @@ public class AppointmentManagerApplication extends javafx.application.Applicatio
 
         setupControllerFactories();
 
-        config.getScreenNavigator().setOnCloseRequestListener(this::closeDbConnection);
         config.getScreenNavigator().switchToLoginScreen();
-    }
-
-    private void closeDbConnection() {
-        if(config.getDbConnection() != null) {
-            try {
-                config.getDbConnection().close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void setupControllerFactories() {
@@ -63,5 +52,10 @@ public class AppointmentManagerApplication extends javafx.application.Applicatio
 
     public static void main(String[] args) {
         launch();
+    }
+
+    @Override
+    public void stop() {
+        config.cleanup();
     }
 }

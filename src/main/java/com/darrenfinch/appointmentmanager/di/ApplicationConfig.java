@@ -5,18 +5,14 @@ import com.darrenfinch.appointmentmanager.data.MainRepositoryImpl;
 import com.darrenfinch.appointmentmanager.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.services.DialogManager;
 import com.darrenfinch.appointmentmanager.services.UserManager;
-import com.mysql.jdbc.Driver;
+import com.darrenfinch.appointmentmanager.services.JDBCManager;
 import javafx.stage.Stage;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class ApplicationConfig {
     private final ScreenNavigator screenNavigator;
     private final DialogManager dialogManager;
 
-    private final Driver jdbcDriver;
-    private final Connection dbConnection;
+    private final JDBCManager jdbcManager;
     private final MainRepository mainRepository;
     private final UserManager userManager;
 
@@ -24,14 +20,10 @@ public class ApplicationConfig {
         this.screenNavigator = new ScreenNavigator(stage);
         this.dialogManager = new DialogManager();
 
-        try {
-            jdbcDriver = new Driver();
-            // I am not doing this on a background thread yet to keep things simple.
-            dbConnection = jdbcDriver.connect("", null);
-            this.mainRepository = new MainRepositoryImpl(dbConnection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        // I am not doing this on a background thread yet to keep things simple for now.
+        jdbcManager = new JDBCManager();
+        jdbcManager.openConnection();
+        this.mainRepository = new MainRepositoryImpl(jdbcManager.getConnection());
 
         this.userManager = new UserManager(mainRepository);
     }
@@ -44,15 +36,15 @@ public class ApplicationConfig {
         return dialogManager;
     }
 
-    public Connection getDbConnection() {
-        return dbConnection;
-    }
-
     public MainRepository getMainRepository() {
         return mainRepository;
     }
 
     public UserManager getUserManager() {
         return userManager;
+    }
+
+    public void cleanup() {
+        jdbcManager.closeConnection();
     }
 }
