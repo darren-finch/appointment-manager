@@ -1,6 +1,6 @@
 package com.darrenfinch.appointmentmanager.screens.editappointment;
 
-import com.darrenfinch.appointmentmanager.services.ScreenNavigator;
+import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 
 public class EditAppointmentController {
     private final ScreenNavigator screenNavigator;

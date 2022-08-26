@@ -1,4 +1,4 @@
-package com.darrenfinch.appointmentmanager.services;
+package com.darrenfinch.appointmentmanager.common.services;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,9 +1,7 @@
-package com.darrenfinch.appointmentmanager.services;
+package com.darrenfinch.appointmentmanager.common.services;
 
-import com.darrenfinch.appointmentmanager.data.MainRepository;
-import com.darrenfinch.appointmentmanager.data.models.User;
-
-import javax.security.auth.login.CredentialException;
+import com.darrenfinch.appointmentmanager.common.data.MainRepository;
+import com.darrenfinch.appointmentmanager.common.data.entities.User;
 
 public class UserManager {
     private final MainRepository mainRepository;
@@ -17,7 +15,7 @@ public class UserManager {
         try {
             User requestedUser = mainRepository.getUserByUserName(userName);
             if (requestedUser != null) {
-                if (requestedUser.password().equals(password)) {
+                if (requestedUser.getPassword().equals(password)) {
                     currentUser = requestedUser;
                     return true;
                 } else {

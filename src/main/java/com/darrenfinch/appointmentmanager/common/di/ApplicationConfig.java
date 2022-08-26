@@ -1,11 +1,11 @@
-package com.darrenfinch.appointmentmanager.di;
+package com.darrenfinch.appointmentmanager.common.di;
 
-import com.darrenfinch.appointmentmanager.data.MainRepository;
-import com.darrenfinch.appointmentmanager.data.MainRepositoryImpl;
-import com.darrenfinch.appointmentmanager.services.ScreenNavigator;
-import com.darrenfinch.appointmentmanager.services.DialogManager;
-import com.darrenfinch.appointmentmanager.services.UserManager;
-import com.darrenfinch.appointmentmanager.services.JDBCManager;
+import com.darrenfinch.appointmentmanager.common.data.MainRepository;
+import com.darrenfinch.appointmentmanager.common.data.MainRepositoryImpl;
+import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
+import com.darrenfinch.appointmentmanager.common.services.DialogManager;
+import com.darrenfinch.appointmentmanager.common.services.UserManager;
+import com.darrenfinch.appointmentmanager.common.services.JDBCManager;
 import javafx.stage.Stage;
 
 public class ApplicationConfig {

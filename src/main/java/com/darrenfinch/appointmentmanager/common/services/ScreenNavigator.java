@@ -1,14 +1,16 @@
-package com.darrenfinch.appointmentmanager.services;
+package com.darrenfinch.appointmentmanager.common.services;
 
-import com.darrenfinch.appointmentmanager.di.ControllerDependencyInjector;
-import javafx.event.EventHandler;
+import com.darrenfinch.appointmentmanager.common.BaseController;
+import com.darrenfinch.appointmentmanager.common.di.ControllerDependencyInjector;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class ScreenNavigator {
     private final Stage stage;
+
+    private BaseController currentController;
 
     public ScreenNavigator(Stage stage) {
         this.stage = stage;
@@ -35,10 +37,17 @@ public class ScreenNavigator {
     }
 
     private void switchToScreen(String screenResourceName) {
+        if (currentController != null) {
+            currentController.onStopRequest();
+        }
+
         try {
-            Parent root = ControllerDependencyInjector.load(screenResourceName);
+            FXMLLoader injectedLoader = ControllerDependencyInjector.getLoader("/" + screenResourceName);
+            currentController = injectedLoader.getController();
+            Parent root = injectedLoader.load();
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (ClassCastException ignored) {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

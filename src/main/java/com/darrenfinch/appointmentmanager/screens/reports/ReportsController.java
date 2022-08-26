@@ -1,6 +1,6 @@
 package com.darrenfinch.appointmentmanager.screens.reports;
 
-import com.darrenfinch.appointmentmanager.services.ScreenNavigator;
+import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 
 public class ReportsController {
     private final ScreenNavigator screenNavigator;

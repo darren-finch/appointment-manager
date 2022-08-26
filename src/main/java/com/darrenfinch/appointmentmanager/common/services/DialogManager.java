@@ -1,4 +1,4 @@
-package com.darrenfinch.appointmentmanager.services;
+package com.darrenfinch.appointmentmanager.common.services;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;

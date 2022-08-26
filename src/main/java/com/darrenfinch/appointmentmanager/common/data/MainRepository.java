@@ -1,10 +1,9 @@
-package com.darrenfinch.appointmentmanager.data;
+package com.darrenfinch.appointmentmanager.common.data;
 
-import com.darrenfinch.appointmentmanager.data.models.Appointment;
-import com.darrenfinch.appointmentmanager.data.models.Customer;
-import com.darrenfinch.appointmentmanager.data.models.User;
-
-import java.util.List;
+import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
+import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
+import com.darrenfinch.appointmentmanager.common.data.entities.User;
+import javafx.collections.ObservableList;
 
 /**
  * This is a simple enough application that I did not see the need for separate DAOs for each entity in the database.
@@ -14,15 +13,15 @@ import java.util.List;
  */
 public interface MainRepository {
     //APPOINTMENTS
-    List<Appointment> getAppointmentsForUserByMonth(User user);
-    List<Appointment> getAppointmentsForUserByWeek(User user);
+    ObservableList<Appointment> getAppointmentsForUserByMonth(User user);
+    ObservableList<Appointment> getAppointmentsForUserByWeek(User user);
 
     void addAppointment(Appointment appointment);
     void updateAppointment(int appointmentId, Appointment newAppointment);
     void removeAppointment(int appointmentId);
 
     //CUSTOMERS
-    List<Customer> getAllCustomers();
+    ObservableList<Customer> getAllCustomers();
 
     void addCustomer(Customer customer);
     void updateCustomer(int customerId, Customer newCustomer);

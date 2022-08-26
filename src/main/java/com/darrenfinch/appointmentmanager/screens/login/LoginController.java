@@ -1,7 +1,8 @@
 package com.darrenfinch.appointmentmanager.screens.login;
 
-import com.darrenfinch.appointmentmanager.services.ScreenNavigator;
-import com.darrenfinch.appointmentmanager.services.UserManager;
+import com.darrenfinch.appointmentmanager.common.BaseController;
+import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
+import com.darrenfinch.appointmentmanager.common.services.UserManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -9,7 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class LoginController {
+public class LoginController implements BaseController {
     @FXML
     private Label locationLabel;
     @FXML

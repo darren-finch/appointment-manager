@@ -1,6 +1,6 @@
 package com.darrenfinch.appointmentmanager.screens.editcustomer;
 
-import com.darrenfinch.appointmentmanager.services.ScreenNavigator;
+import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 
 public class EditCustomerController {
     private final ScreenNavigator screenNavigator;

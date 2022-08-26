@@ -1,7 +1,7 @@
 package com.darrenfinch.appointmentmanager;
 
-import com.darrenfinch.appointmentmanager.di.ApplicationConfig;
-import com.darrenfinch.appointmentmanager.di.ControllerDependencyInjector;
+import com.darrenfinch.appointmentmanager.common.di.ApplicationConfig;
+import com.darrenfinch.appointmentmanager.common.di.ControllerDependencyInjector;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardModel;
 import com.darrenfinch.appointmentmanager.screens.editappointment.EditAppointmentController;
@@ -34,7 +34,7 @@ public class AppointmentManagerApplication extends javafx.application.Applicatio
         );
         ControllerDependencyInjector.addInjectionMethod(
                 DashboardController.class,
-                p -> new DashboardController(config.getScreenNavigator(), config.getDialogManager(), new DashboardModel())
+                p -> new DashboardController(config.getScreenNavigator(), config.getDialogManager(), config.getUserManager(), config.getMainRepository(), new DashboardModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 EditCustomerController.class,

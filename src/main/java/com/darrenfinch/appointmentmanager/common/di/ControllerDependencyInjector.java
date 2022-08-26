@@ -1,4 +1,4 @@
-package com.darrenfinch.appointmentmanager.di;
+package com.darrenfinch.appointmentmanager.common.di;
 
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
@@ -23,10 +23,6 @@ public class ControllerDependencyInjector {
     private static ResourceBundle bundle = null;
     public static void setBundle(ResourceBundle bundle) {
         ControllerDependencyInjector.bundle = bundle;
-    }
-    public static Parent load(String location) throws IOException {
-        FXMLLoader loader = getLoader("/" + location);
-        return loader.load();
     }
     public static FXMLLoader getLoader(String location) {
         return new FXMLLoader(

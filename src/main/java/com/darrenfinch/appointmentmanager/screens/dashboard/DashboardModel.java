@@ -1,21 +1,26 @@
 package com.darrenfinch.appointmentmanager.screens.dashboard;
 
-import com.darrenfinch.appointmentmanager.data.models.Customer;
+import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
+import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DashboardModel {
-    private final ObservableList<Customer> customersProperty = FXCollections.emptyObservableList();
+    private final ObjectProperty<ObservableList<Customer>> customersProperty = new SimpleObjectProperty<>();
     private final StringProperty viewByProperty = new SimpleStringProperty();
-    private final ObservableList<Customer> appointmentsProperty = FXCollections.emptyObservableList();
+    private final ObjectProperty<ObservableList<Appointment>> appointmentsProperty = new SimpleObjectProperty<>();
 
     public DashboardModel() {
+        customersProperty.set(FXCollections.emptyObservableList());
         viewByProperty.set("");
+        appointmentsProperty.set(FXCollections.emptyObservableList());
     }
 
-    public ObservableList<Customer> getCustomersProperty() {
+    public ObjectProperty<ObservableList<Customer>> getCustomersProperty() {
         return customersProperty;
     }
 
@@ -23,7 +28,7 @@ public class DashboardModel {
         return viewByProperty;
     }
 
-    public ObservableList<Customer> getAppointmentsProperty() {
+    public ObjectProperty<ObservableList<Appointment>> getAppointmentsProperty() {
         return appointmentsProperty;
     }
 }
