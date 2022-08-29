@@ -7,6 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class MainRepositoryImpl implements MainRepository {
@@ -20,13 +22,33 @@ public class MainRepositoryImpl implements MainRepository {
     private final ObservableList<Appointment> appointmentsObservableList = FXCollections.observableList(new ArrayList<>());
 
     @Override
-    public ObservableList<Appointment> getAppointmentsForUserByMonth(User user) {
-        return null;
-    }
-
-    @Override
-    public ObservableList<Appointment> getAppointmentsForUserByWeek(User user) {
-        return null;
+    public ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, Appointment.ViewByTimeFrame viewByTimeFrame) {
+        new Thread(() -> {
+            appointmentsObservableList.clear();
+            String query = "SELECT *, EXTRACT(" + viewByTimeFrame.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
+            try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+                statement.setInt(1, userId);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        appointmentsObservableList.add(new Appointment(
+                                resultSet.getInt("Appointment_ID"),
+                                resultSet.getString("Title"),
+                                resultSet.getString("Description"),
+                                resultSet.getString("Location"),
+                                resultSet.getString("Type"),
+                                LocalDate.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                                LocalDate.parse(resultSet.getString("end").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                                resultSet.getInt("Customer_ID"),
+                                resultSet.getInt("User_ID"),
+                                resultSet.getInt("Contact_ID")
+                        ));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        return appointmentsObservableList;
     }
 
     @Override

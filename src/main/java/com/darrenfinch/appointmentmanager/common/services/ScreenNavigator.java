@@ -7,8 +7,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+
 public class ScreenNavigator {
     private final Stage stage;
+
+    private final HashMap<String, Object> arguments = new HashMap<>();
 
     private BaseController currentController;
 
@@ -24,12 +28,16 @@ public class ScreenNavigator {
         switchToScreen("dashboard.fxml");
     }
 
-    public void switchToEditCustomerScreen() {
-        switchToScreen("editcustomer.fxml");
+    public void switchToEditCustomerScreen(int customerId) {
+        arguments.clear();
+        arguments.put("customerId", customerId);
+        switchToScreen("edit-customer.fxml");
     }
 
-    public void switchToEditAppointmentScreen() {
-        switchToScreen("editappointment.fxml");
+    public void switchToEditAppointmentScreen(int appointmentId) {
+        arguments.clear();
+        arguments.put("appointmentId", appointmentId);
+        switchToScreen("edit-appointment.fxml");
     }
 
     public void switchToReportsScreen() {
@@ -51,5 +59,9 @@ public class ScreenNavigator {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Object getArgument(String key) {
+        return arguments.get(key);
     }
 }

@@ -10,12 +10,12 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <Pane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController">
    <children>
       <ToolBar prefHeight="40.0" prefWidth="600.0">
@@ -63,9 +63,9 @@
                         </TableView>
                         <HBox spacing="20.0">
                            <children>
-                              <Button fx:id="deleteCustomersButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Delete Customer(s)" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="updateCustomerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Update Customer" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="addCustomerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add Customer" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="deleteCustomerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteCustomer" text="Delete Customer" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="updateCustomerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updateCustomer" text="Update Customer" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="addCustomerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addCustomer" text="Add Customer" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                      </children>
@@ -87,15 +87,43 @@
                         </HBox>
                         <TableView fx:id="appointmentsTableView" prefHeight="450.0" prefWidth="560.0">
                            <columns>
-                              <TableColumn fx:id="customersTableView1" prefWidth="74.0" text="C1" />
-                              <TableColumn prefWidth="76.0" text="C2" />
+                               <TableColumn text="Appointment ID">
+                                   <cellValueFactory><PropertyValueFactory property="id" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="Title">
+                                   <cellValueFactory><PropertyValueFactory property="title" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="Description">
+                                   <cellValueFactory><PropertyValueFactory property="description" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="Location">
+                                   <cellValueFactory><PropertyValueFactory property="location" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="Type">
+                                   <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="Start">
+                                   <cellValueFactory><PropertyValueFactory property="startDate" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="End">
+                                   <cellValueFactory><PropertyValueFactory property="endDate" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="Customer ID">
+                                   <cellValueFactory><PropertyValueFactory property="customerId" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="User ID">
+                                   <cellValueFactory><PropertyValueFactory property="userId" /></cellValueFactory>
+                               </TableColumn>
+                               <TableColumn text="Contact ID">
+                                   <cellValueFactory><PropertyValueFactory property="contactId" /></cellValueFactory>
+                               </TableColumn>
                            </columns>
                         </TableView>
                         <HBox spacing="20.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <Button fx:id="deleteAppointmentsButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Delete Appointment(s)" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="updateAppointmentButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Update Appointment" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="addAppointmentButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add Appointment" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="deleteAppointmentButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deleteAppointment" text="Delete Appointment" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="updateAppointmentButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updateAppointment" text="Update Appointment" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="addAppointmentButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addAppointment" text="Add Appointment" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                      </children>

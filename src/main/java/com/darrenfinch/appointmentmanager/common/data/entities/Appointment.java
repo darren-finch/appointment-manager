@@ -5,6 +5,21 @@ import javafx.beans.property.*;
 import java.time.LocalDate;
 
 public class Appointment {
+    public enum ViewByTimeFrame {
+        WEEK ("Week"),
+        MONTH ("Month");
+
+        private final String name;
+
+        ViewByTimeFrame(String s) {
+            name = s;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
     private final IntegerProperty id = new SimpleIntegerProperty();
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty description = new SimpleStringProperty();
@@ -18,6 +33,7 @@ public class Appointment {
 
     public Appointment(int id, String title, String description, String location, String type, LocalDate startDate, LocalDate endDate, int customerId, int userId, int contactId) {
         this.id.set(id);
+        this.title.set(title);
         this.description.set(description);
         this.location.set(location);
         this.type.set(type);

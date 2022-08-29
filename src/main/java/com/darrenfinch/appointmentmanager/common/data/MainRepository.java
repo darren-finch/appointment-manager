@@ -8,13 +8,11 @@ import javafx.collections.ObservableList;
 /**
  * This is a simple enough application that I did not see the need for separate DAOs for each entity in the database.
  * Instead, I am creating a single source of truth via this main repository.
- * It will be a testable, stateless abstraction over the persistence layer.
  * I will break the pattern of "no updating objects in the repository" because that just seems completely arbitrary.
  */
 public interface MainRepository {
     //APPOINTMENTS
-    ObservableList<Appointment> getAppointmentsForUserByMonth(User user);
-    ObservableList<Appointment> getAppointmentsForUserByWeek(User user);
+    ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, Appointment.ViewByTimeFrame viewByTimeFrame);
 
     void addAppointment(Appointment appointment);
     void updateAppointment(int appointmentId, Appointment newAppointment);
