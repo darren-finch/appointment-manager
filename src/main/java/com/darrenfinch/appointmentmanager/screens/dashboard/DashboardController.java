@@ -25,7 +25,7 @@ public class DashboardController implements BaseController {
     private TableView<Customer> customersTableView;
 
     @FXML
-    private ComboBox<Appointment.ViewByTimeFrame> viewByComboBox;
+    private ComboBox<ViewByTimeFrame> viewByComboBox;
 
     @FXML
     private TableView<Appointment> appointmentsTableView;
@@ -45,7 +45,7 @@ public class DashboardController implements BaseController {
         model.getAppointmentsProperty().set(mainRepository.getAppointmentsForUserByTimeFrame(userManager.getCurrentUser().getId(), model.getViewBy()));
 
         // Initialize combo box
-        viewByComboBox.setItems(FXCollections.observableList(List.of(Appointment.ViewByTimeFrame.values())));
+        viewByComboBox.setItems(FXCollections.observableList(List.of(ViewByTimeFrame.values())));
         viewByComboBox.valueProperty().bindBidirectional(model.viewByProperty());
 
         // Bind viewByProperty of model to re-fetch appointments
@@ -106,5 +106,21 @@ public class DashboardController implements BaseController {
 
     public void addAppointment() {
         screenNavigator.switchToEditAppointmentScreen(Constants.INVALID_ID);
+    }
+
+    public enum ViewByTimeFrame {
+        WEEK ("Week"),
+        MONTH ("Month");
+
+        private final String name;
+
+        ViewByTimeFrame(String s) {
+            name = s;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 }

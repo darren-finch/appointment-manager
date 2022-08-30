@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.Stack;
 
 public class ScreenNavigator {
     private final Stage stage;
@@ -15,6 +17,8 @@ public class ScreenNavigator {
     private final HashMap<String, Object> arguments = new HashMap<>();
 
     private BaseController currentController;
+
+    private final Stack<String> screenStack = new Stack<>();
 
     public ScreenNavigator(Stage stage) {
         this.stage = stage;
@@ -45,6 +49,10 @@ public class ScreenNavigator {
     }
 
     private void switchToScreen(String screenResourceName) {
+        switchToScreen(screenResourceName, false);
+    }
+
+    private void switchToScreen(String screenResourceName, boolean goingBack) {
         if (currentController != null) {
             currentController.onStopRequest();
         }
@@ -59,9 +67,25 @@ public class ScreenNavigator {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        // If we reach here the screen navigation was successful.
+        // Push new screen to stack unless it's the same one that's on the stack or we are going back.
+        if (screenStack.isEmpty()) {
+            screenStack.push(screenResourceName);
+        }
+        else if (!Objects.equals(screenStack.peek(), screenResourceName) && !goingBack) {
+            screenStack.push(screenResourceName);
+        }
     }
 
     public Object getArgument(String key) {
         return arguments.get(key);
+    }
+
+    public void goBack() {
+        if (!screenStack.isEmpty()) {
+            screenStack.pop();
+            switchToScreen(screenStack.peek(), true);
+        }
     }
 }

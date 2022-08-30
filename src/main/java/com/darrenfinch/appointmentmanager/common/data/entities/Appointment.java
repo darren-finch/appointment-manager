@@ -5,21 +5,6 @@ import javafx.beans.property.*;
 import java.time.LocalDate;
 
 public class Appointment {
-    public enum ViewByTimeFrame {
-        WEEK ("Week"),
-        MONTH ("Month");
-
-        private final String name;
-
-        ViewByTimeFrame(String s) {
-            name = s;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
     private final IntegerProperty id = new SimpleIntegerProperty();
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty description = new SimpleStringProperty();

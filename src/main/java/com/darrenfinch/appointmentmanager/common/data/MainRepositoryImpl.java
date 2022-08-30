@@ -1,8 +1,7 @@
 package com.darrenfinch.appointmentmanager.common.data;
 
-import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
-import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
-import com.darrenfinch.appointmentmanager.common.data.entities.User;
+import com.darrenfinch.appointmentmanager.common.data.entities.*;
+import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -21,8 +20,47 @@ public class MainRepositoryImpl implements MainRepository {
     private final ObservableList<Customer> customersObservableList = FXCollections.observableList(new ArrayList<>());
     private final ObservableList<Appointment> appointmentsObservableList = FXCollections.observableList(new ArrayList<>());
 
+    private final ObservableList<Country> countries = FXCollections.observableList(new ArrayList<>());
+
+    private final ObservableList<FirstLevelDivision> allFirstLevelDivisions = FXCollections.observableList(new ArrayList<>());
+
     @Override
-    public ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, Appointment.ViewByTimeFrame viewByTimeFrame) {
+    public void initializeStaticData() {
+        // Get countries and first level division data from database. This is done synchronously to guarantee the availability of all static data to the application.
+        countries.clear();
+        String query1 = "SELECT * FROM countries";
+        try (Statement statement = dbConnection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(query1)) {
+                while (resultSet.next()) {
+                    countries.add(new Country(
+                            resultSet.getInt("Country_ID"),
+                            resultSet.getString("Country")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        allFirstLevelDivisions.clear();
+        String query2 = "SELECT * FROM first_level_divisions";
+        try (Statement statement = dbConnection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(query2)) {
+                while (resultSet.next()) {
+                    allFirstLevelDivisions.add(new FirstLevelDivision(
+                            resultSet.getInt("Division_ID"),
+                            resultSet.getString("Division"),
+                            resultSet.getInt("Country_ID")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame) {
         new Thread(() -> {
             appointmentsObservableList.clear();
             String query = "SELECT *, EXTRACT(" + viewByTimeFrame.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
@@ -125,5 +163,15 @@ public class MainRepositoryImpl implements MainRepository {
         }
 
         return null;
+    }
+
+    @Override
+    public ObservableList<Country> getAllCountries() {
+        return FXCollections.observableList(countries);
+    }
+
+    @Override
+    public ObservableList<FirstLevelDivision> getFirstLevelDivisionsForCountry(Country country) {
+        return FXCollections.observableList(allFirstLevelDivisions.stream().filter((val) -> val.getCountryId() == country.getId()).toList());
     }
 }

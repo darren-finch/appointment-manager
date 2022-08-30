@@ -1,8 +1,7 @@
 package com.darrenfinch.appointmentmanager.common.data;
 
-import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
-import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
-import com.darrenfinch.appointmentmanager.common.data.entities.User;
+import com.darrenfinch.appointmentmanager.common.data.entities.*;
+import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import javafx.collections.ObservableList;
 
 /**
@@ -11,8 +10,12 @@ import javafx.collections.ObservableList;
  * I will break the pattern of "no updating objects in the repository" because that just seems completely arbitrary.
  */
 public interface MainRepository {
-    //APPOINTMENTS
-    ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, Appointment.ViewByTimeFrame viewByTimeFrame);
+    void initializeStaticData();
+
+    // APPOINTMENTS
+    // This query contains a cross-cutting concern, because the viewByTimeFrame is a view-specific matter, but it needs to be specified in the query.
+    // TODO: REFACTOR
+    ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame);
 
     void addAppointment(Appointment appointment);
     void updateAppointment(int appointmentId, Appointment newAppointment);
@@ -27,4 +30,10 @@ public interface MainRepository {
 
     //User
     User getUserByUserName(String userName);
+
+    // Country
+    ObservableList<Country> getAllCountries();
+
+    // First Level Division
+    ObservableList<FirstLevelDivision> getFirstLevelDivisionsForCountry(Country country);
 }

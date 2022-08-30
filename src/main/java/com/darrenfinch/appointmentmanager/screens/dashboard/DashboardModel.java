@@ -8,12 +8,12 @@ import javafx.collections.ObservableList;
 
 public class DashboardModel {
     private final ObjectProperty<ObservableList<Customer>> customersProperty = new SimpleObjectProperty<>();
-    private final ObjectProperty<Appointment.ViewByTimeFrame> viewByProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<DashboardController.ViewByTimeFrame> viewByProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<ObservableList<Appointment>> appointmentsProperty = new SimpleObjectProperty<>();
 
     public DashboardModel() {
         customersProperty.set(FXCollections.emptyObservableList());
-        viewByProperty.set(Appointment.ViewByTimeFrame.WEEK);
+        viewByProperty.set(DashboardController.ViewByTimeFrame.WEEK);
         appointmentsProperty.set(FXCollections.emptyObservableList());
     }
 
@@ -21,11 +21,11 @@ public class DashboardModel {
         return customersProperty;
     }
 
-    public Property<Appointment.ViewByTimeFrame> viewByProperty() {
+    public Property<DashboardController.ViewByTimeFrame> viewByProperty() {
         return viewByProperty;
     }
 
-    public Appointment.ViewByTimeFrame getViewBy() {
+    public DashboardController.ViewByTimeFrame getViewBy() {
         return viewByProperty.get();
     }
 

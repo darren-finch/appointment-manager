@@ -26,7 +26,7 @@ public class EditAppointmentModel {
         typeProperty.set("");
         contactNameProperty.set("");
         startDateProperty.set(LocalDate.now());
-        endDateProperty.set(LocalDate.now().plus(1, ChronoUnit.HOURS));
+        endDateProperty.set(LocalDate.now());
         customerIdProperty.set("");
         userIdProperty.set("");
     }
