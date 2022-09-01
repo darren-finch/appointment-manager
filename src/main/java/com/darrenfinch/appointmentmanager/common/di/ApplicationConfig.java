@@ -18,13 +18,16 @@ import com.darrenfinch.appointmentmanager.screens.reports.ReportsController;
 import com.darrenfinch.appointmentmanager.screens.reports.ReportsModel;
 import javafx.stage.Stage;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ApplicationConfig {
     private final ScreenNavigator screenNavigator;
     private final DialogManager dialogManager;
-
     private final JDBCManager jdbcManager;
     private final MainRepository mainRepository;
     private final UserManager userManager;
+    private final ExecutorService executorService;
 
     public ApplicationConfig(Stage stage) {
         this.screenNavigator = new ScreenNavigator(stage);
@@ -37,6 +40,7 @@ public class ApplicationConfig {
         this.mainRepository.initializeStaticData();
 
         this.userManager = new UserManager(mainRepository);
+        this.executorService = Executors.newCachedThreadPool();
 
         setupControllerFactories();
     }
@@ -52,7 +56,7 @@ public class ApplicationConfig {
         );
         ControllerDependencyInjector.addInjectionMethod(
                 EditCustomerController.class,
-                p -> new EditCustomerController(getScreenNavigator(), getDialogManager(), getMainRepository(), new EditCustomerModel(getMainRepository()))
+                p -> new EditCustomerController(getScreenNavigator(), getDialogManager(), getUserManager(), getMainRepository(), getExecutorService(), new EditCustomerModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 EditAppointmentController.class,
@@ -80,7 +84,10 @@ public class ApplicationConfig {
         return userManager;
     }
 
+    public ExecutorService getExecutorService() { return executorService; }
+
     public void cleanup() {
+        executorService.shutdown();
         jdbcManager.closeConnection();
     }
 }

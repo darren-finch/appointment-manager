@@ -87,7 +87,7 @@
             <Label fx:id="errorLabel" text="Error text" textFill="RED" />
             <ButtonBar buttonOrder="" prefHeight="40.0" prefWidth="200.0">
               <buttons>
-                  <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
+                  <Button fx:id="saveButton" mnemonicParsing="false" text="Save" onAction="#save"/>
               </buttons>
             </ButtonBar>
          </children>

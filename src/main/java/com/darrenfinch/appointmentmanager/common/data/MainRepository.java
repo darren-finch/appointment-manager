@@ -16,16 +16,16 @@ public interface MainRepository {
     // This query contains a cross-cutting concern, because the viewByTimeFrame is a view-specific matter, but it needs to be specified in the query.
     // TODO: REFACTOR
     ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame);
-
-    void addAppointment(Appointment appointment);
-    void updateAppointment(int appointmentId, Appointment newAppointment);
+    Appointment getAppointment(int appointmentId);
+    void addAppointment(Appointment appointment, User currentUser);
+    void updateAppointment(int appointmentId, Appointment newAppointment, User currentUser);
     void removeAppointment(int appointmentId);
 
     //CUSTOMERS
     ObservableList<Customer> getAllCustomers();
-
-    void addCustomer(Customer customer);
-    void updateCustomer(int customerId, Customer newCustomer);
+    Customer getCustomer(int customerId);
+    void addCustomer(Customer customer, User currentUser);
+    void updateCustomer(int customerId, Customer newCustomer, User currentUser);
     void removeCustomer(int customerId);
 
     //User

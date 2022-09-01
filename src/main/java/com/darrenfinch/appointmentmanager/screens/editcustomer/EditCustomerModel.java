@@ -2,6 +2,7 @@ package com.darrenfinch.appointmentmanager.screens.editcustomer;
 
 import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.entities.Country;
+import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
 import com.darrenfinch.appointmentmanager.common.data.entities.FirstLevelDivision;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -21,25 +22,12 @@ public class EditCustomerModel {
     private final ObjectProperty<FirstLevelDivision> firstLevelDivision = new SimpleObjectProperty<>();
     private final StringProperty error = new SimpleStringProperty();
 
-    // TODO: DETERMINE WHETHER THIS GOES IN CONTROLLER OR MODEL
-    public EditCustomerModel(MainRepository mainRepository) {
+    public EditCustomerModel() {
         id.set("0");
         name.set("");
         phoneNumber.set("");
         address.set("");
         postalCode.set("");
-
-        allCountries.set(mainRepository.getAllCountries());
-        country.set(allCountries.get().get(0));
-
-        allFirstLevelDivisionsForCountry.set(mainRepository.getFirstLevelDivisionsForCountry(country.get()));
-        firstLevelDivision.set(allFirstLevelDivisionsForCountry.get().get(0));
-
-        country.addListener((obs, oldVal, newVal) -> {
-            allFirstLevelDivisionsForCountry.set(mainRepository.getFirstLevelDivisionsForCountry(country.get()));
-            firstLevelDivision.set(allFirstLevelDivisionsForCountry.get().get(0));
-        });
-
         error.set("");
     }
 
