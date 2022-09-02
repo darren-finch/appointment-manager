@@ -9,16 +9,19 @@ import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.common.services.UserManager;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class DashboardController implements BaseController {
     private final ScreenNavigator screenNavigator;
     private final DialogManager dialogManager;
     private final UserManager userManager;
+    private final ExecutorService executorService;
     private final MainRepository mainRepository;
     private final DashboardModel model;
     @FXML
@@ -30,10 +33,11 @@ public class DashboardController implements BaseController {
     @FXML
     private TableView<Appointment> appointmentsTableView;
 
-    public DashboardController(ScreenNavigator screenNavigator, DialogManager dialogManager, UserManager userManager, MainRepository mainRepository, DashboardModel model) {
+    public DashboardController(ScreenNavigator screenNavigator, DialogManager dialogManager, UserManager userManager, ExecutorService executorService, MainRepository mainRepository, DashboardModel model) {
         this.screenNavigator = screenNavigator;
         this.dialogManager = dialogManager;
         this.userManager = userManager;
+        this.executorService = executorService;
         this.mainRepository = mainRepository;
         this.model = model;
     }
@@ -64,8 +68,13 @@ public class DashboardController implements BaseController {
             dialogManager.showConfirmationDialog(
                     "Are you sure you want to delete this customer?",
                     () -> {
-                        mainRepository.removeCustomer(selectedCustomer.getId());
-                        dialogManager.showAlertDialog("Selected appointment would have been deleted");
+                        executorService.execute(new Task<Void>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                mainRepository.removeCustomer(selectedCustomer.getId());
+                                return null;
+                            }
+                        });
                     },
                     null
             );
@@ -89,8 +98,13 @@ public class DashboardController implements BaseController {
             dialogManager.showConfirmationDialog(
                     "Are you sure you want to delete this appointment?",
                     () -> {
-                        mainRepository.removeAppointment(selectedAppointment.getId());
-                        dialogManager.showAlertDialog("Selected appointment would have been deleted");
+                        executorService.execute(new Task<Void>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                mainRepository.removeAppointment(selectedAppointment.getId());
+                                return null;
+                            }
+                        });
                     },
                     null
             );

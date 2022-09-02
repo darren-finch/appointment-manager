@@ -48,11 +48,11 @@ public class ApplicationConfig {
     private void setupControllerFactories() {
         ControllerDependencyInjector.addInjectionMethod(
                 LoginController.class,
-                p -> new LoginController(getScreenNavigator(), getUserManager(), new LoginModel())
+                p -> new LoginController(getScreenNavigator(), getUserManager(), getExecutorService(), new LoginModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 DashboardController.class,
-                p -> new DashboardController(getScreenNavigator(), getDialogManager(), getUserManager(), getMainRepository(), new DashboardModel())
+                p -> new DashboardController(getScreenNavigator(), getDialogManager(), getUserManager(), getExecutorService(), getMainRepository(), new DashboardModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 EditCustomerController.class,

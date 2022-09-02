@@ -62,31 +62,29 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame) {
-        new Thread(() -> {
-            appointmentsObservableList.clear();
-            String query = "SELECT *, EXTRACT(" + viewByTimeFrame.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
-            try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
-                statement.setInt(1, userId);
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    while (resultSet.next()) {
-                        appointmentsObservableList.add(new Appointment(
-                                resultSet.getInt("Appointment_ID"),
-                                resultSet.getString("Title"),
-                                resultSet.getString("Description"),
-                                resultSet.getString("Location"),
-                                resultSet.getString("Type"),
-                                LocalDate.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                                LocalDate.parse(resultSet.getString("end").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                                resultSet.getInt("Customer_ID"),
-                                resultSet.getInt("User_ID"),
-                                resultSet.getInt("Contact_ID")
-                        ));
-                    }
+        appointmentsObservableList.clear();
+        String query = "SELECT *, EXTRACT(" + viewByTimeFrame.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointmentsObservableList.add(new Appointment(
+                            resultSet.getInt("Appointment_ID"),
+                            resultSet.getString("Title"),
+                            resultSet.getString("Description"),
+                            resultSet.getString("Location"),
+                            resultSet.getString("Type"),
+                            LocalDate.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                            LocalDate.parse(resultSet.getString("end").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                            resultSet.getInt("Customer_ID"),
+                            resultSet.getInt("User_ID"),
+                            resultSet.getInt("Contact_ID")
+                    ));
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
-        }).start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return appointmentsObservableList;
     }
 
@@ -135,26 +133,24 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public ObservableList<Customer> getAllCustomers() {
-        new Thread(() -> {
-            customersObservableList.clear();
-            String query = "SELECT * FROM customers";
-            try (Statement statement = dbConnection.createStatement()) {
-                try (ResultSet resultSet = statement.executeQuery(query)) {
-                    while (resultSet.next()) {
-                        customersObservableList.add(new Customer(
-                                resultSet.getInt("Customer_ID"),
-                                resultSet.getString("Customer_Name"),
-                                resultSet.getString("Address"),
-                                resultSet.getString("Postal_Code"),
-                                resultSet.getString("Phone"),
-                                resultSet.getInt("Division_ID")
-                        ));
-                    }
+        customersObservableList.clear();
+        String query = "SELECT * FROM customers";
+        try (Statement statement = dbConnection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(query)) {
+                while (resultSet.next()) {
+                    customersObservableList.add(new Customer(
+                            resultSet.getInt("Customer_ID"),
+                            resultSet.getString("Customer_Name"),
+                            resultSet.getString("Address"),
+                            resultSet.getString("Postal_Code"),
+                            resultSet.getString("Phone"),
+                            resultSet.getInt("Division_ID")
+                    ));
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
-        }).start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return customersObservableList;
     }
 
@@ -197,6 +193,7 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setString(9, currentUser.getName());
             statement.setInt(10, customer.getDivisionId());
             statement.executeUpdate();
+            getAllCustomers();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -223,6 +220,7 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setInt(7, newCustomer.getDivisionId());
             statement.setInt(8, newCustomer.getId());
             statement.executeUpdate();
+            getAllCustomers();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -230,7 +228,14 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public void removeCustomer(int customerId) {
-
+        String query = "DELETE FROM customers WHERE Customer_ID = ?";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, customerId);
+            statement.executeUpdate();
+            getAllCustomers();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

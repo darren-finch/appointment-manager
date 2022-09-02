@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.util.concurrent.ExecutorService;
+
 public class LoginController implements BaseController {
     @FXML
     private Label locationLabel;
@@ -22,11 +24,13 @@ public class LoginController implements BaseController {
 
     private final ScreenNavigator screenNavigator;
     private final UserManager userManager;
+    private final ExecutorService executorService;
     private final LoginModel model;
 
-    public LoginController(ScreenNavigator screenNavigator, UserManager userManager, LoginModel model) {
+    public LoginController(ScreenNavigator screenNavigator, UserManager userManager, ExecutorService executorService, LoginModel model) {
         this.screenNavigator = screenNavigator;
         this.userManager = userManager;
+        this.executorService = executorService;
         this.model = model;
     }
 
@@ -40,9 +44,9 @@ public class LoginController implements BaseController {
 
     @FXML
     public void login() {
-        Task<Boolean> loginTask = new Task<>() {
+        executorService.execute(new Task<Boolean>() {
             @Override
-            protected Boolean call() {
+            protected Boolean call() throws Exception {
                 try {
                     if(userManager.loginWithUserNameAndPassword(model.getUserName(), model.getPassword())) {
                         Platform.runLater(screenNavigator::switchToDashboardScreen);
@@ -58,8 +62,6 @@ public class LoginController implements BaseController {
 
                 return false;
             }
-        };
-
-        new Thread(loginTask).start();
+        });
     }
 }
