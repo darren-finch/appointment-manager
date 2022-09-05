@@ -103,10 +103,10 @@
                                    <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
                                </TableColumn>
                                <TableColumn text="Start">
-                                   <cellValueFactory><PropertyValueFactory property="startDate" /></cellValueFactory>
+                                   <cellValueFactory><PropertyValueFactory property="startDateTime" /></cellValueFactory>
                                </TableColumn>
                                <TableColumn text="End">
-                                   <cellValueFactory><PropertyValueFactory property="endDate" /></cellValueFactory>
+                                   <cellValueFactory><PropertyValueFactory property="endDateTime" /></cellValueFactory>
                                </TableColumn>
                                <TableColumn text="Customer ID">
                                    <cellValueFactory><PropertyValueFactory property="customerId" /></cellValueFactory>

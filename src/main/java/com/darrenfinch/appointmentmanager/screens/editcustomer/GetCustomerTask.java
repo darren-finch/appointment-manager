@@ -19,7 +19,7 @@ public class GetCustomerTask extends Task<Customer> {
         if (customerId != Constants.INVALID_ID) {
             return mainRepository.getCustomer(customerId);
         } else {
-            throw new RuntimeException("Customer not found");
+            throw new RuntimeException("Invalid customer ID.");
         }
     }
 }

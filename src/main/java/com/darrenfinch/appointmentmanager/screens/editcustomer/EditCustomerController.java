@@ -122,6 +122,7 @@ public class EditCustomerController {
             });
             getCustomerTask.setOnFailed(workerStateEvent -> {
                 model.errorProperty().set("An error occurred when loading the customer data.");
+                workerStateEvent.consume();
             });
             executorService.execute(getCustomerTask);
         }

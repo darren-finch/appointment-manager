@@ -29,6 +29,7 @@ public interface MainRepository {
     void removeCustomer(int customerId);
 
     //User
+    ObservableList<User> getAllUsers();
     User getUserByUserName(String userName);
 
     // Country
@@ -36,4 +37,7 @@ public interface MainRepository {
 
     // First Level Division
     ObservableList<FirstLevelDivision> getFirstLevelDivisionsForCountry(Country country);
+
+    // Contacts
+    ObservableList<Contact> getAllContacts();
 }

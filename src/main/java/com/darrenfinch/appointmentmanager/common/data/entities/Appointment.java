@@ -2,7 +2,8 @@ package com.darrenfinch.appointmentmanager.common.data.entities;
 
 import javafx.beans.property.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class Appointment {
     private final IntegerProperty id = new SimpleIntegerProperty();
@@ -10,20 +11,20 @@ public class Appointment {
     private final StringProperty description = new SimpleStringProperty();
     private final StringProperty location = new SimpleStringProperty();
     private final StringProperty type = new SimpleStringProperty();
-    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<>();
-    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<>();
+    private final ObjectProperty<ZonedDateTime> startDateTime = new SimpleObjectProperty<>();
+    private final ObjectProperty<ZonedDateTime> endDateTime = new SimpleObjectProperty<>();
     private final IntegerProperty customerId = new SimpleIntegerProperty();
     private final IntegerProperty userId = new SimpleIntegerProperty();
     private final IntegerProperty contactId = new SimpleIntegerProperty();
 
-    public Appointment(int id, String title, String description, String location, String type, LocalDate startDate, LocalDate endDate, int customerId, int userId, int contactId) {
+    public Appointment(int id, String title, String description, String location, String type, ZonedDateTime startDateTime, ZonedDateTime endDateTime, int customerId, int userId, int contactId) {
         this.id.set(id);
         this.title.set(title);
         this.description.set(description);
         this.location.set(location);
         this.type.set(type);
-        this.startDate.set(startDate);
-        this.endDate.set(endDate);
+        this.startDateTime.set(startDateTime);
+        this.endDateTime.set(endDateTime);
         this.customerId.set(customerId);
         this.userId.set(userId);
         this.contactId.set(contactId);
@@ -69,20 +70,20 @@ public class Appointment {
         return type;
     }
 
-    public LocalDate getStartDate() {
-        return startDate.get();
+    public ZonedDateTime getStartDateTime() {
+        return startDateTime.get();
     }
 
-    public ObjectProperty<LocalDate> startDateProperty() {
-        return startDate;
+    public ObjectProperty<ZonedDateTime> startDateTimeProperty() {
+        return startDateTime;
     }
 
-    public LocalDate getEndDate() {
-        return endDate.get();
+    public ZonedDateTime getEndDateTime() {
+        return endDateTime.get();
     }
 
-    public ObjectProperty<LocalDate> endDateProperty() {
-        return endDate;
+    public ObjectProperty<ZonedDateTime> endDateTimeProperty() {
+        return endDateTime;
     }
 
     public int getCustomerId() {

@@ -60,7 +60,7 @@ public class ApplicationConfig {
         );
         ControllerDependencyInjector.addInjectionMethod(
                 EditAppointmentController.class,
-                p -> new EditAppointmentController(getScreenNavigator(), getDialogManager(), new EditAppointmentModel())
+                p -> new EditAppointmentController(getScreenNavigator(), getDialogManager(), getUserManager(), getMainRepository(), getExecutorService(), new EditAppointmentModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 ReportsController.class,

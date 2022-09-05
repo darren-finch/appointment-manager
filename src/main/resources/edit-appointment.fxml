@@ -20,7 +20,7 @@
             <items>
                 <HBox spacing="10.0">
                     <children>
-                        <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Back" />
+                        <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#goBack" text="Back" />
                         <Label maxHeight="1.7976931348623157E308" text="Edit Appointment">
                             <font>
                                 <Font size="18.0" />
@@ -32,52 +32,78 @@
         </ToolBar>
         <VBox layoutY="40.0" prefHeight="560.0" prefWidth="600.0" spacing="20.0">
             <children>
-                <VBox spacing="5.0" VBox.vgrow="NEVER">
-                    <children>
-                        <Label text="Appointment ID" />
-                        <TextField fx:id="appointmentIDTextField" disable="true" editable="false" maxWidth="200.0" text="0" />
-                    </children>
-                </VBox>
             <HBox spacing="20.0">
                <children>
                       <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                           <children>
-                              <Label text="Appointment Title" />
-                              <TextField fx:id="appointmentTitleTextField" maxWidth="200.0" promptText="Enter appointment title..." />
+                              <Label text="Appointment ID" />
+                              <TextField fx:id="appointmentIdTextField" disable="true" editable="false" maxWidth="1.7976931348623157E308" text="0" />
                           </children>
                       </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
+                        <Label text="Title" />
+                        <TextField fx:id="titleTextField" maxWidth="1.7976931348623157E308" promptText="Enter appointment title..." />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox spacing="20.0">
+               <children>
+                  <VBox maxWidth="1.7976931348623157E308" prefHeight="100.0" spacing="5.0">
+                     <children>
                         <Label text="Description" />
-                        <TextArea fx:id="descriptionTextArea" prefHeight="100.0" prefWidth="200.0" promptText="Enter appointment description..." />
+                        <TextArea fx:id="descriptionTextArea" prefHeight="100.0" prefWidth="300.0" promptText="Enter appointment description..." />
                      </children>
                   </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Type" />
-                        <TextField fx:id="typeTextField" maxWidth="200.0" promptText="Enter appointment type..." />
+                        <TextField fx:id="typeTextField" promptText="Enter appointment type..." />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox spacing="20.0">
+               <children>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Location" />
+                        <TextField fx:id="locationTextField" promptText="Enter location..." />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Date" />
+                        <DatePicker fx:id="datePicker" maxWidth="1.7976931348623157E308" />
                      </children>
                   </VBox>
                </children>
             </HBox>
                 <HBox spacing="20.0">
                     <children>
-                      <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                          <children>
-                              <Label text="Contact Name" />
-                        <ComboBox fx:id="contactNameComboBox" maxWidth="1.7976931348623157E308" />
-                          </children>
-                      </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Start Date/Time" />
-                        <DatePicker fx:id="startDateTimePicker" maxWidth="1.7976931348623157E308" />
+                        <Label text="Start Time" />
+                        <HBox maxWidth="1.7976931348623157E308" spacing="10.0">
+                           <children>
+                              <ComboBox fx:id="startTimeHourComboBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="startTimeMinuteComboBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="startTimeAmOrPmComboBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="End Date/Time" />
-                        <DatePicker fx:id="endDateTimePicker" maxWidth="1.7976931348623157E308" />
+                        <Label text="End Time" />
+                        <HBox maxWidth="1.7976931348623157E308" spacing="10.0">
+                           <children>
+                              <ComboBox fx:id="endTimeHourComboBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="endTimeMinuteComboBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="endTimeAmOrPmComboBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                     </children>
@@ -86,22 +112,28 @@
                <children>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="Customer ID" />
-                        <TextField fx:id="customerIDTextField" maxWidth="1.7976931348623157E308" promptText="Enter customer ID..." />
+                        <Label text="Customer" />
+                        <ComboBox fx:id="customerComboBox" maxWidth="1.7976931348623157E308" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="User ID" />
-                        <TextField fx:id="userIDTextField" maxWidth="1.7976931348623157E308" promptText="Enter user ID..." />
+                        <Label text="User" />
+                        <ComboBox fx:id="userComboBox" maxWidth="1.7976931348623157E308" />
                      </children>
                   </VBox>
+                      <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                          <children>
+                              <Label text="Contact" />
+                        <ComboBox fx:id="contactComboBox" maxWidth="1.7976931348623157E308" />
+                          </children>
+                      </VBox>
                </children>
             </HBox>
             <Label fx:id="errorLabel" text="Error text" textFill="RED" />
                 <ButtonBar buttonOrder="" prefHeight="40.0" prefWidth="200.0">
                     <buttons>
-                        <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" text="Save" />
                     </buttons>
                 </ButtonBar>
             </children>

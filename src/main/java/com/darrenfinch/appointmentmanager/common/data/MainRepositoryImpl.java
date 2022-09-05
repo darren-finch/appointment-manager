@@ -6,8 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
-import java.time.Instant;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -18,16 +17,14 @@ public class MainRepositoryImpl implements MainRepository {
         this.dbConnection = dbConnection;
     }
 
-    private final ObservableList<Customer> customersObservableList = FXCollections.observableList(new ArrayList<>());
-    private final ObservableList<Appointment> appointmentsObservableList = FXCollections.observableList(new ArrayList<>());
-
+    // Static data
+    private final ObservableList<User> users = FXCollections.observableList(new ArrayList<>());
     private final ObservableList<Country> countries = FXCollections.observableList(new ArrayList<>());
-
-    private final ObservableList<FirstLevelDivision> allFirstLevelDivisions = FXCollections.observableList(new ArrayList<>());
+    private final ObservableList<FirstLevelDivision> firstLevelDivisions = FXCollections.observableList(new ArrayList<>());
+    private final ObservableList<Contact> contacts = FXCollections.observableList(new ArrayList<>());
 
     @Override
     public void initializeStaticData() {
-        // Get countries and first level division data from database. This is done synchronously to guarantee the availability of all static data to the application.
         countries.clear();
         String query1 = "SELECT * FROM countries";
         try (Statement statement = dbConnection.createStatement()) {
@@ -43,15 +40,47 @@ public class MainRepositoryImpl implements MainRepository {
             e.printStackTrace();
         }
 
-        allFirstLevelDivisions.clear();
+        firstLevelDivisions.clear();
         String query2 = "SELECT * FROM first_level_divisions";
         try (Statement statement = dbConnection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery(query2)) {
                 while (resultSet.next()) {
-                    allFirstLevelDivisions.add(new FirstLevelDivision(
+                    firstLevelDivisions.add(new FirstLevelDivision(
                             resultSet.getInt("Division_ID"),
                             resultSet.getString("Division"),
                             resultSet.getInt("Country_ID")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        contacts.clear();
+        String query3 = "SELECT * FROM contacts";
+        try (Statement statement = dbConnection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(query3)) {
+                while (resultSet.next()) {
+                    contacts.add(new Contact(
+                            resultSet.getInt("Contact_ID"),
+                            resultSet.getString("Contact_Name"),
+                            resultSet.getString("Email")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        users.clear();
+        String query4 = "SELECT * FROM users";
+        try (Statement statement = dbConnection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(query4)) {
+                while (resultSet.next()) {
+                    users.add(new User(
+                            resultSet.getInt("User_ID"),
+                            resultSet.getString("User_Name"),
+                            resultSet.getString("Password")
                     ));
                 }
             }
@@ -62,20 +91,20 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame) {
-        appointmentsObservableList.clear();
+        ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
         String query = "SELECT *, EXTRACT(" + viewByTimeFrame.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    appointmentsObservableList.add(new Appointment(
+                    appointments.add(new Appointment(
                             resultSet.getInt("Appointment_ID"),
                             resultSet.getString("Title"),
                             resultSet.getString("Description"),
                             resultSet.getString("Location"),
                             resultSet.getString("Type"),
-                            LocalDate.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                            LocalDate.parse(resultSet.getString("end").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                            ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
+                            ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
                             resultSet.getInt("Customer_ID"),
                             resultSet.getInt("User_ID"),
                             resultSet.getInt("Contact_ID")
@@ -85,7 +114,7 @@ public class MainRepositoryImpl implements MainRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return appointmentsObservableList;
+        return appointments;
     }
 
     @Override
@@ -101,8 +130,8 @@ public class MainRepositoryImpl implements MainRepository {
                             resultSet.getString("Description"),
                             resultSet.getString("Location"),
                             resultSet.getString("Type"),
-                            LocalDate.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                            LocalDate.parse(resultSet.getString("end").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                            ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
+                            ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
                             resultSet.getInt("Customer_ID"),
                             resultSet.getInt("User_ID"),
                             resultSet.getInt("Contact_ID")
@@ -118,27 +147,81 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public void addAppointment(Appointment appointment, User currentUser) {
-
+        String query = "INSERT INTO appointments VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, appointment.getId());
+            statement.setString(2, appointment.getTitle());
+            statement.setString(3, appointment.getDescription());
+            statement.setString(4, appointment.getLocation());
+            statement.setString(5, appointment.getType());
+            statement.setObject(6, Instant.from(appointment.getStartDateTime()));
+            statement.setObject(7, Instant.from(appointment.getEndDateTime()));
+            statement.setTimestamp(8, Timestamp.from(Instant.now()));
+            statement.setString(9, currentUser.getName());
+            statement.setTimestamp(10, Timestamp.from(Instant.now()));
+            statement.setString(11, currentUser.getName());
+            statement.setInt(12, appointment.getCustomerId());
+            statement.setInt(13, appointment.getUserId());
+            statement.setInt(14, appointment.getContactId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void updateAppointment(int appointmentId, Appointment newAppointment, User currentUser) {
-
+        String query = "UPDATE appointments " +
+                "SET Title = ?, " +
+                "Description = ?, " +
+                "Location = ?, " +
+                "Type = ?, " +
+                "Start = ?, " +
+                "End = ?, " +
+                "Last_Update = ?, " +
+                "Last_Updated_By = ?, " +
+                "Customer_ID = ?, " +
+                "User_ID = ?, " +
+                "Contact_ID = ? " +
+                "WHERE Appointment_ID = ?";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setString(1, newAppointment.getTitle());
+            statement.setString(2, newAppointment.getDescription());
+            statement.setString(3, newAppointment.getLocation());
+            statement.setString(4, newAppointment.getType());
+            statement.setObject(6, Instant.from(newAppointment.getStartDateTime()));
+            statement.setObject(7, Instant.from(newAppointment.getEndDateTime()));
+            statement.setTimestamp(7, Timestamp.from(Instant.now()));
+            statement.setString(8, currentUser.getName());
+            statement.setInt(9, newAppointment.getCustomerId());
+            statement.setInt(10, newAppointment.getUserId());
+            statement.setInt(11, newAppointment.getContactId());
+            statement.setInt(12, newAppointment.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void removeAppointment(int appointmentId) {
-
+        String query = "DELETE FROM appointments WHERE Appointment_ID = ?";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, appointmentId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public ObservableList<Customer> getAllCustomers() {
-        customersObservableList.clear();
+        ObservableList<Customer> customers = FXCollections.observableList(new ArrayList<>());
         String query = "SELECT * FROM customers";
         try (Statement statement = dbConnection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery(query)) {
                 while (resultSet.next()) {
-                    customersObservableList.add(new Customer(
+                    customers.add(new Customer(
                             resultSet.getInt("Customer_ID"),
                             resultSet.getString("Customer_Name"),
                             resultSet.getString("Address"),
@@ -151,7 +234,7 @@ public class MainRepositoryImpl implements MainRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return customersObservableList;
+        return customers;
     }
 
     @Override
@@ -187,13 +270,12 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setString(3, customer.getAddress());
             statement.setString(4, customer.getPostalCode());
             statement.setString(5, customer.getPhoneNumber());
-            statement.setTimestamp(6, Timestamp.from(Instant.now()));
+            statement.setObject(6, Instant.now());
             statement.setString(7, currentUser.getName());
             statement.setTimestamp(8, Timestamp.from(Instant.now()));
             statement.setString(9, currentUser.getName());
             statement.setInt(10, customer.getDivisionId());
             statement.executeUpdate();
-            getAllCustomers();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -220,7 +302,6 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setInt(7, newCustomer.getDivisionId());
             statement.setInt(8, newCustomer.getId());
             statement.executeUpdate();
-            getAllCustomers();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -232,10 +313,14 @@ public class MainRepositoryImpl implements MainRepository {
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, customerId);
             statement.executeUpdate();
-            getAllCustomers();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public ObservableList<User> getAllUsers() {
+        return users;
     }
 
     @Override
@@ -266,6 +351,11 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public ObservableList<FirstLevelDivision> getFirstLevelDivisionsForCountry(Country country) {
-        return FXCollections.observableList(allFirstLevelDivisions.stream().filter((val) -> val.getCountryId() == country.getId()).toList());
+        return FXCollections.observableList(firstLevelDivisions.stream().filter((val) -> val.getCountryId() == country.getId()).toList());
+    }
+
+    @Override
+    public ObservableList<Contact> getAllContacts() {
+        return contacts;
     }
 }
