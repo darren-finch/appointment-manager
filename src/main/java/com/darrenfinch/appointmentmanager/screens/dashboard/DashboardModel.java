@@ -7,29 +7,37 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DashboardModel {
-    private final ObjectProperty<ObservableList<Customer>> customersProperty = new SimpleObjectProperty<>();
-    private final ObjectProperty<DashboardController.ViewByTimeFrame> viewByProperty = new SimpleObjectProperty<>();
-    private final ObjectProperty<ObservableList<Appointment>> appointmentsProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<ObservableList<Customer>> customers = new SimpleObjectProperty<>();
+    private final ObjectProperty<DashboardController.ViewByTimeFrame> viewBy = new SimpleObjectProperty<>();
+    private final ObjectProperty<ObservableList<Appointment>> appointments = new SimpleObjectProperty<>();
 
     public DashboardModel() {
-        customersProperty.set(FXCollections.emptyObservableList());
-        viewByProperty.set(DashboardController.ViewByTimeFrame.WEEK);
-        appointmentsProperty.set(FXCollections.emptyObservableList());
+        customers.set(FXCollections.emptyObservableList());
+        viewBy.set(DashboardController.ViewByTimeFrame.WEEK);
+        appointments.set(FXCollections.emptyObservableList());
     }
 
-    public ObjectProperty<ObservableList<Customer>> getCustomersProperty() {
-        return customersProperty;
+    public ObservableList<Customer> getCustomers() {
+        return customers.get();
     }
 
-    public Property<DashboardController.ViewByTimeFrame> viewByProperty() {
-        return viewByProperty;
+    public ObjectProperty<ObservableList<Customer>> customersProperty() {
+        return customers;
     }
 
     public DashboardController.ViewByTimeFrame getViewBy() {
-        return viewByProperty.get();
+        return viewBy.get();
     }
 
-    public ObjectProperty<ObservableList<Appointment>> getAppointmentsProperty() {
-        return appointmentsProperty;
+    public ObjectProperty<DashboardController.ViewByTimeFrame> viewByProperty() {
+        return viewBy;
+    }
+
+    public ObservableList<Appointment> getAppointments() {
+        return appointments.get();
+    }
+
+    public ObjectProperty<ObservableList<Appointment>> appointmentsProperty() {
+        return appointments;
     }
 }

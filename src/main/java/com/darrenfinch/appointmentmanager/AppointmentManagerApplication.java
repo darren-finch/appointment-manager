@@ -9,6 +9,8 @@ public class AppointmentManagerApplication extends javafx.application.Applicatio
 
     @Override
     public void start(Stage stage) {
+        stage.setResizable(false);
+
         config = new ApplicationConfig(stage);
 
         config.getScreenNavigator().switchToLoginScreen();
