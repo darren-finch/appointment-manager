@@ -85,14 +85,14 @@ public class DashboardController implements BaseController {
         TableColumn<Appointment, String> startDateTimeColumn = (TableColumn<Appointment, String>) appointmentsTableView.getColumns().filtered(col -> col.getText().equals("Start")).get(0);
         startDateTimeColumn.setCellValueFactory(appointmentStringCellDataFeatures -> {
             SimpleStringProperty strProp = new SimpleStringProperty();
-            strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_FORMAT)));
+            strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
             return strProp;
         });
 
         TableColumn<Appointment, String> endDateTimeColumn = (TableColumn<Appointment, String>) appointmentsTableView.getColumns().filtered(col -> col.getText().equals("End")).get(0);
         endDateTimeColumn.setCellValueFactory(appointmentStringCellDataFeatures -> {
             SimpleStringProperty strProp = new SimpleStringProperty();
-            strProp.set(appointmentStringCellDataFeatures.getValue().getEndDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_FORMAT)));
+            strProp.set(appointmentStringCellDataFeatures.getValue().getEndDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
             return strProp;
         });
     }
@@ -212,10 +212,7 @@ public class DashboardController implements BaseController {
             return new Task<>() {
                 @Override
                 protected ObservableList<Appointment> call() throws Exception {
-                    if (userId.get() > Constants.INVALID_ID)
-                        return mainRepository.getAppointmentsForUserByTimeFrame(userId.get(), viewByTimeFrame.get());
-                    else
-                        return FXCollections.emptyObservableList();
+                    return mainRepository.getAppointmentsForUserByTimeFrame(userId.get(), viewByTimeFrame.get());
                 }
             };
         }

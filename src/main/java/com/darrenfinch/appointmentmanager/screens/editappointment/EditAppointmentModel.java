@@ -14,13 +14,15 @@ import javafx.collections.ObservableList;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.zone.ZoneRules;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EditAppointmentModel {
     // This class exists because the validation for this model requires some data from the database, which the controller will be responsible for getting.
-    public record ValidationParameters(List<Appointment> appointmentsForCustomer) {
+    public record ValidationParameters(Customer customer, List<Appointment> appointmentsForCustomer) {
     }
 
     private final StringProperty id = new SimpleStringProperty();
@@ -69,6 +71,8 @@ public class EditAppointmentModel {
         selectedStartTimeAmOrPm.set(Constants.amOrPm.get(0));
         selectedStartTimeAmOrPm.addListener(selectedStartTimeChangeListener);
 
+        refreshStartDateTime();
+
         ChangeListener<String> selectedEndTimeChangeListener = (obs, oldVal, newVal) -> refreshEndDateTime();
         selectedEndTimeHour.set(Constants.getHours().get(10));
         selectedEndTimeHour.addListener(selectedEndTimeChangeListener);
@@ -78,6 +82,8 @@ public class EditAppointmentModel {
 
         selectedEndTimeAmOrPm.set(Constants.amOrPm.get(0));
         selectedEndTimeAmOrPm.addListener(selectedEndTimeChangeListener);
+
+        refreshEndDateTime();
 
         selectedCustomer.set(null);
         selectedUser.set(null);
@@ -363,7 +369,7 @@ public class EditAppointmentModel {
         invalidReasons.clear();
         return startIsBeforeEnd()
                 && notSchedulingOutsideBusinessHours()
-                && notSchedulingOverlappingAppointments(validationParameters.appointmentsForCustomer());
+                && notSchedulingOverlappingAppointments(validationParameters.customer, validationParameters.appointmentsForCustomer());
     }
 
     private boolean startIsBeforeEnd() {
@@ -376,37 +382,55 @@ public class EditAppointmentModel {
     }
 
     private boolean notSchedulingOutsideBusinessHours() {
-        LocalTime selectedStartTime = getSelectedStartDateTime().toLocalTime();
-        LocalTime selectedEndTime = getSelectedEndDateTime().toLocalTime();
-        if ((selectedStartTime.equals(Constants.BUSINESS_START_TIME) || (selectedStartTime.isAfter(Constants.BUSINESS_START_TIME) && selectedStartTime.isBefore(Constants.BUSINESS_END_TIME)))
-                && ((selectedEndTime.equals(Constants.BUSINESS_END_TIME)) || (selectedEndTime.isAfter(Constants.BUSINESS_START_TIME) && selectedEndTime.isBefore(Constants.BUSINESS_END_TIME)))) {
-            return true;
-        } else {
-            invalidReasons.add("Appointment schedule is outside of business hours.");
+        ZoneId estZoneId = ZoneId.of("America/New_York");
+
+        LocalTime selectedStartTimeInEST = getSelectedStartDateTime().withZoneSameInstant(estZoneId).toLocalTime();
+        LocalTime selectedEndTimeInEST = getSelectedEndDateTime().withZoneSameInstant(estZoneId).toLocalTime();
+
+        if (selectedStartTimeInEST.isBefore(Constants.BUSINESS_START_TIME) || selectedEndTimeInEST.isBefore(Constants.BUSINESS_START_TIME)
+                || selectedStartTimeInEST.isAfter(Constants.BUSINESS_END_TIME) || selectedEndTimeInEST.isAfter(Constants.BUSINESS_END_TIME)) {
+
+            LocalTime businessStartTimeInLocalTimeZone = ZonedDateTime.of(getDate(), Constants.BUSINESS_START_TIME, estZoneId).withZoneSameInstant(ZoneId.systemDefault()).toLocalTime();
+            LocalTime businessEndTimeInLocalTimeZone = ZonedDateTime.of(getDate(), Constants.BUSINESS_END_TIME, estZoneId).withZoneSameInstant(ZoneId.systemDefault()).toLocalTime();
+
+            invalidReasons.add(
+                    "Appointment schedule is outside of business hours.\nStandard business hours in your timezone are "
+                            + businessStartTimeInLocalTimeZone.format(DateTimeFormatter.ofPattern(Constants.STANDARD_TIME_FORMAT))
+                            + " to "
+                            + businessEndTimeInLocalTimeZone.format(DateTimeFormatter.ofPattern(Constants.STANDARD_TIME_FORMAT))
+            );
             return false;
+        } else {
+            return true;
         }
     }
 
-    private boolean notSchedulingOverlappingAppointments(List<Appointment> appointmentsForCustomer) {
+    private boolean notSchedulingOverlappingAppointments(Customer customer, List<Appointment> appointmentsForCustomer) {
         AtomicBoolean ans = new AtomicBoolean(true);
-        List<ZonedDateTime[]> appointmentSchedules = appointmentsForCustomer.stream().map(appointment -> new ZonedDateTime[]{appointment.getStartDateTime(), appointment.getEndDateTime()}).toList();
-        appointmentSchedules.forEach(appointmentSchedule -> {
-            if (isDateOverlappingAppointmentSchedule(getSelectedStartDateTime(), appointmentSchedule[0], appointmentSchedule[1])
-                    || isDateOverlappingAppointmentSchedule(getSelectedEndDateTime(), appointmentSchedule[0], appointmentSchedule[1])) {
-                ans.set(false);
-                invalidReasons.add(
-                        "Appointment overlaps existing appointment between "
-                                + appointmentSchedule[0].format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_FORMAT))
-                                + " and "
-                                + appointmentSchedule[1].format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_FORMAT))
-                );
+        appointmentsForCustomer.forEach(appointment -> {
+            ZonedDateTime appointmentStart = appointment.getStartDateTime();
+            ZonedDateTime appointmentEnd = appointment.getEndDateTime();
+
+            if (appointment.getId() != Integer.parseInt(getId())) {
+                if (isAppointmentOverlapping(getSelectedStartDateTime(), getSelectedEndDateTime(), appointmentStart, appointmentEnd)) {
+                    ans.set(false);
+                    invalidReasons.add(
+                            "Appointment overlaps existing appointment with "
+                                    + customer.getName()
+                                    + ".\nThe existing appointment is between "
+                                    + appointmentStart.format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT))
+                                    + "\nand "
+                                    + appointmentEnd.format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT))
+                    );
+                }
             }
         });
 
         return ans.get();
     }
 
-    private boolean isDateOverlappingAppointmentSchedule(ZonedDateTime dateToCheck, ZonedDateTime appointmentStart, ZonedDateTime appointmentEnd) {
-        return dateToCheck.isAfter(appointmentStart) && dateToCheck.isBefore(appointmentEnd);
+    private boolean isAppointmentOverlapping(ZonedDateTime newAppointmentStart, ZonedDateTime newAppointmentEnd, ZonedDateTime appointmentStart, ZonedDateTime appointmentEnd) {
+        return !((newAppointmentStart.isBefore(appointmentStart) && !newAppointmentEnd.isAfter(appointmentStart))
+                || (!newAppointmentStart.isBefore(appointmentEnd) && newAppointmentEnd.isAfter(appointmentEnd)));
     }
 }

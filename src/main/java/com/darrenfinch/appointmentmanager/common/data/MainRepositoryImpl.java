@@ -1,6 +1,7 @@
 package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
+import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -83,6 +84,8 @@ public class MainRepositoryImpl implements MainRepository {
                             resultSet.getString("Password")
                     ));
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -99,6 +102,8 @@ public class MainRepositoryImpl implements MainRepository {
                 while (resultSet.next()) {
                     appointments.add(getAppointmentFromResultSet(resultSet));
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,6 +121,8 @@ public class MainRepositoryImpl implements MainRepository {
                 while (resultSet.next()) {
                     appointments.add(getAppointmentFromResultSet(resultSet));
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -132,6 +139,8 @@ public class MainRepositoryImpl implements MainRepository {
                 if (resultSet.next()) {
                     return getAppointmentFromResultSet(resultSet);
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -147,8 +156,8 @@ public class MainRepositoryImpl implements MainRepository {
                 resultSet.getString("Description"),
                 resultSet.getString("Location"),
                 resultSet.getString("Type"),
-                ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
-                ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("end").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
+                resultSet.getTimestamp("Start").toInstant().atZone(ZoneId.systemDefault()),
+                resultSet.getTimestamp("End").toInstant().atZone(ZoneId.systemDefault()),
                 resultSet.getInt("Customer_ID"),
                 resultSet.getInt("User_ID"),
                 resultSet.getInt("Contact_ID")
@@ -199,8 +208,8 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setString(2, newAppointment.getDescription());
             statement.setString(3, newAppointment.getLocation());
             statement.setString(4, newAppointment.getType());
-            statement.setObject(5, Instant.from(newAppointment.getStartDateTime()));
-            statement.setObject(6, Instant.from(newAppointment.getEndDateTime()));
+            statement.setObject(5, newAppointment.getStartDateTime());
+            statement.setObject(6, newAppointment.getEndDateTime());
             statement.setTimestamp(7, Timestamp.from(Instant.now()));
             statement.setString(8, currentUser.getName());
             statement.setInt(9, newAppointment.getCustomerId());
@@ -233,6 +242,8 @@ public class MainRepositoryImpl implements MainRepository {
                 while (resultSet.next()) {
                     customers.add(getCustomerFromResultSet(resultSet));
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -249,6 +260,8 @@ public class MainRepositoryImpl implements MainRepository {
                 if (resultSet.next()) {
                     return getCustomerFromResultSet(resultSet);
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();

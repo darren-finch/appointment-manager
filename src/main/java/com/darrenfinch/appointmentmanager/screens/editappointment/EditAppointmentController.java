@@ -17,8 +17,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BinaryOperator;
 
 public class EditAppointmentController {
     @FXML
@@ -184,7 +182,7 @@ public class EditAppointmentController {
         getAppointmentsForSelectedCustomerTask.setOnSucceeded(workerStateEvent -> {
             ObservableList<Appointment> appointmentsForSelectedUser = getAppointmentsForSelectedCustomerTask.getValue();
 
-            if (model.isValid(new EditAppointmentModel.ValidationParameters(appointmentsForSelectedUser))) {
+            if (model.isValid(new EditAppointmentModel.ValidationParameters(model.getSelectedCustomer(), appointmentsForSelectedUser))) {
                 errorLabel.setVisible(false);
 
                 Appointment appointmentFromModel = model.toAppointment();
