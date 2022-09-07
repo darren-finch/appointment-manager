@@ -9,7 +9,6 @@ import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.common.services.UserManager;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
@@ -17,15 +16,10 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.util.Callback;
 
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 
 public class DashboardController implements BaseController {
@@ -91,14 +85,14 @@ public class DashboardController implements BaseController {
         TableColumn<Appointment, String> startDateTimeColumn = (TableColumn<Appointment, String>) appointmentsTableView.getColumns().filtered(col -> col.getText().equals("Start")).get(0);
         startDateTimeColumn.setCellValueFactory(appointmentStringCellDataFeatures -> {
             SimpleStringProperty strProp = new SimpleStringProperty();
-            strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm a")));
+            strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_FORMAT)));
             return strProp;
         });
 
-        TableColumn<Appointment, String> endDateTimeColumn = (TableColumn<Appointment, String>) appointmentsTableView.getColumns().filtered(col -> col.getText().equals("Start")).get(0);
+        TableColumn<Appointment, String> endDateTimeColumn = (TableColumn<Appointment, String>) appointmentsTableView.getColumns().filtered(col -> col.getText().equals("End")).get(0);
         endDateTimeColumn.setCellValueFactory(appointmentStringCellDataFeatures -> {
             SimpleStringProperty strProp = new SimpleStringProperty();
-            strProp.set(appointmentStringCellDataFeatures.getValue().getEndDateTime().format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm a")));
+            strProp.set(appointmentStringCellDataFeatures.getValue().getEndDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_FORMAT)));
             return strProp;
         });
     }

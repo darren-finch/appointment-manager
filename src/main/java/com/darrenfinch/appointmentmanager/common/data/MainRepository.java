@@ -4,6 +4,8 @@ import com.darrenfinch.appointmentmanager.common.data.entities.*;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import javafx.collections.ObservableList;
 
+import java.util.List;
+
 /**
  * This is a simple enough application that I did not see the need for separate DAOs for each entity in the database.
  * Instead, I am creating a single source of truth via this main repository.
@@ -16,6 +18,7 @@ public interface MainRepository {
     // This query contains a cross-cutting concern, because the viewByTimeFrame is a view-specific matter, but it needs to be specified in the query.
     // TODO: REFACTOR
     ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame);
+    ObservableList<Appointment> getAppointmentsForCustomer(int customerId);
     Appointment getAppointment(int appointmentId);
     void addAppointment(Appointment appointment, User currentUser);
     void updateAppointment(int appointmentId, Appointment newAppointment, User currentUser);

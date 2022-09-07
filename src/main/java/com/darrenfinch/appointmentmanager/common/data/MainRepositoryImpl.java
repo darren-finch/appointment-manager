@@ -97,18 +97,24 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    appointments.add(new Appointment(
-                            resultSet.getInt("Appointment_ID"),
-                            resultSet.getString("Title"),
-                            resultSet.getString("Description"),
-                            resultSet.getString("Location"),
-                            resultSet.getString("Type"),
-                            ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
-                            ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
-                            resultSet.getInt("Customer_ID"),
-                            resultSet.getInt("User_ID"),
-                            resultSet.getInt("Contact_ID")
-                    ));
+                    appointments.add(getAppointmentFromResultSet(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return appointments;
+    }
+
+    @Override
+    public ObservableList<Appointment> getAppointmentsForCustomer(int customerId) {
+        ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
+        String query = "SELECT * FROM appointments WHERE Customer_ID = ?";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, customerId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointments.add(getAppointmentFromResultSet(resultSet));
                 }
             }
         } catch (SQLException e) {
@@ -124,18 +130,7 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setInt(1, appointmentId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new Appointment(
-                            resultSet.getInt("Appointment_ID"),
-                            resultSet.getString("Title"),
-                            resultSet.getString("Description"),
-                            resultSet.getString("Location"),
-                            resultSet.getString("Type"),
-                            ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
-                            ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
-                            resultSet.getInt("Customer_ID"),
-                            resultSet.getInt("User_ID"),
-                            resultSet.getInt("Contact_ID")
-                    );
+                    return getAppointmentFromResultSet(resultSet);
                 }
             }
         } catch (SQLException e) {
@@ -143,6 +138,21 @@ public class MainRepositoryImpl implements MainRepository {
         }
 
         return null;
+    }
+
+    private Appointment getAppointmentFromResultSet(ResultSet resultSet) throws SQLException {
+        return new Appointment(
+                resultSet.getInt("Appointment_ID"),
+                resultSet.getString("Title"),
+                resultSet.getString("Description"),
+                resultSet.getString("Location"),
+                resultSet.getString("Type"),
+                ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("start").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
+                ZonedDateTime.of(LocalDateTime.parse(resultSet.getString("end").replace(' ', 'T'), DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneId.systemDefault()),
+                resultSet.getInt("Customer_ID"),
+                resultSet.getInt("User_ID"),
+                resultSet.getInt("Contact_ID")
+        );
     }
 
     @Override
@@ -189,8 +199,8 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setString(2, newAppointment.getDescription());
             statement.setString(3, newAppointment.getLocation());
             statement.setString(4, newAppointment.getType());
-            statement.setObject(6, Instant.from(newAppointment.getStartDateTime()));
-            statement.setObject(7, Instant.from(newAppointment.getEndDateTime()));
+            statement.setObject(5, Instant.from(newAppointment.getStartDateTime()));
+            statement.setObject(6, Instant.from(newAppointment.getEndDateTime()));
             statement.setTimestamp(7, Timestamp.from(Instant.now()));
             statement.setString(8, currentUser.getName());
             statement.setInt(9, newAppointment.getCustomerId());
@@ -221,14 +231,7 @@ public class MainRepositoryImpl implements MainRepository {
         try (Statement statement = dbConnection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery(query)) {
                 while (resultSet.next()) {
-                    customers.add(new Customer(
-                            resultSet.getInt("Customer_ID"),
-                            resultSet.getString("Customer_Name"),
-                            resultSet.getString("Address"),
-                            resultSet.getString("Postal_Code"),
-                            resultSet.getString("Phone"),
-                            resultSet.getInt("Division_ID")
-                    ));
+                    customers.add(getCustomerFromResultSet(resultSet));
                 }
             }
         } catch (SQLException e) {
@@ -244,14 +247,7 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setInt(1, customerId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new Customer(
-                            resultSet.getInt("Customer_ID"),
-                            resultSet.getString("Customer_Name"),
-                            resultSet.getString("Address"),
-                            resultSet.getString("Postal_Code"),
-                            resultSet.getString("Phone"),
-                            resultSet.getInt("Division_ID")
-                    );
+                    return getCustomerFromResultSet(resultSet);
                 }
             }
         } catch (SQLException e) {
@@ -259,6 +255,17 @@ public class MainRepositoryImpl implements MainRepository {
         }
 
         return null;
+    }
+
+    private Customer getCustomerFromResultSet(ResultSet resultSet) throws SQLException {
+        return new Customer(
+                resultSet.getInt("Customer_ID"),
+                resultSet.getString("Customer_Name"),
+                resultSet.getString("Address"),
+                resultSet.getString("Postal_Code"),
+                resultSet.getString("Phone"),
+                resultSet.getInt("Division_ID")
+        );
     }
 
     @Override
@@ -325,23 +332,7 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public User getUserByUserName(String userName) {
-        String query = "SELECT * FROM users WHERE User_Name = ? LIMIT 1;";
-        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
-            statement.setString(1, userName);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return new User(
-                            resultSet.getInt("User_ID"),
-                            resultSet.getString("User_Name"),
-                            resultSet.getString("Password")
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return users.filtered(user -> user.getName().equals(userName)).get(0);
     }
 
     @Override
