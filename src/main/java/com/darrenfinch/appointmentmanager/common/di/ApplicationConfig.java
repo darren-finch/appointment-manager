@@ -64,7 +64,7 @@ public class ApplicationConfig {
         );
         ControllerDependencyInjector.addInjectionMethod(
                 ReportsController.class,
-                p -> new ReportsController(getScreenNavigator(), new ReportsModel())
+                p -> new ReportsController(getScreenNavigator(), getExecutorService(), getMainRepository(), new ReportsModel())
         );
     }
 

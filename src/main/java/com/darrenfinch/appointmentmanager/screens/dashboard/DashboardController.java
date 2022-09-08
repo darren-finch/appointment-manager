@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
@@ -151,6 +152,10 @@ public class DashboardController implements BaseController {
 
     public void addAppointment() {
         screenNavigator.switchToEditAppointmentScreen(Constants.INVALID_ID);
+    }
+
+    public void goToReportsScreen() {
+        screenNavigator.switchToReportsScreen();
     }
 
     public enum ViewByTimeFrame {

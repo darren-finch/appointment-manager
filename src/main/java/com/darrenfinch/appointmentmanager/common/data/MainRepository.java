@@ -2,9 +2,10 @@ package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
+import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
+import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForContact;
+import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForTypeAndMonth;
 import javafx.collections.ObservableList;
-
-import java.util.List;
 
 /**
  * This is a simple enough application that I did not see the need for separate DAOs for each entity in the database.
@@ -43,4 +44,9 @@ public interface MainRepository {
 
     // Contacts
     ObservableList<Contact> getAllContacts();
+
+    // Reports
+    ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth();
+    ObservableList<ContactSchedule> getContactSchedules();
+    ObservableList<NumberOfCustomerAppointmentsForContact> getNumberOfAppointmentsByContact();
 }

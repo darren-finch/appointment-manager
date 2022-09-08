@@ -12,13 +12,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <Pane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.darrenfinch.appointmentmanager.screens.reports.ReportsController">
    <children>
       <ToolBar maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="600.0">
          <items>
             <HBox spacing="10.0">
                <children>
-                  <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Back" />
+                  <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Back" onAction="#back" />
                   <Label maxHeight="1.7976931348623157E308" text="Reports">
                      <font>
                         <Font size="18.0" />
@@ -37,8 +38,15 @@
                         <Label text="# Of Customer Appointments" />
                         <TableView fx:id="numberOfCustomerAppointmentsTableView" prefHeight="200.0" prefWidth="200.0">
                           <columns>
-                            <TableColumn prefWidth="75.0" text="C1" />
-                            <TableColumn prefWidth="75.0" text="C2" />
+                             <TableColumn text="Number Of Appointments">
+                                <cellValueFactory><PropertyValueFactory property="numberOfAppointments" /></cellValueFactory>
+                             </TableColumn>
+                             <TableColumn text="Type">
+                                <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
+                             </TableColumn>
+                             <TableColumn text="Month">
+                                <cellValueFactory><PropertyValueFactory property="month" /></cellValueFactory>
+                             </TableColumn>
                           </columns>
                         </TableView>
                      </children>
@@ -48,19 +56,51 @@
                         <Label text="Contact Schedules" />
                         <TableView fx:id="contactSchedulesTableView" prefHeight="200.0" prefWidth="200.0">
                            <columns>
-                              <TableColumn prefWidth="75.0" text="C1" />
-                              <TableColumn prefWidth="75.0" text="C2" />
+                              <TableColumn text="Contact Name">
+                                 <cellValueFactory><PropertyValueFactory property="contactName" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Contact Email">
+                                 <cellValueFactory><PropertyValueFactory property="contactEmail" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Appointment ID">
+                                 <cellValueFactory><PropertyValueFactory property="appointmentId" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Title">
+                                 <cellValueFactory><PropertyValueFactory property="title" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Type">
+                                 <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Description">
+                                 <cellValueFactory><PropertyValueFactory property="description" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Start Date/Time">
+                                 <cellValueFactory><PropertyValueFactory property="startDateTime" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="End Date/Time">
+                                 <cellValueFactory><PropertyValueFactory property="endDateTime" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Customer ID">
+                                 <cellValueFactory><PropertyValueFactory property="customerId" /></cellValueFactory>
+                              </TableColumn>
                            </columns>
                         </TableView>
                      </children>
                   </VBox>
                   <VBox spacing="10.0">
                      <children>
-                        <Label text="Report 3" />
-                        <TableView prefHeight="200.0" prefWidth="200.0">
+                        <Label text="# Of Appointments For Each Contact" />
+                        <TableView fx:id="numberOfCustomerAppointmentsForContactTableView" prefHeight="200.0" prefWidth="200.0">
                            <columns>
-                              <TableColumn prefWidth="75.0" text="C1" />
-                              <TableColumn prefWidth="75.0" text="C2" />
+                              <TableColumn text="Number Of Appointments">
+                                 <cellValueFactory><PropertyValueFactory property="numberOfAppointments" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Contact Name">
+                                 <cellValueFactory><PropertyValueFactory property="contactName" /></cellValueFactory>
+                              </TableColumn>
+                              <TableColumn text="Email">
+                                 <cellValueFactory><PropertyValueFactory property="email" /></cellValueFactory>
+                              </TableColumn>
                            </columns>
                         </TableView>
                      </children>
