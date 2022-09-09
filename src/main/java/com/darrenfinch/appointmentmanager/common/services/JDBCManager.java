@@ -8,7 +8,7 @@ public class JDBCManager {
     private final String vendor = ":mysql:";
     private final String location = "//localhost/";
     private final String databaseName = "client_schedule";
-    private final String jdbcUrl = protocol + vendor + location + databaseName + "?connectionTimeZone=SERVER"; // LOCAL
+    private final String jdbcUrl = protocol + vendor + location + databaseName + "?connectionTimeZone=UTC"; // LOCAL
     private final String driver = "com.mysql.cj.jdbc.Driver"; // Driver reference
     private final String userName = "sqlUser"; // Username
     private final String password = "Passw0rd!"; // Password
