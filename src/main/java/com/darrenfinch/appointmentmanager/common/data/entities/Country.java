@@ -29,4 +29,12 @@ public class Country {
     public StringProperty nameProperty() {
         return name;
     }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
 }

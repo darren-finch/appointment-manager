@@ -70,13 +70,13 @@ public class EditAppointmentController {
             Appointment appointment = isEditingExistingAppointment ? mainRepository.getAppointment(appointmentId) : null;
 
             Platform.runLater(() -> {
-                model.allCustomersProperty().set(customers);
-                model.allUsersProperty().set(users);
-                model.allContactsProperty().set(contacts);
+                model.setAllCustomers(customers);
+                model.setAllUsers(users);
+                model.setAllContacts(contacts);
 
-                model.selectedCustomerProperty().set(customers.get(0));
-                model.selectedUserProperty().set(users.get(0));
-                model.selectedContactProperty().set(contacts.get(0));
+                model.setSelectedCustomer(customers.get(0));
+                model.setSelectedUser(users.get(0));
+                model.setSelectedContact(contacts.get(0));
 
                 if (appointment != null) {
                     model.initializeWithAppointment(appointment);
@@ -109,8 +109,8 @@ public class EditAppointmentController {
     }
 
     private void setupModelData() {
-        loadFormDataTask.onFailedProperty().set(workerStateEvent -> {
-            model.errorProperty().set("An error occurred when loading the appointment data.");
+        loadFormDataTask.setOnFailed(workerStateEvent -> {
+            model.setError("An error occurred when loading the appointment data.");
             workerStateEvent.consume();
         });
         executorService.execute(loadFormDataTask);
@@ -129,16 +129,16 @@ public class EditAppointmentController {
 
         datePicker.valueProperty().bindBidirectional(model.dateProperty());
 
-        startTimeHourComboBox.itemsProperty().set(FXCollections.observableList(Constants.getHours()));
-        startTimeMinuteComboBox.itemsProperty().set(FXCollections.observableList(Constants.getMinutes()));
-        startTimeAmOrPmComboBox.itemsProperty().set(FXCollections.observableList(Constants.amOrPm));
+        startTimeHourComboBox.setItems(FXCollections.observableList(Constants.getHours()));
+        startTimeMinuteComboBox.setItems(FXCollections.observableList(Constants.getMinutes()));
+        startTimeAmOrPmComboBox.setItems(FXCollections.observableList(Constants.amOrPm));
         startTimeHourComboBox.valueProperty().bindBidirectional(model.selectedStartTimeHourProperty());
         startTimeMinuteComboBox.valueProperty().bindBidirectional(model.selectedStartTimeMinuteProperty());
         startTimeAmOrPmComboBox.valueProperty().bindBidirectional(model.selectedStartTimeAmOrPmProperty());
 
-        endTimeHourComboBox.itemsProperty().set(FXCollections.observableList(Constants.getHours()));
-        endTimeMinuteComboBox.itemsProperty().set(FXCollections.observableList(Constants.getMinutes()));
-        endTimeAmOrPmComboBox.itemsProperty().set(FXCollections.observableList(Constants.amOrPm));
+        endTimeHourComboBox.setItems(FXCollections.observableList(Constants.getHours()));
+        endTimeMinuteComboBox.setItems(FXCollections.observableList(Constants.getMinutes()));
+        endTimeAmOrPmComboBox.setItems(FXCollections.observableList(Constants.amOrPm));
         endTimeHourComboBox.valueProperty().bindBidirectional(model.selectedEndTimeHourProperty());
         endTimeMinuteComboBox.valueProperty().bindBidirectional(model.selectedEndTimeMinuteProperty());
         endTimeAmOrPmComboBox.valueProperty().bindBidirectional(model.selectedEndTimeAmOrPmProperty());
@@ -176,7 +176,7 @@ public class EditAppointmentController {
             }
         };
 
-        model.errorProperty().set("Validating...");
+        model.setError("Validating...");
         errorLabel.setVisible(true);
 
         getAppointmentsForSelectedCustomerTask.setOnSucceeded(workerStateEvent -> {
@@ -200,7 +200,7 @@ public class EditAppointmentController {
                 screenNavigator.switchToDashboardScreen();
             } else {
                 String errors = model.getInvalidReasons().stream().reduce((prev, curr) -> prev + "\n" + curr).get();
-                model.errorProperty().set(errors);
+                model.setError(errors);
             }
         });
 

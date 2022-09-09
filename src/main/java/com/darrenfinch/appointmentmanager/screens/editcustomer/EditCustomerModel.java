@@ -110,4 +110,63 @@ public class EditCustomerModel {
     public StringProperty errorProperty() {
         return error;
     }
+
+    public void setId(String id) {
+        this.id.set(id);
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber.set(phoneNumber);
+    }
+
+    public void setAddress(String address) {
+        this.address.set(address);
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode.set(postalCode);
+    }
+
+    public void setAllCountries(ObservableList<Country> allCountries) {
+        this.allCountries.set(allCountries);
+    }
+
+    public void setCountry(Country country) {
+        this.country.set(country);
+    }
+
+    public void setAllFirstLevelDivisionsForCountry(ObservableList<FirstLevelDivision> allFirstLevelDivisionsForCountry) {
+        this.allFirstLevelDivisionsForCountry.set(allFirstLevelDivisionsForCountry);
+    }
+
+    public void setFirstLevelDivision(FirstLevelDivision firstLevelDivision) {
+        this.firstLevelDivision.set(firstLevelDivision);
+    }
+
+    public void setError(String error) {
+        this.error.set(error);
+    }
+
+    public void initializeWithCustomer(Customer customer) {
+        setId(String.valueOf(customer.getId()));
+        setName(customer.getName());
+        setPhoneNumber(customer.getPhoneNumber());
+        setAddress(customer.getAddress());
+        setPostalCode(customer.getPostalCode());
+    }
+
+    public Customer toCustomer() {
+        return new Customer(
+                Integer.parseInt(getId()),
+                getName(),
+                getAddress(),
+                getPostalCode(),
+                getPhoneNumber(),
+                getFirstLevelDivision().getId()
+        );
+    }
 }

@@ -69,4 +69,28 @@ public class Customer {
     public IntegerProperty divisionIdProperty() {
         return divisionId;
     }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public void setAddress(String address) {
+        this.address.set(address);
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode.set(postalCode);
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber.set(phoneNumber);
+    }
+
+    public void setDivisionId(int divisionId) {
+        this.divisionId.set(divisionId);
+    }
 }

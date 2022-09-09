@@ -64,7 +64,7 @@ public class LoginController implements BaseController {
                     }
                 } catch (Exception e) {
                     Platform.runLater(() -> {
-                        model.errorProperty().set(e.getLocalizedMessage());
+                        model.setError(e.getLocalizedMessage());
                     });
                 }
 

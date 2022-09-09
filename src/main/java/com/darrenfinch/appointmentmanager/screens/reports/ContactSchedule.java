@@ -98,4 +98,40 @@ public class ContactSchedule {
     public IntegerProperty customerIdProperty() {
         return customerId;
     }
+
+    public void setContactName(String contactName) {
+        this.contactName.set(contactName);
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail.set(contactEmail);
+    }
+
+    public void setAppointmentId(int appointmentId) {
+        this.appointmentId.set(appointmentId);
+    }
+
+    public void setTitle(String title) {
+        this.title.set(title);
+    }
+
+    public void setType(String type) {
+        this.type.set(type);
+    }
+
+    public void setDescription(String description) {
+        this.description.set(description);
+    }
+
+    public void setStartDateTime(ZonedDateTime startDateTime) {
+        this.startDateTime.set(startDateTime);
+    }
+
+    public void setEndDateTime(ZonedDateTime endDateTime) {
+        this.endDateTime.set(endDateTime);
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId.set(customerId);
+    }
 }

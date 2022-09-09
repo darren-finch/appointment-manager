@@ -109,4 +109,44 @@ public class Appointment {
     public IntegerProperty contactIdProperty() {
         return contactId;
     }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public void setTitle(String title) {
+        this.title.set(title);
+    }
+
+    public void setDescription(String description) {
+        this.description.set(description);
+    }
+
+    public void setLocation(String location) {
+        this.location.set(location);
+    }
+
+    public void setType(String type) {
+        this.type.set(type);
+    }
+
+    public void setStartDateTime(ZonedDateTime startDateTime) {
+        this.startDateTime.set(startDateTime);
+    }
+
+    public void setEndDateTime(ZonedDateTime endDateTime) {
+        this.endDateTime.set(endDateTime);
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId.set(customerId);
+    }
+
+    public void setUserId(int userId) {
+        this.userId.set(userId);
+    }
+
+    public void setContactId(int contactId) {
+        this.contactId.set(contactId);
+    }
 }

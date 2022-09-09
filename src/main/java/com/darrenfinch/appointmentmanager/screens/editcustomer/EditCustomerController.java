@@ -81,26 +81,22 @@ public class EditCustomerController {
     }
 
     private void setupModelData() {
-        model.allCountriesProperty().set(mainRepository.getAllCountries());
-        model.countryProperty().set(model.getAllCountries().get(0));
+        model.setAllCountries(mainRepository.getAllCountries());
+        model.setCountry(model.getAllCountries().get(0));
 
-        model.allFirstLevelDivisionsForCountryProperty().set(mainRepository.getFirstLevelDivisionsForCountry(model.getCountry()));
-        model.firstLevelDivisionProperty().set(model.getAllFirstLevelDivisionsForCountry().get(0));
+        model.setAllFirstLevelDivisionsForCountry(mainRepository.getFirstLevelDivisionsForCountry(model.getCountry()));
+        model.setFirstLevelDivision(model.getAllFirstLevelDivisionsForCountry().get(0));
 
         model.countryProperty().addListener((obs, oldVal, newVal) -> {
-            model.allFirstLevelDivisionsForCountryProperty().set(mainRepository.getFirstLevelDivisionsForCountry(model.getCountry()));
-            model.firstLevelDivisionProperty().set(model.getAllFirstLevelDivisionsForCountry().get(0));
+            model.setAllFirstLevelDivisionsForCountry(mainRepository.getFirstLevelDivisionsForCountry(model.getCountry()));
+            model.setFirstLevelDivision(model.getAllFirstLevelDivisionsForCountry().get(0));
         });
 
         if (isEditingExistingCustomer) {
             GetCustomerTask getCustomerTask = new GetCustomerTask(mainRepository, customerId);
             getCustomerTask.setOnSucceeded(workerStateEvent -> {
                 Customer customer = getCustomerTask.getValue();
-                model.idProperty().set(String.valueOf(customer.getId()));
-                model.nameProperty().set(customer.getName());
-                model.phoneNumberProperty().set(customer.getPhoneNumber());
-                model.addressProperty().set(customer.getAddress());
-                model.postalCodeProperty().set(customer.getPostalCode());
+                model.initializeWithCustomer(customer);
 
                 List<Country> allCountries = mainRepository.getAllCountries();
                 allCountries.forEach(country -> {
@@ -110,18 +106,18 @@ public class EditCustomerController {
                             .filter(firstLevelDivision -> firstLevelDivision.getId() == customer.getDivisionId())
                             .findFirst();
                     if (optionalFirstLevelDivision.isPresent()) {
-                        model.countryProperty().set(country);
+                        model.setCountry(country);
 
                         FirstLevelDivision firstLevelDivision = optionalFirstLevelDivision.get();
-                        model.allFirstLevelDivisionsForCountryProperty().set(firstLevelDivisions);
-                        model.firstLevelDivisionProperty().set(firstLevelDivision);
+                        model.setAllFirstLevelDivisionsForCountry(firstLevelDivisions);
+                        model.setFirstLevelDivision(firstLevelDivision);
                     }
                 });
 
                 workerStateEvent.consume();
             });
             getCustomerTask.setOnFailed(workerStateEvent -> {
-                model.errorProperty().set("An error occurred when loading the customer data.");
+                model.setError("An error occurred when loading the customer data.");
                 workerStateEvent.consume();
             });
             executorService.execute(getCustomerTask);
@@ -160,14 +156,7 @@ public class EditCustomerController {
     }
 
     public void save() {
-        Customer customerFromModel = new Customer(
-                Integer.parseInt(model.getId()),
-                model.getName(),
-                model.getAddress(),
-                model.getPostalCode(),
-                model.getPhoneNumber(),
-                model.getFirstLevelDivision().getId()
-        );
+        Customer customerFromModel = model.toCustomer();
         executorService.execute(new Task<Void>() {
             @Override
             protected Void call() throws Exception {

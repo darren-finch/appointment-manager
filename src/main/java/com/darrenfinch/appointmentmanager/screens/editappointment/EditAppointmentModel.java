@@ -341,6 +341,90 @@ public class EditAppointmentModel {
         return invalidReasons;
     }
 
+    public void setId(String id) {
+        this.id.set(id);
+    }
+
+    public void setTitle(String title) {
+        this.title.set(title);
+    }
+
+    public void setDescription(String description) {
+        this.description.set(description);
+    }
+
+    public void setLocation(String location) {
+        this.location.set(location);
+    }
+
+    public void setType(String type) {
+        this.type.set(type);
+    }
+
+    public void setDate(LocalDate date) {
+        this.date.set(date);
+    }
+
+    public void setSelectedStartTimeHour(String selectedStartTimeHour) {
+        this.selectedStartTimeHour.set(selectedStartTimeHour);
+    }
+
+    public void setSelectedStartTimeMinute(String selectedStartTimeMinute) {
+        this.selectedStartTimeMinute.set(selectedStartTimeMinute);
+    }
+
+    public void setSelectedStartTimeAmOrPm(String selectedStartTimeAmOrPm) {
+        this.selectedStartTimeAmOrPm.set(selectedStartTimeAmOrPm);
+    }
+
+    public void setSelectedStartDateTime(ZonedDateTime selectedStartDateTime) {
+        this.selectedStartDateTime.set(selectedStartDateTime);
+    }
+
+    public void setSelectedEndTimeHour(String selectedEndTimeHour) {
+        this.selectedEndTimeHour.set(selectedEndTimeHour);
+    }
+
+    public void setSelectedEndTimeMinute(String selectedEndTimeMinute) {
+        this.selectedEndTimeMinute.set(selectedEndTimeMinute);
+    }
+
+    public void setSelectedEndTimeAmOrPm(String selectedEndTimeAmOrPm) {
+        this.selectedEndTimeAmOrPm.set(selectedEndTimeAmOrPm);
+    }
+
+    public void setSelectedEndDateTime(ZonedDateTime selectedEndDateTime) {
+        this.selectedEndDateTime.set(selectedEndDateTime);
+    }
+
+    public void setAllCustomers(ObservableList<Customer> allCustomers) {
+        this.allCustomers.set(allCustomers);
+    }
+
+    public void setSelectedCustomer(Customer selectedCustomer) {
+        this.selectedCustomer.set(selectedCustomer);
+    }
+
+    public void setAllUsers(ObservableList<User> allUsers) {
+        this.allUsers.set(allUsers);
+    }
+
+    public void setSelectedUser(User selectedUser) {
+        this.selectedUser.set(selectedUser);
+    }
+
+    public void setAllContacts(ObservableList<Contact> allContacts) {
+        this.allContacts.set(allContacts);
+    }
+
+    public void setSelectedContact(Contact selectedContact) {
+        this.selectedContact.set(selectedContact);
+    }
+
+    public void setError(String error) {
+        this.error.set(error);
+    }
+
     public void initializeWithAppointment(Appointment appointment) {
         idProperty().set(String.valueOf(appointment.getId()));
         titleProperty().set(appointment.getTitle());

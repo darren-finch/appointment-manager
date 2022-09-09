@@ -39,4 +39,16 @@ public class NumberOfCustomerAppointmentsForContact {
     public IntegerProperty numberOfAppointmentsProperty() {
         return numberOfAppointments;
     }
+
+    public void setContactName(String contactName) {
+        this.contactName.set(contactName);
+    }
+
+    public void setEmail(String email) {
+        this.email.set(email);
+    }
+
+    public void setNumberOfAppointments(int numberOfAppointments) {
+        this.numberOfAppointments.set(numberOfAppointments);
+    }
 }

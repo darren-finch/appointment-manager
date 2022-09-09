@@ -40,4 +40,16 @@ public class DashboardModel {
     public ObjectProperty<ObservableList<Appointment>> appointmentsProperty() {
         return appointments;
     }
+
+    public void setCustomers(ObservableList<Customer> customers) {
+        this.customers.set(customers);
+    }
+
+    public void setViewBy(DashboardController.ViewByTimeFrame viewBy) {
+        this.viewBy.set(viewBy);
+    }
+
+    public void setAppointments(ObservableList<Appointment> appointments) {
+        this.appointments.set(appointments);
+    }
 }

@@ -39,4 +39,16 @@ public class User {
     public StringProperty passwordProperty() {
         return password;
     }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public void setPassword(String password) {
+        this.password.set(password);
+    }
 }

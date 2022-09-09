@@ -39,4 +39,16 @@ public class NumberOfCustomerAppointmentsForTypeAndMonth {
     public StringProperty monthProperty() {
         return month;
     }
+
+    public void setNumberOfAppointments(int numberOfAppointments) {
+        this.numberOfAppointments.set(numberOfAppointments);
+    }
+
+    public void setType(String type) {
+        this.type.set(type);
+    }
+
+    public void setMonth(String month) {
+        this.month.set(month);
+    }
 }

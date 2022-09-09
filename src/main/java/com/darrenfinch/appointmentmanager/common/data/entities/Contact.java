@@ -39,4 +39,16 @@ public class Contact {
     public StringProperty emailProperty() {
         return email;
     }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public void setEmail(String email) {
+        this.email.set(email);
+    }
 }
