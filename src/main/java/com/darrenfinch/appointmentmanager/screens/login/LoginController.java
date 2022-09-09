@@ -10,6 +10,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.time.ZoneId;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 
 public class LoginController implements BaseController {
@@ -40,6 +43,8 @@ public class LoginController implements BaseController {
         userNameTextField.textProperty().bindBidirectional(model.userNameProperty());
         passwordPasswordField.textProperty().bindBidirectional(model.passwordProperty());
         errorLabel.textProperty().bind(model.errorProperty());
+
+        model.setLocation("You are in the " + ZoneId.systemDefault().getId() + " time zone.");
     }
 
     @FXML

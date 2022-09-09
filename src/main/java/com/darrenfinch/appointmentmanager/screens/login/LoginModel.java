@@ -47,4 +47,20 @@ public class LoginModel {
     public StringProperty errorProperty() {
         return error;
     }
+
+    public void setLocation(String location) {
+        this.location.set(location);
+    }
+
+    public void setUserName(String userName) {
+        this.userName.set(userName);
+    }
+
+    public void setPassword(String password) {
+        this.password.set(password);
+    }
+
+    public void setError(String error) {
+        this.error.set(error);
+    }
 }

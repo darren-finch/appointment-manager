@@ -18,11 +18,7 @@
                   <Font size="48.0" />
                </font>
             </Label>
-            <Label fx:id="locationLabel" prefHeight="23.0" prefWidth="200.0" text="You are in (insert location)." textAlignment="CENTER">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
+            <Label alignment="CENTER" fx:id="locationLabel" prefHeight="23.0" prefWidth="505.0" text="Welcome back! You are in the America/Chicago time zone." textAlignment="CENTER" />
             <VBox>
                <children>
                   <Label text="Username" />
