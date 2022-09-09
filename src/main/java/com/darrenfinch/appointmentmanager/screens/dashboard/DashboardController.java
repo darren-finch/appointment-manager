@@ -4,30 +4,31 @@ import com.darrenfinch.appointmentmanager.common.BaseController;
 import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
 import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
-import com.darrenfinch.appointmentmanager.common.services.DialogManager;
-import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
-import com.darrenfinch.appointmentmanager.common.services.UserManager;
+import com.darrenfinch.appointmentmanager.common.services.*;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DashboardController implements BaseController {
     private final ScreenNavigator screenNavigator;
     private final DialogManager dialogManager;
+    private final AppointmentAlertService appointmentAlertService;
     private final UserManager userManager;
     private final ExecutorService executorService;
+    private final TimeHelper timeHelper;
     private final MainRepository mainRepository;
     private final DashboardModel model;
     @FXML
@@ -42,11 +43,22 @@ public class DashboardController implements BaseController {
     private GetAllCustomersService getAllCustomersService;
     private GetAppointmentsForUserByTimeFrameService getAppointmentsForUserByTimeFrameService;
 
-    public DashboardController(ScreenNavigator screenNavigator, DialogManager dialogManager, UserManager userManager, ExecutorService executorService, MainRepository mainRepository, DashboardModel model) {
+    public DashboardController(
+            ScreenNavigator screenNavigator,
+            DialogManager dialogManager,
+            AppointmentAlertService appointmentAlertService,
+            UserManager userManager,
+            ExecutorService executorService,
+            TimeHelper timeHelper,
+            MainRepository mainRepository,
+            DashboardModel model
+    ) {
         this.screenNavigator = screenNavigator;
         this.dialogManager = dialogManager;
+        this.appointmentAlertService = appointmentAlertService;
         this.userManager = userManager;
         this.executorService = executorService;
+        this.timeHelper = timeHelper;
         this.mainRepository = mainRepository;
         this.model = model;
         this.getAllCustomersService = new GetAllCustomersService(mainRepository);
@@ -60,6 +72,9 @@ public class DashboardController implements BaseController {
         getAppointmentsForUserByTimeFrameService.setExecutor(executorService);
         getAppointmentsForUserByTimeFrameService.setUserId(userManager.getCurrentUser().getId());
         getAppointmentsForUserByTimeFrameService.setViewByTimeFrame(ViewByTimeFrame.WEEK);
+        getAppointmentsForUserByTimeFrameService.setOnSucceeded(workerStateEvent -> {
+            appointmentAlertService.alertUserOfPotentialUpcomingAppointments(userManager.getCurrentUser().getId());
+        });
 
         // Fill model
         model.customersProperty().bind(getAllCustomersService.valueProperty());

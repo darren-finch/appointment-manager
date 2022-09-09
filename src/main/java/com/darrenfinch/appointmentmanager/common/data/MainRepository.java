@@ -7,6 +7,8 @@ import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppoin
 import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForTypeAndMonth;
 import javafx.collections.ObservableList;
 
+import java.time.ZonedDateTime;
+
 /**
  * This is a simple enough application that I did not see the need for separate DAOs for each entity in the database.
  * Instead, I am creating a single source of truth via this main repository.
@@ -18,6 +20,7 @@ public interface MainRepository {
     // APPOINTMENTS
     // This query contains a cross-cutting concern, because the viewByTimeFrame is a view-specific matter, but it needs to be specified in the query.
     // TODO: REFACTOR
+    ObservableList<Appointment> getUpcomingAppointmentsForUser(int userId); // returns all appointments in the future of the current date
     ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame);
     ObservableList<Appointment> getAppointmentsForCustomer(int customerId);
     Appointment getAppointment(int appointmentId);

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Constants {
+    public static final int APPOINTMENT_ALERT_THRESHOLD_MINUTES = 15;
+
     public static final int INVALID_ID = -1;
 
     public static final LocalTime BUSINESS_START_TIME = LocalTime.of(8, 0);

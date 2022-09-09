@@ -2,10 +2,7 @@ package com.darrenfinch.appointmentmanager.common.di;
 
 import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.MainRepositoryImpl;
-import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
-import com.darrenfinch.appointmentmanager.common.services.DialogManager;
-import com.darrenfinch.appointmentmanager.common.services.UserManager;
-import com.darrenfinch.appointmentmanager.common.services.JDBCManager;
+import com.darrenfinch.appointmentmanager.common.services.*;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardModel;
 import com.darrenfinch.appointmentmanager.screens.editappointment.EditAppointmentController;
@@ -28,19 +25,24 @@ public class ApplicationConfig {
     private final MainRepository mainRepository;
     private final UserManager userManager;
     private final ExecutorService executorService;
+    private final AppointmentAlertService appointmentAlertService;
+    private final TimeHelper timeHelper;
 
     public ApplicationConfig(Stage stage) {
         this.screenNavigator = new ScreenNavigator(stage);
         this.dialogManager = new DialogManager();
+        this.timeHelper = new TimeHelper();
+        this.executorService = Executors.newCachedThreadPool();
 
         // I am not doing this on a background thread yet to keep things simple for now.
         jdbcManager = new JDBCManager();
         jdbcManager.openConnection();
-        this.mainRepository = new MainRepositoryImpl(jdbcManager.getConnection());
+        this.mainRepository = new MainRepositoryImpl(jdbcManager.getConnection(), getTimeHelper());
         this.mainRepository.initializeStaticData();
 
-        this.userManager = new UserManager(mainRepository);
-        this.executorService = Executors.newCachedThreadPool();
+        this.userManager = new UserManager(getMainRepository());
+
+        this.appointmentAlertService = new AppointmentAlertService(getExecutorService(), getTimeHelper(), getDialogManager(), getMainRepository());
 
         setupControllerFactories();
     }
@@ -48,11 +50,11 @@ public class ApplicationConfig {
     private void setupControllerFactories() {
         ControllerDependencyInjector.addInjectionMethod(
                 LoginController.class,
-                p -> new LoginController(getScreenNavigator(), getUserManager(), getExecutorService(), new LoginModel())
+                p -> new LoginController(getScreenNavigator(), getUserManager(), getExecutorService(), getTimeHelper(), new LoginModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 DashboardController.class,
-                p -> new DashboardController(getScreenNavigator(), getDialogManager(), getUserManager(), getExecutorService(), getMainRepository(), new DashboardModel())
+                p -> new DashboardController(getScreenNavigator(), getDialogManager(), getAppointmentAlertService(), getUserManager(), getExecutorService(), getTimeHelper(), getMainRepository(), new DashboardModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 EditCustomerController.class,
@@ -60,7 +62,7 @@ public class ApplicationConfig {
         );
         ControllerDependencyInjector.addInjectionMethod(
                 EditAppointmentController.class,
-                p -> new EditAppointmentController(getScreenNavigator(), getDialogManager(), getUserManager(), getMainRepository(), getExecutorService(), new EditAppointmentModel())
+                p -> new EditAppointmentController(getScreenNavigator(), getDialogManager(), getUserManager(), getMainRepository(), getExecutorService(), new EditAppointmentModel(getTimeHelper()))
         );
         ControllerDependencyInjector.addInjectionMethod(
                 ReportsController.class,
@@ -76,6 +78,10 @@ public class ApplicationConfig {
         return dialogManager;
     }
 
+    public JDBCManager getJdbcManager() {
+        return jdbcManager;
+    }
+
     public MainRepository getMainRepository() {
         return mainRepository;
     }
@@ -84,7 +90,17 @@ public class ApplicationConfig {
         return userManager;
     }
 
-    public ExecutorService getExecutorService() { return executorService; }
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public AppointmentAlertService getAppointmentAlertService() {
+        return appointmentAlertService;
+    }
+
+    public TimeHelper getTimeHelper() {
+        return timeHelper;
+    }
 
     public void cleanup() {
         executorService.shutdown();

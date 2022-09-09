@@ -2,6 +2,7 @@ package com.darrenfinch.appointmentmanager.screens.login;
 
 import com.darrenfinch.appointmentmanager.common.BaseController;
 import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
+import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import com.darrenfinch.appointmentmanager.common.services.UserManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -28,12 +29,14 @@ public class LoginController implements BaseController {
     private final ScreenNavigator screenNavigator;
     private final UserManager userManager;
     private final ExecutorService executorService;
+    private final TimeHelper timeHelper;
     private final LoginModel model;
 
-    public LoginController(ScreenNavigator screenNavigator, UserManager userManager, ExecutorService executorService, LoginModel model) {
+    public LoginController(ScreenNavigator screenNavigator, UserManager userManager, ExecutorService executorService, TimeHelper timeHelper, LoginModel model) {
         this.screenNavigator = screenNavigator;
         this.userManager = userManager;
         this.executorService = executorService;
+        this.timeHelper = timeHelper;
         this.model = model;
     }
 
@@ -44,7 +47,7 @@ public class LoginController implements BaseController {
         passwordPasswordField.textProperty().bindBidirectional(model.passwordProperty());
         errorLabel.textProperty().bind(model.errorProperty());
 
-        model.setLocation("You are in the " + ZoneId.systemDefault().getId() + " time zone.");
+        model.setLocation("You are in the " + timeHelper.defaultZone().getId() + " time zone.");
     }
 
     @FXML

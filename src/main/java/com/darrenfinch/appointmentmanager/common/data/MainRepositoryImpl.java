@@ -1,6 +1,7 @@
 package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
+import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
 import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForContact;
@@ -14,9 +15,11 @@ import java.util.ArrayList;
 
 public class MainRepositoryImpl implements MainRepository {
     private final Connection dbConnection;
+    private final TimeHelper timeHelper;
 
-    public MainRepositoryImpl(Connection dbConnection) {
+    public MainRepositoryImpl(Connection dbConnection, TimeHelper timeHelper) {
         this.dbConnection = dbConnection;
+        this.timeHelper = timeHelper;
     }
 
     // Static data
@@ -94,6 +97,26 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
+    public ObservableList<Appointment> getUpcomingAppointmentsForUser(int userId) {
+        ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
+        String query = "SELECT * FROM appointments WHERE User_ID = ? AND Start >= ?";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            statement.setObject(2, timeHelper.systemTimeNow());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointments.add(getAppointmentFromResultSet(resultSet));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return appointments;
+    }
+
+    @Override
     public ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame) {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
         String query = "SELECT *, EXTRACT(" + viewByTimeFrame.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
@@ -157,8 +180,8 @@ public class MainRepositoryImpl implements MainRepository {
                 resultSet.getString("Description"),
                 resultSet.getString("Location"),
                 resultSet.getString("Type"),
-                resultSet.getTimestamp("Start").toInstant().atZone(ZoneId.systemDefault()),
-                resultSet.getTimestamp("End").toInstant().atZone(ZoneId.systemDefault()),
+                resultSet.getTimestamp("Start").toInstant().atZone(timeHelper.defaultZone()),
+                resultSet.getTimestamp("End").toInstant().atZone(timeHelper.defaultZone()),
                 resultSet.getInt("Customer_ID"),
                 resultSet.getInt("User_ID"),
                 resultSet.getInt("Contact_ID")
@@ -176,9 +199,9 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setString(5, appointment.getType());
             statement.setObject(6, Instant.from(appointment.getStartDateTime()));
             statement.setObject(7, Instant.from(appointment.getEndDateTime()));
-            statement.setTimestamp(8, Timestamp.from(Instant.now()));
+            statement.setTimestamp(8, Timestamp.from(timeHelper.nowAsInstant()));
             statement.setString(9, currentUser.getName());
-            statement.setTimestamp(10, Timestamp.from(Instant.now()));
+            statement.setTimestamp(10, Timestamp.from(timeHelper.nowAsInstant()));
             statement.setString(11, currentUser.getName());
             statement.setInt(12, appointment.getCustomerId());
             statement.setInt(13, appointment.getUserId());
@@ -211,7 +234,7 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setString(4, newAppointment.getType());
             statement.setObject(5, newAppointment.getStartDateTime());
             statement.setObject(6, newAppointment.getEndDateTime());
-            statement.setTimestamp(7, Timestamp.from(Instant.now()));
+            statement.setTimestamp(7, Timestamp.from(timeHelper.nowAsInstant()));
             statement.setString(8, currentUser.getName());
             statement.setInt(9, newAppointment.getCustomerId());
             statement.setInt(10, newAppointment.getUserId());
@@ -291,9 +314,9 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setString(3, customer.getAddress());
             statement.setString(4, customer.getPostalCode());
             statement.setString(5, customer.getPhoneNumber());
-            statement.setObject(6, Instant.now());
+            statement.setObject(6, timeHelper.nowAsInstant());
             statement.setString(7, currentUser.getName());
-            statement.setTimestamp(8, Timestamp.from(Instant.now()));
+            statement.setTimestamp(8, Timestamp.from(timeHelper.nowAsInstant()));
             statement.setString(9, currentUser.getName());
             statement.setInt(10, customer.getDivisionId());
             statement.executeUpdate();
@@ -318,7 +341,7 @@ public class MainRepositoryImpl implements MainRepository {
             statement.setString(2, newCustomer.getAddress());
             statement.setString(3, newCustomer.getPostalCode());
             statement.setString(4, newCustomer.getPhoneNumber());
-            statement.setTimestamp(5, Timestamp.from(Instant.now()));
+            statement.setTimestamp(5, Timestamp.from(timeHelper.nowAsInstant()));
             statement.setString(6, currentUser.getName());
             statement.setInt(7, newCustomer.getDivisionId());
             statement.setInt(8, newCustomer.getId());
@@ -398,8 +421,8 @@ public class MainRepositoryImpl implements MainRepository {
                                 resultSet.getString("Title"),
                                 resultSet.getString("Type"),
                                 resultSet.getString("Description"),
-                                resultSet.getTimestamp("Start").toInstant().atZone(ZoneId.systemDefault()),
-                                resultSet.getTimestamp("Start").toInstant().atZone(ZoneId.systemDefault()),
+                                resultSet.getTimestamp("Start").toInstant().atZone(timeHelper.defaultZone()),
+                                resultSet.getTimestamp("Start").toInstant().atZone(timeHelper.defaultZone()),
                                 resultSet.getInt("Customer_ID")
                         )
                 );

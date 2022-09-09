@@ -4,6 +4,7 @@ import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
 import com.darrenfinch.appointmentmanager.common.data.entities.Contact;
 import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
 import com.darrenfinch.appointmentmanager.common.data.entities.User;
+import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -49,13 +50,17 @@ public class EditAppointmentModel {
 
     private final List<String> invalidReasons = new ArrayList<>();
 
-    public EditAppointmentModel() {
+    private final TimeHelper timeHelper;
+
+    public EditAppointmentModel(TimeHelper timeHelper) {
+        this.timeHelper = timeHelper;
+
         id.set("0");
         title.set("");
         description.set("");
         location.set("");
         type.set("");
-        date.set(LocalDate.now());
+        date.set(timeHelper.systemTimeNow().toLocalDate());
         date.addListener((obs, oldVal, newVal) -> {
             refreshStartDateTime();
             refreshEndDateTime();
@@ -101,7 +106,7 @@ public class EditAppointmentModel {
                                         getSelectedStartTimeAmOrPm().equals(Constants.amOrPm.get(0))
                                 )
                         ),
-                        ZoneId.systemDefault()
+                        timeHelper.defaultZone()
                 )
         );
     }
@@ -116,7 +121,7 @@ public class EditAppointmentModel {
                                         getSelectedEndTimeAmOrPm().equals(Constants.amOrPm.get(0))
                                 )
                         ),
-                        ZoneId.systemDefault()
+                        timeHelper.defaultZone()
                 )
         );
     }
@@ -390,8 +395,8 @@ public class EditAppointmentModel {
         if (selectedStartTimeInEST.isBefore(Constants.BUSINESS_START_TIME) || selectedEndTimeInEST.isBefore(Constants.BUSINESS_START_TIME)
                 || selectedStartTimeInEST.isAfter(Constants.BUSINESS_END_TIME) || selectedEndTimeInEST.isAfter(Constants.BUSINESS_END_TIME)) {
 
-            LocalTime businessStartTimeInLocalTimeZone = ZonedDateTime.of(getDate(), Constants.BUSINESS_START_TIME, estZoneId).withZoneSameInstant(ZoneId.systemDefault()).toLocalTime();
-            LocalTime businessEndTimeInLocalTimeZone = ZonedDateTime.of(getDate(), Constants.BUSINESS_END_TIME, estZoneId).withZoneSameInstant(ZoneId.systemDefault()).toLocalTime();
+            LocalTime businessStartTimeInLocalTimeZone = ZonedDateTime.of(getDate(), Constants.BUSINESS_START_TIME, estZoneId).withZoneSameInstant(timeHelper.defaultZone()).toLocalTime();
+            LocalTime businessEndTimeInLocalTimeZone = ZonedDateTime.of(getDate(), Constants.BUSINESS_END_TIME, estZoneId).withZoneSameInstant(timeHelper.defaultZone()).toLocalTime();
 
             invalidReasons.add(
                     "Appointment schedule is outside of business hours.\nStandard business hours in your timezone are "
