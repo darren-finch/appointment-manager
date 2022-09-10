@@ -34,14 +34,14 @@ public class MainRepositoryImpl implements MainRepository {
         countries.clear();
         String query1 = "SELECT * FROM countries";
         try (Statement statement = dbConnection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(query1)) {
-                while (resultSet.next()) {
-                    countries.add(new Country(
-                            resultSet.getInt("Country_ID"),
-                            resultSet.getString("Country")
-                    ));
-                }
+            ResultSet resultSet = statement.executeQuery(query1);
+            while (resultSet.next()) {
+                countries.add(new Country(
+                        resultSet.getInt("Country_ID"),
+                        resultSet.getString("Country")
+                ));
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,15 +49,15 @@ public class MainRepositoryImpl implements MainRepository {
         firstLevelDivisions.clear();
         String query2 = "SELECT * FROM first_level_divisions";
         try (Statement statement = dbConnection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(query2)) {
-                while (resultSet.next()) {
-                    firstLevelDivisions.add(new FirstLevelDivision(
-                            resultSet.getInt("Division_ID"),
-                            resultSet.getString("Division"),
-                            resultSet.getInt("Country_ID")
-                    ));
-                }
+            ResultSet resultSet = statement.executeQuery(query2);
+            while (resultSet.next()) {
+                firstLevelDivisions.add(new FirstLevelDivision(
+                        resultSet.getInt("Division_ID"),
+                        resultSet.getString("Division"),
+                        resultSet.getInt("Country_ID")
+                ));
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -65,15 +65,15 @@ public class MainRepositoryImpl implements MainRepository {
         contacts.clear();
         String query3 = "SELECT * FROM contacts";
         try (Statement statement = dbConnection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(query3)) {
-                while (resultSet.next()) {
-                    contacts.add(new Contact(
-                            resultSet.getInt("Contact_ID"),
-                            resultSet.getString("Contact_Name"),
-                            resultSet.getString("Email")
-                    ));
-                }
+            ResultSet resultSet = statement.executeQuery(query3);
+            while (resultSet.next()) {
+                contacts.add(new Contact(
+                        resultSet.getInt("Contact_ID"),
+                        resultSet.getString("Contact_Name"),
+                        resultSet.getString("Email")
+                ));
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -81,16 +81,13 @@ public class MainRepositoryImpl implements MainRepository {
         users.clear();
         String query4 = "SELECT * FROM users";
         try (Statement statement = dbConnection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(query4)) {
-                while (resultSet.next()) {
-                    users.add(new User(
-                            resultSet.getInt("User_ID"),
-                            resultSet.getString("User_Name"),
-                            resultSet.getString("Password")
-                    ));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            ResultSet resultSet = statement.executeQuery(query4);
+            while (resultSet.next()) {
+                users.add(new User(
+                        resultSet.getInt("User_ID"),
+                        resultSet.getString("User_Name"),
+                        resultSet.getString("Password")
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,13 +101,11 @@ public class MainRepositoryImpl implements MainRepository {
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, userId);
             statement.setObject(2, timeHelper.systemTimeNow());
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    appointments.add(getAppointmentFromResultSet(resultSet));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                appointments.add(getAppointmentFromResultSet(resultSet));
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -118,18 +113,16 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
-    public ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame) {
+    public ObservableList<Appointment> getAppointmentsForUserBySortingFilter(int userId, DashboardController.AppointmentsSortingFilter appointmentsSortingFilter) {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
-        String query = "SELECT *, EXTRACT(" + viewByTimeFrame.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
+        String query = "SELECT *, EXTRACT(" + appointmentsSortingFilter.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, userId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    appointments.add(getAppointmentFromResultSet(resultSet));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                appointments.add(getAppointmentFromResultSet(resultSet));
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -142,13 +135,11 @@ public class MainRepositoryImpl implements MainRepository {
         String query = "SELECT * FROM appointments WHERE Customer_ID = ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, customerId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    appointments.add(getAppointmentFromResultSet(resultSet));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                appointments.add(getAppointmentFromResultSet(resultSet));
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -160,13 +151,11 @@ public class MainRepositoryImpl implements MainRepository {
         String query = "SELECT * from appointments WHERE Appointment_ID = ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, appointmentId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return getAppointmentFromResultSet(resultSet);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return getAppointmentFromResultSet(resultSet);
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -290,13 +279,11 @@ public class MainRepositoryImpl implements MainRepository {
         ObservableList<Customer> customers = FXCollections.observableList(new ArrayList<>());
         String query = "SELECT * FROM customers";
         try (Statement statement = dbConnection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(query)) {
-                while (resultSet.next()) {
-                    customers.add(getCustomerFromResultSet(resultSet));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                customers.add(getCustomerFromResultSet(resultSet));
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -308,13 +295,11 @@ public class MainRepositoryImpl implements MainRepository {
         String query = "SELECT * from customers WHERE Customer_ID = ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, customerId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return getCustomerFromResultSet(resultSet);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return getCustomerFromResultSet(resultSet);
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

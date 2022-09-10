@@ -3,20 +3,16 @@ package com.darrenfinch.appointmentmanager.screens.dashboard;
 import com.darrenfinch.appointmentmanager.common.BaseController;
 import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
-import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
 import com.darrenfinch.appointmentmanager.common.services.*;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class DashboardController implements BaseController {
@@ -65,7 +61,7 @@ public class DashboardController implements BaseController {
         getAllCustomersService.setExecutor(executorService);
         getAppointmentsForUserByTimeFrameService.setExecutor(executorService);
         getAppointmentsForUserByTimeFrameService.setUserId(userManager.getCurrentUser().getId());
-        getAppointmentsForUserByTimeFrameService.setViewByTimeFrame(ViewByTimeFrame.WEEK);
+        getAppointmentsForUserByTimeFrameService.setAppointmentsSortingFilter(AppointmentsSortingFilter.WEEK);
         getAppointmentsForUserByTimeFrameService.setOnSucceeded(workerStateEvent -> {
             appointmentAlertService.alertUserOfPotentialUpcomingAppointments(userManager.getCurrentUser().getId());
         });
@@ -85,7 +81,7 @@ public class DashboardController implements BaseController {
 
         // Bind viewByProperty of model to re-fetch appointments
         model.viewByProperty().addListener((obs, oldVal, newVal) -> {
-            getAppointmentsForUserByTimeFrameService.setViewByTimeFrame(newVal);
+            getAppointmentsForUserByTimeFrameService.setAppointmentsSortingFilter(newVal);
             getAppointmentsForUserByTimeFrameService.restart();
         });
 
@@ -178,20 +174,20 @@ public class DashboardController implements BaseController {
     }
 
     public void onViewByWeekSelected() {
-        model.setViewBy(ViewByTimeFrame.WEEK);
+        model.setViewBy(AppointmentsSortingFilter.WEEK);
     }
 
     public void onViewByMonthSelected() {
-        model.setViewBy(ViewByTimeFrame.MONTH);
+        model.setViewBy(AppointmentsSortingFilter.MONTH);
     }
 
-    public enum ViewByTimeFrame {
+    public enum AppointmentsSortingFilter {
         WEEK("Week"),
         MONTH("Month");
 
         private final String name;
 
-        ViewByTimeFrame(String s) {
+        AppointmentsSortingFilter(String s) {
             name = s;
         }
 
@@ -223,20 +219,20 @@ public class DashboardController implements BaseController {
 
         private final MainRepository mainRepository;
         private final IntegerProperty userId = new SimpleIntegerProperty();
-        private final ObjectProperty<ViewByTimeFrame> viewByTimeFrame = new SimpleObjectProperty<>();
+        private final ObjectProperty<AppointmentsSortingFilter> appointmentsSortingFilter = new SimpleObjectProperty<>();
 
         public GetAppointmentsForUserByTimeFrameService(MainRepository mainRepository) {
             this.mainRepository = mainRepository;
             this.userId.set(Constants.INVALID_ID);
-            this.viewByTimeFrame.set(ViewByTimeFrame.WEEK);
+            this.appointmentsSortingFilter.set(AppointmentsSortingFilter.WEEK);
         }
 
         public void setUserId(int userId) {
             this.userId.set(userId);
         }
 
-        public void setViewByTimeFrame(ViewByTimeFrame viewByTimeFrame) {
-            this.viewByTimeFrame.set(viewByTimeFrame);
+        public void setAppointmentsSortingFilter(AppointmentsSortingFilter appointmentsSortingFilter) {
+            this.appointmentsSortingFilter.set(appointmentsSortingFilter);
         }
 
         @Override
@@ -244,7 +240,7 @@ public class DashboardController implements BaseController {
             return new Task<>() {
                 @Override
                 protected ObservableList<Appointment> call() throws Exception {
-                    return mainRepository.getAppointmentsForUserByTimeFrame(userId.get(), viewByTimeFrame.get());
+                    return mainRepository.getAppointmentsForUserBySortingFilter(userId.get(), appointmentsSortingFilter.get());
                 }
             };
         }

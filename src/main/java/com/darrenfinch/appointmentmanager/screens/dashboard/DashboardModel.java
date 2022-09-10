@@ -1,19 +1,18 @@
 package com.darrenfinch.appointmentmanager.screens.dashboard;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
-import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DashboardModel {
     private final ObjectProperty<ObservableList<CustomerWithLocationData>> customers = new SimpleObjectProperty<>();
-    private final ObjectProperty<DashboardController.ViewByTimeFrame> viewBy = new SimpleObjectProperty<>();
+    private final ObjectProperty<DashboardController.AppointmentsSortingFilter> viewBy = new SimpleObjectProperty<>();
     private final ObjectProperty<ObservableList<Appointment>> appointments = new SimpleObjectProperty<>();
 
     public DashboardModel() {
         customers.set(FXCollections.emptyObservableList());
-        viewBy.set(DashboardController.ViewByTimeFrame.WEEK);
+        viewBy.set(DashboardController.AppointmentsSortingFilter.WEEK);
         appointments.set(FXCollections.emptyObservableList());
     }
 
@@ -25,11 +24,11 @@ public class DashboardModel {
         return customers;
     }
 
-    public DashboardController.ViewByTimeFrame getViewBy() {
+    public DashboardController.AppointmentsSortingFilter getViewBy() {
         return viewBy.get();
     }
 
-    public ObjectProperty<DashboardController.ViewByTimeFrame> viewByProperty() {
+    public ObjectProperty<DashboardController.AppointmentsSortingFilter> viewByProperty() {
         return viewBy;
     }
 
@@ -45,7 +44,7 @@ public class DashboardModel {
         this.customers.set(customers);
     }
 
-    public void setViewBy(DashboardController.ViewByTimeFrame viewBy) {
+    public void setViewBy(DashboardController.AppointmentsSortingFilter viewBy) {
         this.viewBy.set(viewBy);
     }
 

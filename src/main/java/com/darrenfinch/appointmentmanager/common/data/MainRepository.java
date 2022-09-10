@@ -8,8 +8,6 @@ import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppoin
 import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForTypeAndMonth;
 import javafx.collections.ObservableList;
 
-import java.time.ZonedDateTime;
-
 /**
  * This is a simple enough application that I did not see the need for separate DAOs for each entity in the database.
  * Instead, I am creating a single source of truth via this main repository.
@@ -19,10 +17,11 @@ public interface MainRepository {
     void initializeStaticData();
 
     // APPOINTMENTS
-    // This query contains a cross-cutting concern, because the viewByTimeFrame is a view-specific matter, but it needs to be specified in the query.
-    // TODO: REFACTOR
     ObservableList<Appointment> getUpcomingAppointmentsForUser(int userId); // returns all appointments in the future of the current date
-    ObservableList<Appointment> getAppointmentsForUserByTimeFrame(int userId, DashboardController.ViewByTimeFrame viewByTimeFrame);
+    // This query contains a cross-cutting concern, because the viewByTimeFrame is a view-specific matter, but it needs to be specified in the query.
+    // One way this could be mitigated is by having a specific DAO to do this.
+    // If we have too many more of these types of methods it might be a good idea to start using a use-case oriented pattern or a dao pattern.
+    ObservableList<Appointment> getAppointmentsForUserBySortingFilter(int userId, DashboardController.AppointmentsSortingFilter appointmentsSortingFilter);
     ObservableList<Appointment> getAppointmentsForCustomer(int customerId);
     Appointment getAppointment(int appointmentId);
     void addAppointment(Appointment appointment, User currentUser);
