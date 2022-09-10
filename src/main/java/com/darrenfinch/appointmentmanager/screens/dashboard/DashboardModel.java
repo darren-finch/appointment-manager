@@ -7,7 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DashboardModel {
-    private final ObjectProperty<ObservableList<Customer>> customers = new SimpleObjectProperty<>();
+    private final ObjectProperty<ObservableList<CustomerWithLocationData>> customers = new SimpleObjectProperty<>();
     private final ObjectProperty<DashboardController.ViewByTimeFrame> viewBy = new SimpleObjectProperty<>();
     private final ObjectProperty<ObservableList<Appointment>> appointments = new SimpleObjectProperty<>();
 
@@ -17,11 +17,11 @@ public class DashboardModel {
         appointments.set(FXCollections.emptyObservableList());
     }
 
-    public ObservableList<Customer> getCustomers() {
+    public ObservableList<CustomerWithLocationData> getCustomers() {
         return customers.get();
     }
 
-    public ObjectProperty<ObservableList<Customer>> customersProperty() {
+    public ObjectProperty<ObservableList<CustomerWithLocationData>> customersProperty() {
         return customers;
     }
 
@@ -41,7 +41,7 @@ public class DashboardModel {
         return appointments;
     }
 
-    public void setCustomers(ObservableList<Customer> customers) {
+    public void setCustomers(ObservableList<CustomerWithLocationData> customers) {
         this.customers.set(customers);
     }
 

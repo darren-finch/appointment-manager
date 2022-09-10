@@ -2,6 +2,7 @@ package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
 import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
+import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
 import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForContact;
@@ -255,6 +256,33 @@ public class MainRepositoryImpl implements MainRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public ObservableList<CustomerWithLocationData> getAllCustomersWithLocationData() {
+        ObservableList<CustomerWithLocationData> customers = FXCollections.observableList(new ArrayList<>());
+        String query = "SELECT * from customers cu INNER JOIN first_level_divisions f ON cu.Division_ID = f.Division_ID INNER JOIN countries co ON co.Country_ID = f.Country_ID";
+        try (Statement statement = dbConnection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                customers.add(new CustomerWithLocationData(
+                        new Customer(
+                                resultSet.getInt("Customer_ID"),
+                                resultSet.getString("Customer_Name"),
+                                resultSet.getString("Address"),
+                                resultSet.getString("Postal_Code"),
+                                resultSet.getString("Phone"),
+                                resultSet.getInt("Division_ID")
+                        ),
+                        resultSet.getString("Division"),
+                        resultSet.getString("Country")
+                ));
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
     }
 
     @Override

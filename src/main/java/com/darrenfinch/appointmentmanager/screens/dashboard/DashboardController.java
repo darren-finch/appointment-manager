@@ -11,16 +11,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DashboardController implements BaseController {
     private final ScreenNavigator screenNavigator;
@@ -32,13 +29,13 @@ public class DashboardController implements BaseController {
     private final MainRepository mainRepository;
     private final DashboardModel model;
     @FXML
-    private TableView<Customer> customersTableView;
-
-    @FXML
-    private ComboBox<ViewByTimeFrame> viewByComboBox;
-
+    private TableView<CustomerWithLocationData> customersTableView;
     @FXML
     private TableView<Appointment> appointmentsTableView;
+    @FXML
+    private RadioButton viewByWeekRadioButton;
+    @FXML
+    private RadioButton viewByMonthRadioButton;
 
     private GetAllCustomersService getAllCustomersService;
     private GetAppointmentsForUserByTimeFrameService getAppointmentsForUserByTimeFrameService;
@@ -83,9 +80,11 @@ public class DashboardController implements BaseController {
         getAllCustomersService.start();
         getAppointmentsForUserByTimeFrameService.start();
 
-        // Initialize combo box
-        viewByComboBox.setItems(FXCollections.observableList(List.of(ViewByTimeFrame.values())));
-        viewByComboBox.valueProperty().bindBidirectional(model.viewByProperty());
+        // Initialize radio buttons
+        ToggleGroup toggleGroup = new ToggleGroup();
+        viewByWeekRadioButton.setToggleGroup(toggleGroup);
+        viewByMonthRadioButton.setToggleGroup(toggleGroup);
+        toggleGroup.selectToggle(viewByWeekRadioButton); // assuming that we will sort by week on screen load
 
         // Bind viewByProperty of model to re-fetch appointments
         model.viewByProperty().addListener((obs, oldVal, newVal) -> {
@@ -114,28 +113,30 @@ public class DashboardController implements BaseController {
     }
 
     public void deleteCustomer() {
-        Customer selectedCustomer = customersTableView.getSelectionModel().getSelectedItem();
-        if (selectedCustomer != null) {
-            dialogManager.showConfirmationDialog(
-                    "Are you sure you want to delete this customer? All associated appointments will be deleted as well.",
-                    () -> {
-                        DeleteCustomerTask deleteCustomerTask = new DeleteCustomerTask(mainRepository, selectedCustomer.getId());
-                        deleteCustomerTask.setOnSucceeded(workerStateEvent -> {
-                            getAllCustomersService.restart();
-                            getAppointmentsForUserByTimeFrameService.restart();
-                        });
-                        executorService.execute(deleteCustomerTask);
-                    },
-                    null
-            );
-        }
+        CustomerWithLocationData selectedCustomerWithLocationData = customersTableView.getSelectionModel().getSelectedItem();
+        if (selectedCustomerWithLocationData == null)
+            return;
+
+        dialogManager.showConfirmationDialog(
+                "Are you sure you want to delete this customer? All associated appointments will be deleted as well.",
+                () -> {
+                    DeleteCustomerTask deleteCustomerTask = new DeleteCustomerTask(mainRepository, selectedCustomerWithLocationData.getCustomer().getId());
+                    deleteCustomerTask.setOnSucceeded(workerStateEvent -> {
+                        getAllCustomersService.restart();
+                        getAppointmentsForUserByTimeFrameService.restart();
+                    });
+                    executorService.execute(deleteCustomerTask);
+                },
+                null
+        );
     }
 
     public void updateCustomer() {
-        Customer selectedCustomer = customersTableView.getSelectionModel().getSelectedItem();
-        if (selectedCustomer != null) {
-            screenNavigator.switchToEditCustomerScreen(selectedCustomer.getId());
-        }
+        CustomerWithLocationData selectedCustomerWithLocationData = customersTableView.getSelectionModel().getSelectedItem();
+        if (selectedCustomerWithLocationData == null)
+            return;
+
+        screenNavigator.switchToEditCustomerScreen(selectedCustomerWithLocationData.getId());
     }
 
     public void addCustomer() {
@@ -174,6 +175,14 @@ public class DashboardController implements BaseController {
         screenNavigator.switchToReportsScreen();
     }
 
+    public void onViewByWeekSelected() {
+        model.setViewBy(ViewByTimeFrame.WEEK);
+    }
+
+    public void onViewByMonthSelected() {
+        model.setViewBy(ViewByTimeFrame.MONTH);
+    }
+
     public enum ViewByTimeFrame {
         WEEK("Week"),
         MONTH("Month");
@@ -190,7 +199,7 @@ public class DashboardController implements BaseController {
         }
     }
 
-    public static class GetAllCustomersService extends Service<ObservableList<Customer>> {
+    public static class GetAllCustomersService extends Service<ObservableList<CustomerWithLocationData>> {
         private final MainRepository mainRepository;
 
         public GetAllCustomersService(MainRepository mainRepository) {
@@ -198,11 +207,11 @@ public class DashboardController implements BaseController {
         }
 
         @Override
-        protected Task<ObservableList<Customer>> createTask() {
+        protected Task<ObservableList<CustomerWithLocationData>> createTask() {
             return new Task<>() {
                 @Override
-                protected ObservableList<Customer> call() throws Exception {
-                    return mainRepository.getAllCustomers();
+                protected ObservableList<CustomerWithLocationData> call() throws Exception {
+                    return mainRepository.getAllCustomersWithLocationData();
                 }
             };
         }

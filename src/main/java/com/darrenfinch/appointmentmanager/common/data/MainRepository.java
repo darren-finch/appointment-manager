@@ -1,6 +1,7 @@
 package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
+import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
 import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForContact;
@@ -27,6 +28,9 @@ public interface MainRepository {
     void addAppointment(Appointment appointment, User currentUser);
     void updateAppointment(int appointmentId, Appointment newAppointment, User currentUser);
     void removeAppointment(int appointmentId);
+
+    // Customers with location data
+    ObservableList<CustomerWithLocationData> getAllCustomersWithLocationData();
 
     //CUSTOMERS
     ObservableList<Customer> getAllCustomers();
