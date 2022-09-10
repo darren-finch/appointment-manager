@@ -25,7 +25,6 @@ public class DashboardController implements BaseController {
     private final AppointmentAlertService appointmentAlertService;
     private final UserManager userManager;
     private final ExecutorService executorService;
-    private final TimeHelper timeHelper;
     private final MainRepository mainRepository;
     private final DashboardModel model;
     @FXML
@@ -46,7 +45,6 @@ public class DashboardController implements BaseController {
             AppointmentAlertService appointmentAlertService,
             UserManager userManager,
             ExecutorService executorService,
-            TimeHelper timeHelper,
             MainRepository mainRepository,
             DashboardModel model
     ) {
@@ -55,7 +53,6 @@ public class DashboardController implements BaseController {
         this.appointmentAlertService = appointmentAlertService;
         this.userManager = userManager;
         this.executorService = executorService;
-        this.timeHelper = timeHelper;
         this.mainRepository = mainRepository;
         this.model = model;
         this.getAllCustomersService = new GetAllCustomersService(mainRepository);
@@ -152,6 +149,11 @@ public class DashboardController implements BaseController {
                         DeleteAppointmentTask deleteAppointmentTask = new DeleteAppointmentTask(mainRepository, selectedAppointment.getId());
                         deleteAppointmentTask.setOnSucceeded(workerStateEvent -> {
                             getAppointmentsForUserByTimeFrameService.restart();
+                            dialogManager.showAlertDialog(
+                                    "Appointment Deleted"
+                                    + "\nID: " + selectedAppointment.getId()
+                                    + "\nType: " + selectedAppointment.getType()
+                            );
                         });
                         executorService.execute(deleteAppointmentTask);
                     },

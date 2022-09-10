@@ -62,7 +62,7 @@ public class ApplicationConfig {
         );
         ControllerDependencyInjector.addInjectionMethod(
                 DashboardController.class,
-                p -> new DashboardController(getScreenNavigator(), getDialogManager(), getAppointmentAlertService(), getUserManager(), getExecutorService(), getTimeHelper(), getMainRepository(), new DashboardModel())
+                p -> new DashboardController(getScreenNavigator(), getDialogManager(), getAppointmentAlertService(), getUserManager(), getExecutorService(), getMainRepository(), new DashboardModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 EditCustomerController.class,
