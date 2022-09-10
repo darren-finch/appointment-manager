@@ -2,9 +2,15 @@ package com.darrenfinch.appointmentmanager.common.data.entities;
 
 import javafx.beans.property.*;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
+/**
+ * The main class that this application centers around. The company that this app is built for needs some way to track
+ * appointments with their customers so they built this app.
+ *
+ * An Appointment has some meta data, as well as the start/end dates, then the IDs for the customer who we will meet with,
+ * the user that created the appointment, and the contact that will meet the customer.
+ */
 public class Appointment {
     private final IntegerProperty id = new SimpleIntegerProperty();
     private final StringProperty title = new SimpleStringProperty();

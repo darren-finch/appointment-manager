@@ -388,6 +388,7 @@ public class MainRepositoryImpl implements MainRepository {
         return users;
     }
 
+    // TODO: REFACTOR TO PROVIDE PROPER ERROR MSG
     @Override
     public User getUserByUserName(String userName) {
         return users.filtered(user -> user.getName().equals(userName)).get(0);

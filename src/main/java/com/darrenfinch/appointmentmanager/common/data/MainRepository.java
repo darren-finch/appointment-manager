@@ -9,11 +9,10 @@ import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppoin
 import javafx.collections.ObservableList;
 
 /**
- * This is a simple enough application that I did not see the need for separate DAOs for each entity in the database.
- * Instead, I am creating a single source of truth via this main repository.
- * I will break the pattern of "no updating objects in the repository" because that just seems completely arbitrary.
+ *
  */
 public interface MainRepository {
+    // TODO: REMOVE FROM PUBLIC INTERFACE
     void initializeStaticData();
 
     // APPOINTMENTS
