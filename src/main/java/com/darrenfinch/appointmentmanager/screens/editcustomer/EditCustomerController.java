@@ -8,11 +8,13 @@ import com.darrenfinch.appointmentmanager.common.services.DialogManager;
 import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.common.services.UserManager;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
-import com.darrenfinch.appointmentmanager.common.utils.formatters.PhoneNumberFormatterOperator;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 
 import java.util.List;
 import java.util.Optional;
@@ -130,8 +132,6 @@ public class EditCustomerController {
         nameTextField.textProperty().bindBidirectional(model.nameProperty());
 
         phoneNumberTextField.textProperty().bindBidirectional(model.phoneNumberProperty());
-        // TODO: IMPLEMENT FORMATTER
-//        phoneNumberTextField.setTextFormatter(new TextFormatter<>(new PhoneNumberFormatterOperator()));
 
         addressTextField.textProperty().bindBidirectional(model.addressProperty());
 
@@ -156,19 +156,23 @@ public class EditCustomerController {
     }
 
     public void save() {
-        Customer customerFromModel = model.toCustomer();
-        executorService.execute(new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                if (isEditingExistingCustomer) {
-                    mainRepository.updateCustomer(customerId, customerFromModel, userManager.getCurrentUser());
-                } else {
-                    mainRepository.addCustomer(customerFromModel, userManager.getCurrentUser());
+        if (model.isValid()) {
+            Customer customerFromModel = model.toCustomer();
+            executorService.execute(new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    if (isEditingExistingCustomer) {
+                        mainRepository.updateCustomer(customerId, customerFromModel, userManager.getCurrentUser());
+                    } else {
+                        mainRepository.addCustomer(customerFromModel, userManager.getCurrentUser());
+                    }
+                    return null;
                 }
-                return null;
-            }
-        });
-        screenNavigator.switchToDashboardScreen();
+            });
+            screenNavigator.switchToDashboardScreen();
+        } else {
+            model.setError(model.getInvalidReasons().stream().reduce((prev, curr) -> prev + "\n" + curr).get());
+        }
     }
 
     // Got these implementations from https://www.baeldung.com/javafx-listview-display-custom-items

@@ -1,6 +1,5 @@
 package com.darrenfinch.appointmentmanager.screens.editcustomer;
 
-import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.entities.Country;
 import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
 import com.darrenfinch.appointmentmanager.common.data.entities.FirstLevelDivision;
@@ -9,6 +8,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class EditCustomerModel {
     private final StringProperty id = new SimpleStringProperty();
@@ -21,6 +24,8 @@ public class EditCustomerModel {
     private final ObjectProperty<ObservableList<FirstLevelDivision>> allFirstLevelDivisionsForCountry = new SimpleObjectProperty<>();
     private final ObjectProperty<FirstLevelDivision> firstLevelDivision = new SimpleObjectProperty<>();
     private final StringProperty error = new SimpleStringProperty();
+
+    private final List<String> invalidReasons = new ArrayList<>();
 
     public EditCustomerModel() {
         id.set("0");
@@ -168,5 +173,26 @@ public class EditCustomerModel {
                 getPhoneNumber(),
                 getFirstLevelDivision().getId()
         );
+    }
+
+    public boolean isValid() {
+        invalidReasons.clear();
+        return fieldsAreNotEmpty();
+    }
+
+    private boolean fieldsAreNotEmpty() {
+        if (getName().isEmpty()
+                || getPhoneNumber().isEmpty()
+                || getAddress().isEmpty()
+                || getPostalCode().isEmpty()) {
+            invalidReasons.add("Name, Phone Number, Address, and Postal Code cannot be empty.");
+            return false;
+        }
+
+        return true;
+    }
+
+    public List<String> getInvalidReasons() {
+        return invalidReasons;
     }
 }

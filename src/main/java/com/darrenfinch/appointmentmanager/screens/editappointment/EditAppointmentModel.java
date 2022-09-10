@@ -456,9 +456,22 @@ public class EditAppointmentModel {
 
     public boolean isValid(ValidationParameters validationParameters) {
         invalidReasons.clear();
-        return startIsBeforeEnd()
+        return fieldsAreNotEmpty()
+                && startIsBeforeEnd()
                 && notSchedulingOutsideBusinessHours()
                 && notSchedulingOverlappingAppointments(validationParameters.customer, validationParameters.appointmentsForCustomer());
+    }
+
+    private boolean fieldsAreNotEmpty() {
+        if (getTitle().isEmpty()
+        || getDescription().isEmpty()
+        || getLocation().isEmpty()
+        || getType().isEmpty()) {
+            invalidReasons.add("Title, Description, Location, and Type cannot be empty.");
+            return false;
+        }
+
+        return true;
     }
 
     private boolean startIsBeforeEnd() {
