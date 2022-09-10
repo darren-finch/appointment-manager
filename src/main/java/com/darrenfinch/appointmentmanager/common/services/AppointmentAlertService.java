@@ -17,8 +17,6 @@ public class AppointmentAlertService {
     private final DialogManager dialogManager;
     private final MainRepository mainRepository;
 
-    private boolean hasAlertedUser = false;
-
     public AppointmentAlertService(ExecutorService executorService, TimeHelper timeHelper, DialogManager dialogManager, MainRepository mainRepository) {
         this.executorService = executorService;
         this.timeHelper = timeHelper;
@@ -27,9 +25,6 @@ public class AppointmentAlertService {
     }
 
     public void alertUserOfPotentialUpcomingAppointments(int userId) {
-        if (hasAlertedUser)
-            return;
-
         executorService.execute(new Task<>() {
             @Override
             protected Object call() throws Exception {
@@ -61,8 +56,6 @@ public class AppointmentAlertService {
                         dialogManager.showAlertDialog("You have no new upcoming appointments.");
                     });
                 }
-
-                hasAlertedUser = true;
 
                 return null;
             }
