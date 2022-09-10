@@ -154,9 +154,11 @@ public class EditAppointmentModel {
     public List<String> to12HrFormat(LocalTime localTime) {
         int hourIn12HourFormat = localTime.getHour();
         String amOrPm = Constants.amOrPm.get(0);
-        if (localTime.getHour() == 0) {
+        if (localTime.getHour() == 0) { // 12 AM
             hourIn12HourFormat += 12;
-        } else if (localTime.getHour() > 12) {
+        } else if (localTime.getHour() == 12) { // 12 PM
+            amOrPm = Constants.amOrPm.get(1);
+        } else if (localTime.getHour() > 12) { // Over 12 PM up to 11 PM
             hourIn12HourFormat -= 12;
             amOrPm = Constants.amOrPm.get(1);
         }
