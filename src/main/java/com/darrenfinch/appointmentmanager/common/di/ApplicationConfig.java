@@ -15,21 +15,28 @@ import com.darrenfinch.appointmentmanager.screens.reports.ReportsController;
 import com.darrenfinch.appointmentmanager.screens.reports.ReportsModel;
 import javafx.stage.Stage;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ApplicationConfig {
+    private final StringService stringService;
     private final ScreenNavigator screenNavigator;
     private final DialogManager dialogManager;
     private final JDBCManager jdbcManager;
     private final MainRepository mainRepository;
+    private final LoginActivityLogger loginActivityLogger;
     private final UserManager userManager;
     private final ExecutorService executorService;
     private final AppointmentAlertService appointmentAlertService;
     private final TimeHelper timeHelper;
 
     public ApplicationConfig(Stage stage) {
-        this.screenNavigator = new ScreenNavigator(stage);
+        ResourceBundle bundle = ResourceBundle.getBundle("ApplicationManager", Locale.getDefault());
+
+        this.stringService = new StringService(bundle);
+        this.screenNavigator = new ScreenNavigator(stage, bundle);
         this.dialogManager = new DialogManager();
         this.timeHelper = new TimeHelper();
         this.executorService = Executors.newCachedThreadPool();
@@ -40,7 +47,8 @@ public class ApplicationConfig {
         this.mainRepository = new MainRepositoryImpl(jdbcManager.getConnection(), getTimeHelper());
         this.mainRepository.initializeStaticData();
 
-        this.userManager = new UserManager(getMainRepository());
+        this.loginActivityLogger = new LoginActivityLogger();
+        this.userManager = new UserManager(getStringService(), getLoginActivityLogger(), getTimeHelper(), getMainRepository());
 
         this.appointmentAlertService = new AppointmentAlertService(getExecutorService(), getTimeHelper(), getDialogManager(), getMainRepository());
 
@@ -50,7 +58,7 @@ public class ApplicationConfig {
     private void setupControllerFactories() {
         ControllerDependencyInjector.addInjectionMethod(
                 LoginController.class,
-                p -> new LoginController(getScreenNavigator(), getUserManager(), getExecutorService(), getTimeHelper(), new LoginModel())
+                p -> new LoginController(getStringService(), getScreenNavigator(), getUserManager(), getExecutorService(), getTimeHelper(), new LoginModel())
         );
         ControllerDependencyInjector.addInjectionMethod(
                 DashboardController.class,
@@ -70,6 +78,10 @@ public class ApplicationConfig {
         );
     }
 
+    public StringService getStringService() {
+        return stringService;
+    }
+
     public ScreenNavigator getScreenNavigator() {
         return screenNavigator;
     }
@@ -84,6 +96,10 @@ public class ApplicationConfig {
 
     public MainRepository getMainRepository() {
         return mainRepository;
+    }
+
+    public LoginActivityLogger getLoginActivityLogger() {
+        return loginActivityLogger;
     }
 
     public UserManager getUserManager() {

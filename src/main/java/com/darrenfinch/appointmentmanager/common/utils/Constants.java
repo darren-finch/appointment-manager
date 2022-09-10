@@ -1,10 +1,14 @@
 package com.darrenfinch.appointmentmanager.common.utils;
 
+import java.io.File;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Constants {
+    public static final String RESOURCE_BUNDLE_BASE_NAME = "ApplicationManager";
+
     public static final int APPOINTMENT_ALERT_THRESHOLD_MINUTES = 15;
 
     public static final int INVALID_ID = -1;
@@ -36,6 +40,7 @@ public class Constants {
     public static final List<String> amOrPm = List.of("AM", "PM");
 
     public static void main(String[] args) {
-        System.out.println(ZoneId.getAvailableZoneIds());
+        File file = new File(".");
+        System.out.println(file.getAbsolutePath());
     }
 }

@@ -117,11 +117,12 @@ public class DashboardController implements BaseController {
         Customer selectedCustomer = customersTableView.getSelectionModel().getSelectedItem();
         if (selectedCustomer != null) {
             dialogManager.showConfirmationDialog(
-                    "Are you sure you want to delete this customer?",
+                    "Are you sure you want to delete this customer? All associated appointments will be deleted as well.",
                     () -> {
                         DeleteCustomerTask deleteCustomerTask = new DeleteCustomerTask(mainRepository, selectedCustomer.getId());
                         deleteCustomerTask.setOnSucceeded(workerStateEvent -> {
                             getAllCustomersService.restart();
+                            getAppointmentsForUserByTimeFrameService.restart();
                         });
                         executorService.execute(deleteCustomerTask);
                     },

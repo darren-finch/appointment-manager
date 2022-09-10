@@ -2,6 +2,7 @@ package com.darrenfinch.appointmentmanager.screens.login;
 
 import com.darrenfinch.appointmentmanager.common.BaseController;
 import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
+import com.darrenfinch.appointmentmanager.common.services.StringService;
 import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import com.darrenfinch.appointmentmanager.common.services.UserManager;
 import javafx.application.Platform;
@@ -11,9 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import java.time.ZoneId;
-import java.time.format.TextStyle;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 
 public class LoginController implements BaseController {
@@ -26,13 +24,22 @@ public class LoginController implements BaseController {
     @FXML
     private Label errorLabel;
 
+    private final StringService stringService;
     private final ScreenNavigator screenNavigator;
     private final UserManager userManager;
     private final ExecutorService executorService;
     private final TimeHelper timeHelper;
     private final LoginModel model;
 
-    public LoginController(ScreenNavigator screenNavigator, UserManager userManager, ExecutorService executorService, TimeHelper timeHelper, LoginModel model) {
+    public LoginController(
+            StringService stringService,
+            ScreenNavigator screenNavigator,
+            UserManager userManager,
+            ExecutorService executorService,
+            TimeHelper timeHelper,
+            LoginModel model
+    ) {
+        this.stringService = stringService;
         this.screenNavigator = screenNavigator;
         this.userManager = userManager;
         this.executorService = executorService;
@@ -47,7 +54,7 @@ public class LoginController implements BaseController {
         passwordPasswordField.textProperty().bindBidirectional(model.passwordProperty());
         errorLabel.textProperty().bind(model.errorProperty());
 
-        model.setLocation("You are in the " + timeHelper.defaultZone().getId() + " time zone.");
+        model.setLocation(String.format(stringService.getString("location_display"), timeHelper.defaultZone().getId()));
     }
 
     @FXML

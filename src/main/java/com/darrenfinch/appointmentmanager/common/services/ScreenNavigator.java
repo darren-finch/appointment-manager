@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.Stack;
 
 public class ScreenNavigator {
@@ -20,8 +21,10 @@ public class ScreenNavigator {
 
     private final Stack<String> screenStack = new Stack<>();
 
-    public ScreenNavigator(Stage stage) {
+    public ScreenNavigator(Stage stage, ResourceBundle bundle) {
         this.stage = stage;
+
+        ControllerDependencyInjector.setBundle(bundle);
     }
 
     public void switchToLoginScreen() {
@@ -69,7 +72,7 @@ public class ScreenNavigator {
         }
 
         // If we reach here the screen navigation was successful.
-        // Push new screen to stack unless it's the same one that's on the stack or we are going back.
+        // Push new screen to stack unless it's the same one that's on the stack, or we are going back.
         if (screenStack.isEmpty()) {
             screenStack.push(screenResourceName);
         }

@@ -353,8 +353,16 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public void removeCustomer(int customerId) {
-        String query = "DELETE FROM customers WHERE Customer_ID = ?";
+        String query = "DELETE FROM appointments WHERE Customer_ID = ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, customerId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String query1 = "DELETE FROM customers WHERE Customer_ID = ?";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query1)) {
             statement.setInt(1, customerId);
             statement.executeUpdate();
         } catch (SQLException e) {
