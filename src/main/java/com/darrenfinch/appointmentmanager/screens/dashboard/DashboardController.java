@@ -32,8 +32,8 @@ public class DashboardController implements BaseController {
     @FXML
     private RadioButton viewByMonthRadioButton;
 
-    private GetAllCustomersService getAllCustomersService;
-    private GetAppointmentsForUserByTimeFrameService getAppointmentsForUserByTimeFrameService;
+    private final GetAllCustomersService getAllCustomersService;
+    private final GetAppointmentsForUserByTimeFrameService getAppointmentsForUserByTimeFrameService;
 
     public DashboardController(
             ScreenNavigator screenNavigator,
@@ -57,14 +57,13 @@ public class DashboardController implements BaseController {
 
     @FXML
     public void initialize() {
+        appointmentAlertService.alertUserOfPotentialUpcomingAppointments(userManager.getCurrentUser().getId());
+
         // Initialize services
         getAllCustomersService.setExecutor(executorService);
         getAppointmentsForUserByTimeFrameService.setExecutor(executorService);
         getAppointmentsForUserByTimeFrameService.setUserId(userManager.getCurrentUser().getId());
         getAppointmentsForUserByTimeFrameService.setAppointmentsSortingFilter(AppointmentsSortingFilter.WEEK);
-        getAppointmentsForUserByTimeFrameService.setOnSucceeded(workerStateEvent -> {
-            appointmentAlertService.alertUserOfPotentialUpcomingAppointments(userManager.getCurrentUser().getId());
-        });
 
         // Fill model
         model.customersProperty().bind(getAllCustomersService.valueProperty());
