@@ -43,14 +43,6 @@
             <artifactId>appointmentmanager</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-<!--        TODO: CITE THIS, GOT IT FROM https://stackoverflow.com/questions/51823522/cant-import-classes-from-jar-->
-<!--        <dependency>-->
-<!--            <groupId>mysql</groupId>-->
-<!--            <artifactId>protocol</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${basedir}/lib/simulator-1.2.2.jar</systemPath>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>

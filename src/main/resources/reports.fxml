@@ -6,20 +6,21 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<Pane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.darrenfinch.appointmentmanager.screens.reports.ReportsController">
+<Pane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.darrenfinch.appointmentmanager.screens.reports.ReportsController">
    <children>
-      <ToolBar maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="600.0">
+      <ToolBar maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="1000.0">
          <items>
             <HBox spacing="10.0">
                <children>
-                  <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" text="Back" onAction="#back" />
+                  <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#back" text="Back" />
                   <Label maxHeight="1.7976931348623157E308" text="Reports">
                      <font>
                         <Font size="18.0" />
@@ -29,22 +30,26 @@
             </HBox>
          </items>
       </ToolBar>
-      <ScrollPane fitToWidth="true" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minViewportHeight="560.0" minViewportWidth="600.0" minWidth="-Infinity" pannable="true" prefHeight="560.0" prefWidth="600.0">
+      <ScrollPane fitToWidth="true" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minViewportHeight="560.0" minViewportWidth="1000.0" minWidth="-Infinity" pannable="true" prefHeight="560.0" prefWidth="1000.0">
          <content>
             <VBox spacing="20.0">
                <children>
                   <VBox spacing="10.0">
                      <children>
-                        <Label text="# Of Customer Appointments" />
-                        <TableView fx:id="numberOfCustomerAppointmentsTableView" prefHeight="200.0" prefWidth="200.0">
+                        <HBox spacing="20.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" text="Number Of Customer Appointments" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="numberOfCustomerAppointmentsTableView">
                           <columns>
-                             <TableColumn text="Number Of Appointments">
+                             <TableColumn prefWidth="167.0" text="Number Of Appointments">
                                 <cellValueFactory><PropertyValueFactory property="numberOfAppointments" /></cellValueFactory>
                              </TableColumn>
-                             <TableColumn text="Type">
+                             <TableColumn minWidth="0.0" prefWidth="136.0" text="Type">
                                 <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
                              </TableColumn>
-                             <TableColumn text="Month">
+                             <TableColumn prefWidth="124.0" text="Month">
                                 <cellValueFactory><PropertyValueFactory property="month" /></cellValueFactory>
                              </TableColumn>
                           </columns>
@@ -53,34 +58,38 @@
                   </VBox>
                   <VBox spacing="10.0">
                      <children>
-                        <Label text="Contact Schedules" />
-                        <TableView fx:id="contactSchedulesTableView" prefHeight="200.0" prefWidth="200.0">
+                        <HBox spacing="20.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" text="Contact Schedules" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="contactSchedulesTableView">
                            <columns>
-                              <TableColumn text="Contact Name">
+                              <TableColumn prefWidth="115.0" text="Contact Name">
                                  <cellValueFactory><PropertyValueFactory property="contactName" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Contact Email">
+                              <TableColumn prefWidth="100.0" text="Contact Email">
                                  <cellValueFactory><PropertyValueFactory property="contactEmail" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Appointment ID">
+                              <TableColumn prefWidth="95.0" text="Appointment ID">
                                  <cellValueFactory><PropertyValueFactory property="appointmentId" /></cellValueFactory>
                               </TableColumn>
                               <TableColumn text="Title">
                                  <cellValueFactory><PropertyValueFactory property="title" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Type">
+                              <TableColumn prefWidth="63.0" text="Type">
                                  <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Description">
+                              <TableColumn prefWidth="92.0" text="Description">
                                  <cellValueFactory><PropertyValueFactory property="description" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Start Date/Time">
+                              <TableColumn prefWidth="123.0" text="Start Date/Time">
                                  <cellValueFactory><PropertyValueFactory property="startDateTime" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="End Date/Time">
+                              <TableColumn prefWidth="115.0" text="End Date/Time">
                                  <cellValueFactory><PropertyValueFactory property="endDateTime" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Customer ID">
+                              <TableColumn prefWidth="86.0" text="Customer ID">
                                  <cellValueFactory><PropertyValueFactory property="customerId" /></cellValueFactory>
                               </TableColumn>
                            </columns>
@@ -89,16 +98,23 @@
                   </VBox>
                   <VBox spacing="10.0">
                      <children>
-                        <Label text="# Of Appointments For Each Contact" />
-                        <TableView fx:id="numberOfCustomerAppointmentsForContactTableView" prefHeight="200.0" prefWidth="200.0">
+                        <HBox spacing="20.0">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" text="Number Of Appointments For Each Contact" />
+                              <HBox HBox.hgrow="ALWAYS" />
+                              <HBox spacing="10.0" />
+                              <HBox spacing="10.0" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="numberOfCustomerAppointmentsForContactTableView">
                            <columns>
-                              <TableColumn text="Number Of Appointments">
+                              <TableColumn prefWidth="150.0" text="Number Of Appointments">
                                  <cellValueFactory><PropertyValueFactory property="numberOfAppointments" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Contact Name">
+                              <TableColumn prefWidth="127.0" text="Contact Name">
                                  <cellValueFactory><PropertyValueFactory property="contactName" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Email">
+                              <TableColumn prefWidth="145.0" text="Email">
                                  <cellValueFactory><PropertyValueFactory property="email" /></cellValueFactory>
                               </TableColumn>
                            </columns>
