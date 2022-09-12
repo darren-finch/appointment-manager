@@ -45,19 +45,19 @@
                               <TableColumn text="Customer ID">
                                   <cellValueFactory><PropertyValueFactory property="id" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Customer Name">
+                              <TableColumn prefWidth="130.0" text="Customer Name">
                                   <cellValueFactory><PropertyValueFactory property="name" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Address">
+                              <TableColumn prefWidth="96.0" text="Address">
                                   <cellValueFactory><PropertyValueFactory property="fullAddress" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Postal Code">
+                              <TableColumn prefWidth="94.0" text="Postal Code">
                                   <cellValueFactory><PropertyValueFactory property="postalCode" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Phone Number">
+                              <TableColumn prefWidth="124.0" text="Phone Number">
                                   <cellValueFactory><PropertyValueFactory property="phoneNumber" /></cellValueFactory>
                               </TableColumn>
-                              <TableColumn text="Division ID">
+                              <TableColumn prefWidth="77.0" text="Division ID">
                                   <cellValueFactory><PropertyValueFactory property="divisionId" /></cellValueFactory>
                               </TableColumn>
                           </columns>
@@ -93,34 +93,34 @@
                         </HBox>
                         <TableView fx:id="appointmentsTableView" prefHeight="450.0" prefWidth="560.0">
                            <columns>
-                               <TableColumn text="Appointment ID">
+                               <TableColumn prefWidth="113.0" text="Appointment ID">
                                    <cellValueFactory><PropertyValueFactory property="id" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn text="Title">
+                               <TableColumn prefWidth="99.0" text="Title">
                                    <cellValueFactory><PropertyValueFactory property="title" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn text="Description">
+                               <TableColumn prefWidth="104.0" text="Description">
                                    <cellValueFactory><PropertyValueFactory property="description" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn text="Location">
+                               <TableColumn prefWidth="78.0" text="Location">
                                    <cellValueFactory><PropertyValueFactory property="location" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn text="Type">
+                               <TableColumn prefWidth="67.0" text="Type">
                                    <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn text="Start">
+                               <TableColumn prefWidth="148.0" text="Start">
                                    <cellValueFactory><PropertyValueFactory property="startDateTime" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn text="End">
+                               <TableColumn prefWidth="147.0" text="End">
                                    <cellValueFactory><PropertyValueFactory property="endDateTime" /></cellValueFactory>
                                </TableColumn>
                                <TableColumn text="Customer ID">
                                    <cellValueFactory><PropertyValueFactory property="customerId" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn text="User ID">
+                               <TableColumn prefWidth="53.0" text="User ID">
                                    <cellValueFactory><PropertyValueFactory property="userId" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn text="Contact ID">
+                               <TableColumn prefWidth="70.0" text="Contact ID">
                                    <cellValueFactory><PropertyValueFactory property="contactId" /></cellValueFactory>
                                </TableColumn>
                            </columns>
