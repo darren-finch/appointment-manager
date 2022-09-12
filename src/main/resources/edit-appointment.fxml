@@ -59,7 +59,7 @@
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Type" />
-                        <TextField fx:id="typeTextField" promptText="Enter appointment type..." />
+                        <ComboBox fx:id="typeComboBox" maxWidth="1.7976931348623157E308" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0" HBox.hgrow="ALWAYS">

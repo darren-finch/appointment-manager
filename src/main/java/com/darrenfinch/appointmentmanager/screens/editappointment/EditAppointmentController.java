@@ -28,7 +28,7 @@ public class EditAppointmentController {
     @FXML
     private TextField locationTextField;
     @FXML
-    private TextField typeTextField;
+    private ComboBox<String> typeComboBox;
     @FXML
     private DatePicker datePicker;
     @FXML
@@ -79,7 +79,11 @@ public class EditAppointmentController {
                 model.setSelectedContact(contacts.get(0));
 
                 if (appointment != null) {
-                    model.initializeWithAppointment(appointment);
+                    try {
+                        model.initializeWithAppointment(appointment);
+                    } catch (InvalidAppointmentTypeException e) {
+                        model.setError(e.getMessage());
+                    }
                 }
             });
 
@@ -125,7 +129,8 @@ public class EditAppointmentController {
 
         locationTextField.textProperty().bindBidirectional(model.locationProperty());
 
-        typeTextField.textProperty().bindBidirectional(model.typeProperty());
+        typeComboBox.setItems(Appointment.TYPES);
+        typeComboBox.valueProperty().bindBidirectional(model.typeProperty());
 
         datePicker.valueProperty().bindBidirectional(model.dateProperty());
 

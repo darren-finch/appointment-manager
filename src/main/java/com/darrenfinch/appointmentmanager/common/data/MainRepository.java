@@ -51,7 +51,8 @@ public interface MainRepository {
     ObservableList<Contact> getAllContacts();
 
     // Reports
-    ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth();
+    ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth(String type, String month);
+//    ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth();
     ObservableList<ContactSchedule> getContactSchedules();
     ObservableList<NumberOfCustomerAppointmentsForContact> getNumberOfAppointmentsByContact();
 }

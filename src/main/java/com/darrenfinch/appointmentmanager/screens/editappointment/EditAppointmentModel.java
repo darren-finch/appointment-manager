@@ -59,7 +59,7 @@ public class EditAppointmentModel {
         title.set("");
         description.set("");
         location.set("");
-        type.set("");
+        type.set(Appointment.TYPES.get(0));
         date.set(timeHelper.systemTimeNow().toLocalDate());
         date.addListener((obs, oldVal, newVal) -> {
             refreshStartDateTime();
@@ -427,18 +427,23 @@ public class EditAppointmentModel {
         this.error.set(error);
     }
 
-    public void initializeWithAppointment(Appointment appointment) {
+    public void initializeWithAppointment(Appointment appointment) throws InvalidAppointmentTypeException {
         idProperty().set(String.valueOf(appointment.getId()));
         titleProperty().set(appointment.getTitle());
         descriptionProperty().set(appointment.getDescription());
         locationProperty().set(appointment.getLocation());
-        typeProperty().set(appointment.getType());
         dateProperty().set(appointment.getStartDateTime().toLocalDate());
         setStartTime(appointment.getStartDateTime().toLocalTime());
         setEndTime(appointment.getEndDateTime().toLocalTime());
         selectedCustomerProperty().set(getAllCustomers().filtered(customer -> customer.getId() == appointment.getCustomerId()).get(0));
         selectedUserProperty().set(getAllUsers().filtered(user -> user.getId() == appointment.getUserId()).get(0));
         selectedContactProperty().set(getAllContacts().filtered(contact -> contact.getId() == appointment.getContactId()).get(0));
+
+        // This must come last in order to ensure all the other properties are set.
+        if (Appointment.TYPES.contains(appointment.getType()))
+            typeProperty().set(appointment.getType());
+        else
+            throw new InvalidAppointmentTypeException(appointment.getId());
     }
 
     public Appointment toAppointment() {

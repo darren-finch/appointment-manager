@@ -1,17 +1,32 @@
 package com.darrenfinch.appointmentmanager.common.data.entities;
 
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * The main class that this application centers around. The company that this app is built for needs some way to track
  * appointments with their customers so they built this app.
- *
+ * <p>
  * An Appointment has some meta data, as well as the start/end dates, then the IDs for the customer who we will meet with,
  * the user that created the appointment, and the contact that will meet the customer.
  */
 public class Appointment {
+
+    public static final ObservableList<String> TYPES = FXCollections.observableList(List.of(
+            "Planning Session",
+            "Briefing",
+            "De-Briefing",
+            "Executive",
+            "Brainstorming",
+            "Report",
+            "Review",
+            "Miscellaneous"
+    ));
+
     private final IntegerProperty id = new SimpleIntegerProperty();
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty description = new SimpleStringProperty();
