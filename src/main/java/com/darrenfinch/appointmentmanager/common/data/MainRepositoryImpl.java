@@ -2,6 +2,7 @@ package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
 import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
+import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerHasAppointmentsException;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
@@ -382,14 +383,10 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
-    public void removeCustomer(int customerId) {
-        String query = "DELETE FROM appointments WHERE Customer_ID = ?";
-        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
-            statement.setInt(1, customerId);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void removeCustomer(int customerId) throws CustomerHasAppointmentsException {
+        ObservableList<Appointment> appointmentsForCustomer = getAppointmentsForCustomer(customerId);
+        if (!appointmentsForCustomer.isEmpty())
+            throw new CustomerHasAppointmentsException(customerId);
 
         String query1 = "DELETE FROM customers WHERE Customer_ID = ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query1)) {

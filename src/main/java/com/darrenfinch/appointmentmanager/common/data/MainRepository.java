@@ -1,6 +1,7 @@
 package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
+import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerHasAppointmentsException;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
@@ -36,7 +37,7 @@ public interface MainRepository {
     Customer getCustomer(int customerId);
     void addCustomer(Customer customer, User currentUser);
     void updateCustomer(int customerId, Customer newCustomer, User currentUser);
-    void removeCustomer(int customerId);
+    void removeCustomer(int customerId) throws CustomerHasAppointmentsException;
 
     //User
     ObservableList<User> getAllUsers();

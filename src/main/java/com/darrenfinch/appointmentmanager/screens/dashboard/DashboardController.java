@@ -110,12 +110,19 @@ public class DashboardController implements BaseController {
             return;
 
         dialogManager.showConfirmationDialog(
-                "Are you sure you want to delete this customer? All associated appointments will be deleted as well.",
+                "Are you sure you want to delete this customer?",
                 () -> {
                     DeleteCustomerTask deleteCustomerTask = new DeleteCustomerTask(mainRepository, selectedCustomerWithLocationData.getCustomer().getId());
                     deleteCustomerTask.setOnSucceeded(workerStateEvent -> {
+                        dialogManager.showAlertDialog("Customer with ID " + selectedCustomerWithLocationData.getCustomer().getId() + " was deleted successfully.");
+
                         getAllCustomersService.restart();
                         getAppointmentsForUserBySortingFilterService.restart();
+                        workerStateEvent.consume();
+                    });
+                    deleteCustomerTask.setOnFailed(workerStateEvent -> {
+                        dialogManager.showAlertDialog(workerStateEvent.getSource().getException().getMessage());
+                        workerStateEvent.consume();
                     });
                     executorService.execute(deleteCustomerTask);
                 },
@@ -145,10 +152,11 @@ public class DashboardController implements BaseController {
                         deleteAppointmentTask.setOnSucceeded(workerStateEvent -> {
                             getAppointmentsForUserBySortingFilterService.restart();
                             dialogManager.showAlertDialog(
-                                    "Appointment Deleted"
+                                    "Appointment was deleted successfully."
                                     + "\nID: " + selectedAppointment.getId()
                                     + "\nType: " + selectedAppointment.getType()
                             );
+                            workerStateEvent.consume();
                         });
                         executorService.execute(deleteAppointmentTask);
                     },
