@@ -172,6 +172,11 @@ public class DashboardController implements BaseController {
         screenNavigator.switchToReportsScreen();
     }
 
+    public void logout() {
+        userManager.logout();
+        screenNavigator.switchToLoginScreen();
+    }
+
     public void onViewByWeekSelected() {
         model.setViewBy(AppointmentsSortingFilter.WEEK);
     }

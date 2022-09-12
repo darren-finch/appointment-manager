@@ -20,7 +20,7 @@
    <children>
       <ToolBar prefHeight="40.0" prefWidth="1000.0">
          <items>
-            <HBox maxWidth="1.7976931348623157E308" prefWidth="987.0">
+            <HBox maxWidth="1.7976931348623157E308" prefWidth="987.0" spacing="10.0">
                <children>
                   <Label maxHeight="1.7976931348623157E308" text="Dashboard">
                      <font>
@@ -28,7 +28,8 @@
                      </font>
                   </Label>
                   <Separator opacity="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="reportsButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToReportsScreen" text="Reports" />
+                  <Button fx:id="reportsButton1" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToReportsScreen" text="Reports" />
+                  <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout" text="Logout" />
                </children>
             </HBox>
          </items>
