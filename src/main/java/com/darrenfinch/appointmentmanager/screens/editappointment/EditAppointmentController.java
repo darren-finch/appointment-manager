@@ -136,14 +136,14 @@ public class EditAppointmentController {
 
         startTimeHourComboBox.setItems(FXCollections.observableList(Constants.getHours()));
         startTimeMinuteComboBox.setItems(FXCollections.observableList(Constants.getMinutes()));
-        startTimeAmOrPmComboBox.setItems(FXCollections.observableList(Constants.amOrPm));
+        startTimeAmOrPmComboBox.setItems(FXCollections.observableList(Constants.AM_OR_PM));
         startTimeHourComboBox.valueProperty().bindBidirectional(model.selectedStartTimeHourProperty());
         startTimeMinuteComboBox.valueProperty().bindBidirectional(model.selectedStartTimeMinuteProperty());
         startTimeAmOrPmComboBox.valueProperty().bindBidirectional(model.selectedStartTimeAmOrPmProperty());
 
         endTimeHourComboBox.setItems(FXCollections.observableList(Constants.getHours()));
         endTimeMinuteComboBox.setItems(FXCollections.observableList(Constants.getMinutes()));
-        endTimeAmOrPmComboBox.setItems(FXCollections.observableList(Constants.amOrPm));
+        endTimeAmOrPmComboBox.setItems(FXCollections.observableList(Constants.AM_OR_PM));
         endTimeHourComboBox.valueProperty().bindBidirectional(model.selectedEndTimeHourProperty());
         endTimeMinuteComboBox.valueProperty().bindBidirectional(model.selectedEndTimeMinuteProperty());
         endTimeAmOrPmComboBox.valueProperty().bindBidirectional(model.selectedEndTimeAmOrPmProperty());
@@ -213,16 +213,14 @@ public class EditAppointmentController {
         executorService.execute(validateModelDataTask);
     }
 
-    // Got these implementations from https://www.baeldung.com/javafx-listview-display-custom-items
     private static class CustomerListCell extends ListCell<Customer> {
         @Override
         protected void updateItem(Customer customer, boolean empty) {
             super.updateItem(customer, empty);
-            if (empty || customer == null) {
-                setText(null);
-            } else {
+            if (!empty && customer != null)
                 setText(customer.getName());
-            }
+            else
+                setText("");
         }
     }
 
@@ -230,11 +228,10 @@ public class EditAppointmentController {
         @Override
         protected void updateItem(User user, boolean empty) {
             super.updateItem(user, empty);
-            if (empty || user == null) {
-                setText(null);
-            } else {
+            if (!empty && user != null)
                 setText(user.getName());
-            }
+            else
+                setText("");
         }
     }
 
@@ -242,11 +239,10 @@ public class EditAppointmentController {
         @Override
         protected void updateItem(Contact contact, boolean empty) {
             super.updateItem(contact, empty);
-            if (empty || contact == null) {
-                setText(null);
-            } else {
+            if (!empty && contact != null)
                 setText(contact.getName());
-            }
+            else
+                setText("");
         }
     }
 }

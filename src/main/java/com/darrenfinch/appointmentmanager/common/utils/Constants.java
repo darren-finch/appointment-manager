@@ -4,7 +4,6 @@ import java.io.File;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class Constants {
     public static final String RESOURCE_BUNDLE_BASE_NAME = "ApplicationManager";
@@ -20,6 +19,21 @@ public class Constants {
     public static final String STANDARD_TIME_FORMAT = "hh:mm a";
 
     public static final String STANDARD_DATE_TIME_FORMAT = STANDARD_DATE_FORMAT + " " + STANDARD_TIME_FORMAT;
+
+    public static final List<String> MONTHS = List.of(
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+    );
 
     public static List<String> getHours() {
         ArrayList<String> hours = new ArrayList<>(12);
@@ -37,7 +51,7 @@ public class Constants {
         return minutes;
     }
 
-    public static final List<String> amOrPm = List.of("AM", "PM");
+    public static final List<String> AM_OR_PM = List.of("AM", "PM");
 
     public static void main(String[] args) {
         File file = new File(".");

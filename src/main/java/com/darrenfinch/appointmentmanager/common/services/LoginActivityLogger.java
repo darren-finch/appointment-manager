@@ -10,9 +10,7 @@ public class LoginActivityLogger {
         try (FileWriter writer = new FileWriter("login_activity.txt", true);) {
             writer.append("Attempted ")
                     .append(loginSuccessful ? "successful" : "unsuccessful")
-                    .append(" login for username ")
-                    .append(userName)
-                    .append(" at ")
+                    .append(" login at ")
                     .append(timeStamp.format(DateTimeFormatter.ISO_DATE_TIME))
                     .append("\n");
         } catch (IOException e) {

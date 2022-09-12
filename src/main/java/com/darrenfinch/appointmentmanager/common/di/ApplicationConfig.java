@@ -13,9 +13,14 @@ import com.darrenfinch.appointmentmanager.screens.login.LoginController;
 import com.darrenfinch.appointmentmanager.screens.login.LoginModel;
 import com.darrenfinch.appointmentmanager.screens.reports.ReportsController;
 import com.darrenfinch.appointmentmanager.screens.reports.ReportsModel;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,26 +61,29 @@ public class ApplicationConfig {
     }
 
     private void setupControllerFactories() {
-        ControllerDependencyInjector.addInjectionMethod(
+        HashMap<Class<?>, Callback<Class<?>, Object>> controllerBuilderMethods = new HashMap<>();
+        controllerBuilderMethods.put(
                 LoginController.class,
                 p -> new LoginController(getStringService(), getScreenNavigator(), getUserManager(), getExecutorService(), getTimeHelper(), new LoginModel())
         );
-        ControllerDependencyInjector.addInjectionMethod(
+        controllerBuilderMethods.put(
                 DashboardController.class,
                 p -> new DashboardController(getScreenNavigator(), getDialogManager(), getAppointmentAlertService(), getUserManager(), getExecutorService(), getMainRepository(), new DashboardModel())
         );
-        ControllerDependencyInjector.addInjectionMethod(
+        controllerBuilderMethods.put(
                 EditCustomerController.class,
                 p -> new EditCustomerController(getScreenNavigator(), getDialogManager(), getUserManager(), getMainRepository(), getExecutorService(), new EditCustomerModel())
         );
-        ControllerDependencyInjector.addInjectionMethod(
+        controllerBuilderMethods.put(
                 EditAppointmentController.class,
                 p -> new EditAppointmentController(getScreenNavigator(), getDialogManager(), getUserManager(), getMainRepository(), getExecutorService(), new EditAppointmentModel(getTimeHelper()))
         );
-        ControllerDependencyInjector.addInjectionMethod(
+        controllerBuilderMethods.put(
                 ReportsController.class,
                 p -> new ReportsController(getScreenNavigator(), getExecutorService(), getMainRepository(), new ReportsModel())
         );
+
+        ScreenNavigator.setControllerBuilderMethods(controllerBuilderMethods);
     }
 
     public StringService getStringService() {

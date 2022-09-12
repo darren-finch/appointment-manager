@@ -175,27 +175,24 @@ public class EditCustomerController {
         }
     }
 
-    // Got these implementations from https://www.baeldung.com/javafx-listview-display-custom-items
     private static class CountryListCell extends ListCell<Country> {
         @Override
         protected void updateItem(Country country, boolean empty) {
             super.updateItem(country, empty);
-            if (empty || country == null) {
-                setText(null);
-            } else {
+            if (!isEmpty() && country != null)
                 setText(country.getName());
-            }
+            else
+                setText("");
         }
     }
     private static class FirstLevelDivisionListCell extends ListCell<FirstLevelDivision> {
         @Override
         protected void updateItem(FirstLevelDivision firstLevelDivision, boolean empty) {
             super.updateItem(firstLevelDivision, empty);
-            if (empty || firstLevelDivision == null) {
-                setText(null);
-            } else {
+            if (!isEmpty() && firstLevelDivision != null)
                 setText(firstLevelDivision.getName());
-            }
+            else
+                setText("");
         }
     }
 }

@@ -15,8 +15,6 @@ import javafx.collections.ObservableList;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.zone.ZoneRules;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -73,7 +71,7 @@ public class EditAppointmentModel {
         selectedStartTimeMinute.set(Constants.getMinutes().get(0));
         selectedStartTimeMinute.addListener(selectedStartTimeChangeListener);
 
-        selectedStartTimeAmOrPm.set(Constants.amOrPm.get(0));
+        selectedStartTimeAmOrPm.set(Constants.AM_OR_PM.get(0));
         selectedStartTimeAmOrPm.addListener(selectedStartTimeChangeListener);
 
         refreshStartDateTime();
@@ -85,7 +83,7 @@ public class EditAppointmentModel {
         selectedEndTimeMinute.set(Constants.getMinutes().get(0));
         selectedEndTimeMinute.addListener(selectedEndTimeChangeListener);
 
-        selectedEndTimeAmOrPm.set(Constants.amOrPm.get(0));
+        selectedEndTimeAmOrPm.set(Constants.AM_OR_PM.get(0));
         selectedEndTimeAmOrPm.addListener(selectedEndTimeChangeListener);
 
         refreshEndDateTime();
@@ -103,7 +101,7 @@ public class EditAppointmentModel {
                                 from12HrFormat(
                                         Integer.parseInt(getSelectedStartTimeHour()),
                                         Integer.parseInt(getSelectedStartTimeMinute()),
-                                        getSelectedStartTimeAmOrPm().equals(Constants.amOrPm.get(0))
+                                        getSelectedStartTimeAmOrPm().equals(Constants.AM_OR_PM.get(0))
                                 )
                         ),
                         timeHelper.defaultZone()
@@ -118,7 +116,7 @@ public class EditAppointmentModel {
                                 from12HrFormat(
                                         Integer.parseInt(getSelectedEndTimeHour()),
                                         Integer.parseInt(getSelectedEndTimeMinute()),
-                                        getSelectedEndTimeAmOrPm().equals(Constants.amOrPm.get(0))
+                                        getSelectedEndTimeAmOrPm().equals(Constants.AM_OR_PM.get(0))
                                 )
                         ),
                         timeHelper.defaultZone()
@@ -153,14 +151,14 @@ public class EditAppointmentModel {
 
     public List<String> to12HrFormat(LocalTime localTime) {
         int hourIn12HourFormat = localTime.getHour();
-        String amOrPm = Constants.amOrPm.get(0);
+        String amOrPm = Constants.AM_OR_PM.get(0);
         if (localTime.getHour() == 0) { // 12 AM
             hourIn12HourFormat += 12;
         } else if (localTime.getHour() == 12) { // 12 PM
-            amOrPm = Constants.amOrPm.get(1);
+            amOrPm = Constants.AM_OR_PM.get(1);
         } else if (localTime.getHour() > 12) { // Over 12 PM up to 11 PM
             hourIn12HourFormat -= 12;
-            amOrPm = Constants.amOrPm.get(1);
+            amOrPm = Constants.AM_OR_PM.get(1);
         }
 
         return List.of(

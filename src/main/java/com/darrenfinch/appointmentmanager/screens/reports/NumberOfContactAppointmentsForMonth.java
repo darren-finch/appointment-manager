@@ -5,12 +5,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class NumberOfCustomerAppointmentsForContact {
+public class NumberOfContactAppointmentsForMonth {
     private final StringProperty contactName = new SimpleStringProperty();
     private final StringProperty email = new SimpleStringProperty();
     private final IntegerProperty numberOfAppointments = new SimpleIntegerProperty();
 
-    public NumberOfCustomerAppointmentsForContact(String contactName, String email, int numberOfAppointments) {
+    public NumberOfContactAppointmentsForMonth(String contactName, String email, int numberOfAppointments) {
         this.contactName.set(contactName);
         this.email.set(email);
         this.numberOfAppointments.set(numberOfAppointments);

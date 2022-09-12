@@ -30,7 +30,7 @@
             </HBox>
          </items>
       </ToolBar>
-      <ScrollPane fitToWidth="true" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minViewportHeight="560.0" minViewportWidth="1000.0" minWidth="-Infinity" pannable="true" prefHeight="560.0" prefWidth="1000.0">
+      <ScrollPane fitToWidth="true" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minViewportHeight="560.0" minViewportWidth="1000.0" minWidth="-Infinity" pannable="true" prefHeight="560.0" prefWidth="1000.0" vvalue="1.0">
          <content>
             <VBox spacing="20.0">
                <children>
@@ -49,7 +49,7 @@
                               <HBox spacing="10.0">
                                  <children>
                                     <Label maxHeight="1.7976931348623157E308" text="Month" />
-                                    <ComboBox fx:id="appointmentMonthFilterComboBox" prefWidth="150.0" />
+                                    <ComboBox fx:id="appointmentMonthFilterComboBox1" prefWidth="150.0" />
                                  </children>
                               </HBox>
                            </children>
@@ -116,7 +116,12 @@
                               <Label maxHeight="1.7976931348623157E308" text="Number Of Appointments For Each Contact" />
                               <HBox HBox.hgrow="ALWAYS" />
                               <HBox spacing="10.0" />
-                              <HBox spacing="10.0" />
+                              <HBox spacing="10.0">
+                                 <children>
+                                    <Label maxHeight="1.7976931348623157E308" text="Month" />
+                                    <ComboBox fx:id="appointmentMonthFilterComboBox2" prefWidth="150.0" />
+                                 </children>
+                              </HBox>
                            </children>
                         </HBox>
                         <TableView fx:id="numberOfCustomerAppointmentsForContactTableView">

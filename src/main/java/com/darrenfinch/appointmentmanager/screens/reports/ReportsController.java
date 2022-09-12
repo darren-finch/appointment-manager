@@ -4,6 +4,7 @@ import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
 import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,9 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.text.DateFormatSymbols;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class ReportsController {
@@ -25,26 +24,28 @@ public class ReportsController {
     private final MainRepository mainRepository;
     private final ReportsModel model;
 
-    private final GetNumberOfCustomerAppointmentsByTypeAndMonthService getNumberOfCustomerAppointmentsByTypeAndMonthService;
+    private final RefreshReportsService refreshReportsService;
 
     @FXML
     private ComboBox<String> appointmentTypeFilterComboBox;
     @FXML
-    private ComboBox<String> appointmentMonthFilterComboBox;
+    private ComboBox<String> appointmentMonthFilterComboBox1;
+    @FXML
+    private ComboBox<String> appointmentMonthFilterComboBox2;
     @FXML
     private TableView<NumberOfCustomerAppointmentsForTypeAndMonth> numberOfCustomerAppointmentsTableView;
     @FXML
     private TableView<ContactSchedule> contactSchedulesTableView;
     @FXML
-    private TableView<NumberOfCustomerAppointmentsForContact> numberOfCustomerAppointmentsForContactTableView;
+    private TableView<NumberOfContactAppointmentsForMonth> numberOfCustomerAppointmentsForContactTableView;
 
     public ReportsController(ScreenNavigator screenNavigator, ExecutorService executorService, MainRepository mainRepository, ReportsModel model) {
         this.screenNavigator = screenNavigator;
         this.executorService = executorService;
         this.mainRepository = mainRepository;
         this.model = model;
-        this.getNumberOfCustomerAppointmentsByTypeAndMonthService = new GetNumberOfCustomerAppointmentsByTypeAndMonthService();
-        this.getNumberOfCustomerAppointmentsByTypeAndMonthService.setExecutor(this.executorService);
+        this.refreshReportsService = new RefreshReportsService();
+        this.refreshReportsService.setExecutor(this.executorService);
     }
 
     @FXML
@@ -54,16 +55,20 @@ public class ReportsController {
     }
 
     private void setupUI() {
+        // Setup number of customer appointments by type and month report UI
         appointmentTypeFilterComboBox.setItems(Appointment.TYPES);
         appointmentTypeFilterComboBox.valueProperty().bindBidirectional(model.appointmentTypeFilterProperty());
-
-        // TODO: DateFormatSymbols.getInstance().getMonths() has an empty value at the end. Remove this.
-        appointmentMonthFilterComboBox.setItems(FXCollections.observableList(List.of(DateFormatSymbols.getInstance().getMonths())));
-        appointmentMonthFilterComboBox.valueProperty().bindBidirectional(model.appointmentMonthFilterProperty());
-
+        appointmentMonthFilterComboBox1.setItems(FXCollections.observableList(Constants.MONTHS));
+        appointmentMonthFilterComboBox1.valueProperty().bindBidirectional(model.appointmentMonthFilter1Property());
         numberOfCustomerAppointmentsTableView.itemsProperty().bind(model.numberOfCustomerAppointmentsByTypeAndMonthProperty());
+
+        // Setup contact schedule report UI
         contactSchedulesTableView.itemsProperty().bind(model.contactSchedulesProperty());
-        numberOfCustomerAppointmentsForContactTableView.itemsProperty().bind(model.numberOfCustomerAppointmentsByContactProperty());
+
+        // Setup number of contact appointments by month report UI
+        appointmentMonthFilterComboBox2.setItems(FXCollections.observableList(Constants.MONTHS));
+        appointmentMonthFilterComboBox2.valueProperty().bindBidirectional(model.appointmentMonthFilter2Property());
+        numberOfCustomerAppointmentsForContactTableView.itemsProperty().bind(model.numberOfContactAppointmentsByMonthProperty());
 
         // Ensure date formatting is correct
         TableColumn<ContactSchedule, String> startDateTimeColumn = (TableColumn<ContactSchedule, String>) contactSchedulesTableView.getColumns().filtered(col -> col.getText().equals("Start Date/Time")).get(0);
@@ -82,40 +87,39 @@ public class ReportsController {
     }
 
     private void setupModelData() {
-        getNumberOfCustomerAppointmentsByTypeAndMonthService.setOnSucceeded(workerStateEvent -> {
-            model.setNumberOfCustomerAppointmentsByTypeAndMonth(getNumberOfCustomerAppointmentsByTypeAndMonthService.getValue());
-        });
-
         model.appointmentTypeFilterProperty().addListener((obs, oldVal, newVal) -> {
-            getNumberOfCustomerAppointmentsByTypeAndMonthService.restart();
+            refreshReportsService.restart();
         });
-        model.appointmentMonthFilterProperty().addListener((obs, oldVal, newVal) -> {
-            getNumberOfCustomerAppointmentsByTypeAndMonthService.restart();
+        model.appointmentMonthFilter1Property().addListener((obs, oldVal, newVal) -> {
+            refreshReportsService.restart();
         });
-
-        getNumberOfCustomerAppointmentsByTypeAndMonthService.start();
-
-        executorService.execute(new Task<>() {
-            @Override
-            protected Object call() throws Exception {
-                model.setContactSchedules(mainRepository.getContactSchedules());
-                model.setNumberOfCustomerAppointmentsByContact(mainRepository.getNumberOfAppointmentsByContact());
-                return null;
-            }
+        model.appointmentMonthFilter2Property().addListener((obs, oldVal, newVal) -> {
+            refreshReportsService.restart();
         });
+        refreshReportsService.start();
     }
 
     public void back() {
         screenNavigator.goBack();
     }
 
-    private class GetNumberOfCustomerAppointmentsByTypeAndMonthService extends Service<ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth>> {
+    private class RefreshReportsService extends Service<Void> {
         @Override
-        protected Task<ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth>> createTask() {
+        protected Task<Void> createTask() {
             return new Task<>() {
                 @Override
-                protected ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> call() throws Exception {
-                    return mainRepository.getNumberOfCustomerAppointmentsByTypeAndMonth(model.getAppointmentTypeFilter(), model.getAppointmentMonthFilter());
+                protected Void call() throws Exception {
+                    ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> report1Data = mainRepository.getNumberOfCustomerAppointmentsByTypeAndMonth(model.getAppointmentTypeFilter(), model.getAppointmentMonthFilter1());
+                    ObservableList<ContactSchedule> report2Data = mainRepository.getContactSchedules();
+                    ObservableList<NumberOfContactAppointmentsForMonth> report3Data = mainRepository.getNumberOfContactAppointmentsForMonth(model.getAppointmentMonthFilter2());
+
+                    Platform.runLater(() -> {
+                        model.setNumberOfCustomerAppointmentsByTypeAndMonth(report1Data);
+                        model.setContactSchedules(report2Data);
+                        model.setNumberOfContactAppointmentsByMonth(report3Data);
+                    });
+
+                    return null;
                 }
             };
         }

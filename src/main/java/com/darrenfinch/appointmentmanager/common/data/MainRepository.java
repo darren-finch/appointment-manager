@@ -4,7 +4,7 @@ import com.darrenfinch.appointmentmanager.common.data.entities.*;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
-import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForContact;
+import com.darrenfinch.appointmentmanager.screens.reports.NumberOfContactAppointmentsForMonth;
 import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForTypeAndMonth;
 import javafx.collections.ObservableList;
 
@@ -54,5 +54,5 @@ public interface MainRepository {
     // Reports
     ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth(String type, String month);
     ObservableList<ContactSchedule> getContactSchedules();
-    ObservableList<NumberOfCustomerAppointmentsForContact> getNumberOfAppointmentsByContact();
+    ObservableList<NumberOfContactAppointmentsForMonth> getNumberOfContactAppointmentsForMonth(String month);
 }

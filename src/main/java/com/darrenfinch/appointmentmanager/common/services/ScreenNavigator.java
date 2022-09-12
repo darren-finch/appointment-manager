@@ -1,30 +1,37 @@
 package com.darrenfinch.appointmentmanager.common.services;
 
 import com.darrenfinch.appointmentmanager.common.BaseController;
-import com.darrenfinch.appointmentmanager.common.di.ControllerDependencyInjector;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.Stack;
+import java.util.*;
 
 public class ScreenNavigator {
+
+    private final ResourceBundle screenBundle;
+
     private final Stage stage;
 
     private final HashMap<String, Object> arguments = new HashMap<>();
 
     private BaseController currentController;
 
+    private static HashMap<Class<?>, Callback<Class<?>, Object>> controllerBuilderMethods = new HashMap<>();
+
     private final Stack<String> screenStack = new Stack<>();
 
-    public ScreenNavigator(Stage stage, ResourceBundle bundle) {
-        this.stage = stage;
 
-        ControllerDependencyInjector.setBundle(bundle);
+    public ScreenNavigator(Stage stage, ResourceBundle screenBundle) {
+        this.stage = stage;
+        this.screenBundle = screenBundle;
+    }
+
+    public static void setControllerBuilderMethods(HashMap<Class<?>, Callback<Class<?>, Object>> newControllerBuilderMethods) {
+        controllerBuilderMethods = newControllerBuilderMethods;
     }
 
     public void switchToLoginScreen() {
@@ -61,7 +68,21 @@ public class ScreenNavigator {
         }
 
         try {
-            FXMLLoader injectedLoader = ControllerDependencyInjector.getLoader("/" + screenResourceName);
+            FXMLLoader injectedLoader = new FXMLLoader(
+                    ScreenNavigator.class.getResource("/" + screenResourceName),
+                    screenBundle,
+                    new JavaFXBuilderFactory(),
+                    (controllerClass) -> {
+                        try {
+                            if (controllerBuilderMethods.containsKey(controllerClass)) {
+                                return controllerBuilderMethods.get(controllerClass).call(null);
+                            } else {
+                                throw new IllegalStateException("There is no builder method specified for controller " + controllerClass.getName());
+                            }
+                        } catch (Exception e) {
+                            throw new IllegalStateException(e);
+                        }
+                    });
             currentController = injectedLoader.getController();
             Parent root = injectedLoader.load();
             stage.setScene(new Scene(root));
@@ -75,8 +96,7 @@ public class ScreenNavigator {
         // Push new screen to stack unless it's the same one that's on the stack, or we are going back.
         if (screenStack.isEmpty()) {
             screenStack.push(screenResourceName);
-        }
-        else if (!Objects.equals(screenStack.peek(), screenResourceName) && !goingBack) {
+        } else if (!Objects.equals(screenStack.peek(), screenResourceName) && !goingBack) {
             screenStack.push(screenResourceName);
         }
     }

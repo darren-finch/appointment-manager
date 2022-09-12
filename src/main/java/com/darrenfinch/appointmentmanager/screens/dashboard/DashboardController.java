@@ -33,7 +33,7 @@ public class DashboardController implements BaseController {
     private RadioButton viewByMonthRadioButton;
 
     private final GetAllCustomersService getAllCustomersService;
-    private final GetAppointmentsForUserByTimeFrameService getAppointmentsForUserByTimeFrameService;
+    private final GetAppointmentsForUserBySortingFilterService getAppointmentsForUserBySortingFilterService;
 
     public DashboardController(
             ScreenNavigator screenNavigator,
@@ -52,7 +52,7 @@ public class DashboardController implements BaseController {
         this.mainRepository = mainRepository;
         this.model = model;
         this.getAllCustomersService = new GetAllCustomersService(mainRepository);
-        this.getAppointmentsForUserByTimeFrameService = new GetAppointmentsForUserByTimeFrameService(mainRepository);
+        this.getAppointmentsForUserBySortingFilterService = new GetAppointmentsForUserBySortingFilterService(mainRepository);
     }
 
     @FXML
@@ -61,16 +61,16 @@ public class DashboardController implements BaseController {
 
         // Initialize services
         getAllCustomersService.setExecutor(executorService);
-        getAppointmentsForUserByTimeFrameService.setExecutor(executorService);
-        getAppointmentsForUserByTimeFrameService.setUserId(userManager.getCurrentUser().getId());
-        getAppointmentsForUserByTimeFrameService.setAppointmentsSortingFilter(AppointmentsSortingFilter.WEEK);
+        getAppointmentsForUserBySortingFilterService.setExecutor(executorService);
+        getAppointmentsForUserBySortingFilterService.setUserId(userManager.getCurrentUser().getId());
+        getAppointmentsForUserBySortingFilterService.setAppointmentsSortingFilter(AppointmentsSortingFilter.WEEK);
 
         // Fill model
         model.customersProperty().bind(getAllCustomersService.valueProperty());
-        model.appointmentsProperty().bind(getAppointmentsForUserByTimeFrameService.valueProperty());
+        model.appointmentsProperty().bind(getAppointmentsForUserBySortingFilterService.valueProperty());
 
         getAllCustomersService.start();
-        getAppointmentsForUserByTimeFrameService.start();
+        getAppointmentsForUserBySortingFilterService.start();
 
         // Initialize radio buttons
         ToggleGroup toggleGroup = new ToggleGroup();
@@ -80,8 +80,8 @@ public class DashboardController implements BaseController {
 
         // Bind viewByProperty of model to re-fetch appointments
         model.viewByProperty().addListener((obs, oldVal, newVal) -> {
-            getAppointmentsForUserByTimeFrameService.setAppointmentsSortingFilter(newVal);
-            getAppointmentsForUserByTimeFrameService.restart();
+            getAppointmentsForUserBySortingFilterService.setAppointmentsSortingFilter(newVal);
+            getAppointmentsForUserBySortingFilterService.restart();
         });
 
         // Bind items of table views to model properties
@@ -115,7 +115,7 @@ public class DashboardController implements BaseController {
                     DeleteCustomerTask deleteCustomerTask = new DeleteCustomerTask(mainRepository, selectedCustomerWithLocationData.getCustomer().getId());
                     deleteCustomerTask.setOnSucceeded(workerStateEvent -> {
                         getAllCustomersService.restart();
-                        getAppointmentsForUserByTimeFrameService.restart();
+                        getAppointmentsForUserBySortingFilterService.restart();
                     });
                     executorService.execute(deleteCustomerTask);
                 },
@@ -143,7 +143,7 @@ public class DashboardController implements BaseController {
                     () -> {
                         DeleteAppointmentTask deleteAppointmentTask = new DeleteAppointmentTask(mainRepository, selectedAppointment.getId());
                         deleteAppointmentTask.setOnSucceeded(workerStateEvent -> {
-                            getAppointmentsForUserByTimeFrameService.restart();
+                            getAppointmentsForUserBySortingFilterService.restart();
                             dialogManager.showAlertDialog(
                                     "Appointment Deleted"
                                     + "\nID: " + selectedAppointment.getId()
@@ -219,13 +219,13 @@ public class DashboardController implements BaseController {
         }
     }
 
-    public static class GetAppointmentsForUserByTimeFrameService extends Service<ObservableList<Appointment>> {
+    public static class GetAppointmentsForUserBySortingFilterService extends Service<ObservableList<Appointment>> {
 
         private final MainRepository mainRepository;
         private final IntegerProperty userId = new SimpleIntegerProperty();
         private final ObjectProperty<AppointmentsSortingFilter> appointmentsSortingFilter = new SimpleObjectProperty<>();
 
-        public GetAppointmentsForUserByTimeFrameService(MainRepository mainRepository) {
+        public GetAppointmentsForUserBySortingFilterService(MainRepository mainRepository) {
             this.mainRepository = mainRepository;
             this.userId.set(Constants.INVALID_ID);
             this.appointmentsSortingFilter.set(AppointmentsSortingFilter.WEEK);
