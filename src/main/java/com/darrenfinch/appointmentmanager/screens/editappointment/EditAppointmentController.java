@@ -174,42 +174,43 @@ public class EditAppointmentController {
         if (!loadFormDataTask.isDone())
             return;
 
-        Task<ObservableList<Appointment>> getAppointmentsForSelectedCustomerTask = new Task<>() {
-            @Override
-            protected ObservableList<Appointment> call() throws Exception {
-                return mainRepository.getAppointmentsForCustomer(model.getSelectedCustomer().getId());
-            }
-        };
-
         model.setError("Validating...");
         errorLabel.setVisible(true);
 
-        getAppointmentsForSelectedCustomerTask.setOnSucceeded(workerStateEvent -> {
-            ObservableList<Appointment> appointmentsForSelectedUser = getAppointmentsForSelectedCustomerTask.getValue();
+        Task<Void> validateModelDataTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                ObservableList<Appointment> appointmentsForCustomer = mainRepository.getAppointmentsForCustomer(model.getSelectedCustomer().getId());
+                ObservableList<Appointment> appointmentsForContact = mainRepository.getAppointmentsForContact(model.getSelectedContact().getId());
 
-            if (model.isValid(new EditAppointmentModel.ValidationParameters(model.getSelectedCustomer(), appointmentsForSelectedUser))) {
-                errorLabel.setVisible(false);
+                Platform.runLater(() -> {
+                    if (model.isValid(new EditAppointmentModel.ValidationParameters(appointmentsForCustomer, appointmentsForContact))) {
+                        errorLabel.setVisible(false);
 
-                Appointment appointmentFromModel = model.toAppointment();
-                executorService.execute(new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        if (isEditingExistingAppointment) {
-                            mainRepository.updateAppointment(appointmentId, appointmentFromModel, userManager.getCurrentUser());
-                        } else {
-                            mainRepository.addAppointment(appointmentFromModel, userManager.getCurrentUser());
-                        }
-                        return null;
+                        Appointment appointmentFromModel = model.toAppointment();
+                        executorService.execute(new Task<Void>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                if (isEditingExistingAppointment) {
+                                    mainRepository.updateAppointment(appointmentId, appointmentFromModel, userManager.getCurrentUser());
+                                } else {
+                                    mainRepository.addAppointment(appointmentFromModel, userManager.getCurrentUser());
+                                }
+                                return null;
+                            }
+                        });
+                        screenNavigator.switchToDashboardScreen();
+                    } else {
+                        String errors = model.getInvalidReasons().stream().reduce((prev, curr) -> prev + "\n" + curr).get();
+                        model.setError(errors);
                     }
                 });
-                screenNavigator.switchToDashboardScreen();
-            } else {
-                String errors = model.getInvalidReasons().stream().reduce((prev, curr) -> prev + "\n" + curr).get();
-                model.setError(errors);
-            }
-        });
 
-        executorService.execute(getAppointmentsForSelectedCustomerTask);
+                return null;
+            }
+        };
+
+        executorService.execute(validateModelDataTask);
     }
 
     // Got these implementations from https://www.baeldung.com/javafx-listview-display-custom-items

@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EditAppointmentModel {
     // This class exists because the validation for this model requires some data from the database, which the controller will be responsible for getting.
-    public record ValidationParameters(Customer customer, List<Appointment> appointmentsForCustomer) {
+    public record ValidationParameters(List<Appointment> appointmentsForCustomer, List<Appointment> appointmentsForContact) {
     }
 
     private final StringProperty id = new SimpleStringProperty();
@@ -466,7 +466,8 @@ public class EditAppointmentModel {
         return fieldsAreNotEmpty()
                 && startIsBeforeEnd()
                 && notSchedulingOutsideBusinessHours()
-                && notSchedulingOverlappingAppointments(validationParameters.customer, validationParameters.appointmentsForCustomer());
+                && notSchedulingOverlappingAppointments(getSelectedCustomer(), validationParameters.appointmentsForCustomer())
+                && notSchedulingOverlappingAppointments(getSelectedContact(), validationParameters.appointmentsForContact());
     }
 
     private boolean fieldsAreNotEmpty() {
@@ -524,8 +525,32 @@ public class EditAppointmentModel {
                 if (isAppointmentOverlapping(getSelectedStartDateTime(), getSelectedEndDateTime(), appointmentStart, appointmentEnd)) {
                     ans.set(false);
                     invalidReasons.add(
-                            "Appointment overlaps existing appointment with "
+                            "Appointment overlaps existing appointment with customer named "
                                     + customer.getName()
+                                    + ".\nThe existing appointment is between "
+                                    + appointmentStart.format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT))
+                                    + "\nand "
+                                    + appointmentEnd.format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT))
+                    );
+                }
+            }
+        });
+
+        return ans.get();
+    }
+
+    private boolean notSchedulingOverlappingAppointments(Contact contact, List<Appointment> appointmentsForContact) {
+        AtomicBoolean ans = new AtomicBoolean(true);
+        appointmentsForContact.forEach(appointment -> {
+            ZonedDateTime appointmentStart = appointment.getStartDateTime();
+            ZonedDateTime appointmentEnd = appointment.getEndDateTime();
+
+            if (appointment.getId() != Integer.parseInt(getId())) {
+                if (isAppointmentOverlapping(getSelectedStartDateTime(), getSelectedEndDateTime(), appointmentStart, appointmentEnd)) {
+                    ans.set(false);
+                    invalidReasons.add(
+                            "Appointment overlaps existing appointment with contact named "
+                                    + contact.getName()
                                     + ".\nThe existing appointment is between "
                                     + appointmentStart.format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT))
                                     + "\nand "

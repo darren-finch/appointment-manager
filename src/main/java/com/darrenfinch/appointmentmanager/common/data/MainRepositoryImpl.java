@@ -130,6 +130,23 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
+    public ObservableList<Appointment> getAppointmentsForContact(int contactId) {
+        ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
+        String query = "SELECT * FROM appointments WHERE Contact_ID = ?";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, contactId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                appointments.add(getAppointmentFromResultSet(resultSet));
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return appointments;
+    }
+
+    @Override
     public ObservableList<Appointment> getAppointmentsForCustomer(int customerId) {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
         String query = "SELECT * FROM appointments WHERE Customer_ID = ?";
@@ -433,26 +450,6 @@ public class MainRepositoryImpl implements MainRepository {
         return numberOfCustomerAppointmentsByTypeAndMonth;
     }
 
-    //    @Override
-//    public ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth() {
-//        ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> numberOfCustomerAppointmentsByTypeAndMonth = FXCollections.observableList(new ArrayList<>());
-//        String query = "SELECT COUNT(*) as Number_of_Appointments, Type, MONTHNAME(Start) AS Month FROM appointments GROUP BY type, month";
-//        try (PreparedStatement statement = dbConnection.prepareStatement(query); ResultSet resultSet = statement.executeQuery();) {
-//            while (resultSet.next()) {
-//                numberOfCustomerAppointmentsByTypeAndMonth.add(
-//                        new NumberOfCustomerAppointmentsForTypeAndMonth(
-//                                resultSet.getInt("Number_of_Appointments"),
-//                                resultSet.getString("Type"),
-//                                resultSet.getString("Month")
-//                        )
-//                );
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return numberOfCustomerAppointmentsByTypeAndMonth;
-//    }
-
     @Override
     public ObservableList<ContactSchedule> getContactSchedules() {
         ObservableList<ContactSchedule> contactSchedules = FXCollections.observableList(new ArrayList<>());
@@ -468,7 +465,7 @@ public class MainRepositoryImpl implements MainRepository {
                                 resultSet.getString("Type"),
                                 resultSet.getString("Description"),
                                 resultSet.getTimestamp("Start").toInstant().atZone(timeHelper.defaultZone()),
-                                resultSet.getTimestamp("Start").toInstant().atZone(timeHelper.defaultZone()),
+                                resultSet.getTimestamp("End").toInstant().atZone(timeHelper.defaultZone()),
                                 resultSet.getInt("Customer_ID")
                         )
                 );

@@ -22,6 +22,7 @@ public interface MainRepository {
     // If we have too many more of these types of methods it might be a good idea to start using a use-case oriented pattern or a dao pattern.
     ObservableList<Appointment> getAppointmentsForUserBySortingFilter(int userId, DashboardController.AppointmentsSortingFilter appointmentsSortingFilter);
     ObservableList<Appointment> getAppointmentsForCustomer(int customerId);
+    ObservableList<Appointment> getAppointmentsForContact(int contactId);
     Appointment getAppointment(int appointmentId);
     void addAppointment(Appointment appointment, User currentUser);
     void updateAppointment(int appointmentId, Appointment newAppointment, User currentUser);
@@ -52,7 +53,6 @@ public interface MainRepository {
 
     // Reports
     ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth(String type, String month);
-//    ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth();
     ObservableList<ContactSchedule> getContactSchedules();
     ObservableList<NumberOfCustomerAppointmentsForContact> getNumberOfAppointmentsByContact();
 }
