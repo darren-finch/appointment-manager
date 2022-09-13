@@ -21,4 +21,8 @@ module com.darrenfinch.appointmentmanager {
     opens com.darrenfinch.appointmentmanager.common.utils to javafx.fxml;
 
     opens com.darrenfinch.appointmentmanager.common.data.entities to javafx.base;
+    exports com.darrenfinch.appointmentmanager.common.data;
+    opens com.darrenfinch.appointmentmanager.common.data to javafx.fxml;
+    exports com.darrenfinch.appointmentmanager.common.data.misc;
+    opens com.darrenfinch.appointmentmanager.common.data.misc to javafx.fxml;
 }

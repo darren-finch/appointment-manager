@@ -80,15 +80,16 @@
                <content>
                   <VBox spacing="20.0">
                      <children>
-                        <HBox>
+                        <HBox spacing="20.0">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="View By" HBox.hgrow="ALWAYS" />
-                              <RadioButton fx:id="viewByWeekRadioButton" mnemonicParsing="false" onAction="#onViewByWeekSelected" text="Week">
+                              <RadioButton fx:id="viewByWeekRadioButton" mnemonicParsing="false" onAction="#onViewByWeekSelected" text="This Week">
                                  <HBox.margin>
-                                    <Insets right="20.0" />
+                                    <Insets />
                                  </HBox.margin>
                               </RadioButton>
-                              <RadioButton fx:id="viewByMonthRadioButton" mnemonicParsing="false" onAction="#onViewByMonthSelected" text="Month" />
+                              <RadioButton fx:id="viewByMonthRadioButton" mnemonicParsing="false" onAction="#onViewByMonthSelected" text="This Month" />
+                              <RadioButton fx:id="viewByAllTimeRadioButton" mnemonicParsing="false" onAction="#onViewByAllTimeSelected" text="All Time" />
                            </children>
                         </HBox>
                         <TableView fx:id="appointmentsTableView" prefHeight="450.0" prefWidth="560.0">
@@ -120,7 +121,7 @@
                                <TableColumn prefWidth="53.0" text="User ID">
                                    <cellValueFactory><PropertyValueFactory property="userId" /></cellValueFactory>
                                </TableColumn>
-                               <TableColumn prefWidth="70.0" text="Contact ID">
+                               <TableColumn prefWidth="68.67041015625" text="Contact ID">
                                    <cellValueFactory><PropertyValueFactory property="contactId" /></cellValueFactory>
                                </TableColumn>
                            </columns>

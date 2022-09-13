@@ -1,6 +1,6 @@
 package com.darrenfinch.appointmentmanager.common.ui.listcells;
 
-import com.darrenfinch.appointmentmanager.common.utils.TimeFilter;
+import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
 import javafx.scene.control.ListCell;
 
 public class TimeFilterListCell extends ListCell<TimeFilter> {

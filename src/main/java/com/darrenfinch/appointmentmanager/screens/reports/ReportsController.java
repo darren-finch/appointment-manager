@@ -7,7 +7,7 @@ import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.common.ui.listcells.ContactListCell;
 import com.darrenfinch.appointmentmanager.common.ui.listcells.TimeFilterListCell;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
-import com.darrenfinch.appointmentmanager.common.utils.TimeFilter;
+import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;

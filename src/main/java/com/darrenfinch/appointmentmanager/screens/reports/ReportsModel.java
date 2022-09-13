@@ -3,7 +3,7 @@ package com.darrenfinch.appointmentmanager.screens.reports;
 import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
 import com.darrenfinch.appointmentmanager.common.data.entities.Contact;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
-import com.darrenfinch.appointmentmanager.common.utils.TimeFilter;
+import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;

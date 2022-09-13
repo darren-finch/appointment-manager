@@ -3,6 +3,7 @@ package com.darrenfinch.appointmentmanager.screens.dashboard;
 import com.darrenfinch.appointmentmanager.common.BaseController;
 import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
+import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
 import com.darrenfinch.appointmentmanager.common.services.*;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.beans.property.*;
@@ -31,6 +32,8 @@ public class DashboardController implements BaseController {
     private RadioButton viewByWeekRadioButton;
     @FXML
     private RadioButton viewByMonthRadioButton;
+    @FXML
+    private RadioButton viewByAllTimeRadioButton;
 
     private final GetAllCustomersService getAllCustomersService;
     private final GetAppointmentsForUserBySortingFilterService getAppointmentsForUserBySortingFilterService;
@@ -63,7 +66,7 @@ public class DashboardController implements BaseController {
         getAllCustomersService.setExecutor(executorService);
         getAppointmentsForUserBySortingFilterService.setExecutor(executorService);
         getAppointmentsForUserBySortingFilterService.setUserId(userManager.getCurrentUser().getId());
-        getAppointmentsForUserBySortingFilterService.setAppointmentsSortingFilter(AppointmentsSortingFilter.WEEK);
+        getAppointmentsForUserBySortingFilterService.setAppointmentsSortingFilter(TimeFilter.WEEK);
 
         // Fill model
         model.customersProperty().bind(getAllCustomersService.valueProperty());
@@ -76,10 +79,11 @@ public class DashboardController implements BaseController {
         ToggleGroup toggleGroup = new ToggleGroup();
         viewByWeekRadioButton.setToggleGroup(toggleGroup);
         viewByMonthRadioButton.setToggleGroup(toggleGroup);
+        viewByAllTimeRadioButton.setToggleGroup(toggleGroup);
         toggleGroup.selectToggle(viewByWeekRadioButton); // assuming that we will sort by week on screen load
 
         // Bind viewByProperty of model to re-fetch appointments
-        model.viewByProperty().addListener((obs, oldVal, newVal) -> {
+        model.timeFilterProperty().addListener((obs, oldVal, newVal) -> {
             getAppointmentsForUserBySortingFilterService.setAppointmentsSortingFilter(newVal);
             getAppointmentsForUserBySortingFilterService.restart();
         });
@@ -186,27 +190,15 @@ public class DashboardController implements BaseController {
     }
 
     public void onViewByWeekSelected() {
-        model.setViewBy(AppointmentsSortingFilter.WEEK);
+        model.setTimeFilter(TimeFilter.WEEK);
     }
 
     public void onViewByMonthSelected() {
-        model.setViewBy(AppointmentsSortingFilter.MONTH);
+        model.setTimeFilter(TimeFilter.MONTH);
     }
 
-    public enum AppointmentsSortingFilter {
-        WEEK("Week"),
-        MONTH("Month");
-
-        private final String name;
-
-        AppointmentsSortingFilter(String s) {
-            name = s;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
+    public void onViewByAllTimeSelected() {
+        model.setTimeFilter(TimeFilter.ALL_TIME);
     }
 
     public static class GetAllCustomersService extends Service<ObservableList<CustomerWithLocationData>> {
@@ -231,20 +223,20 @@ public class DashboardController implements BaseController {
 
         private final MainRepository mainRepository;
         private final IntegerProperty userId = new SimpleIntegerProperty();
-        private final ObjectProperty<AppointmentsSortingFilter> appointmentsSortingFilter = new SimpleObjectProperty<>();
+        private final ObjectProperty<TimeFilter> appointmentsSortingFilter = new SimpleObjectProperty<>();
 
         public GetAppointmentsForUserBySortingFilterService(MainRepository mainRepository) {
             this.mainRepository = mainRepository;
             this.userId.set(Constants.INVALID_ID);
-            this.appointmentsSortingFilter.set(AppointmentsSortingFilter.WEEK);
+            this.appointmentsSortingFilter.set(TimeFilter.WEEK);
         }
 
         public void setUserId(int userId) {
             this.userId.set(userId);
         }
 
-        public void setAppointmentsSortingFilter(AppointmentsSortingFilter appointmentsSortingFilter) {
-            this.appointmentsSortingFilter.set(appointmentsSortingFilter);
+        public void setAppointmentsSortingFilter(TimeFilter timeFilter) {
+            this.appointmentsSortingFilter.set(timeFilter);
         }
 
         @Override
@@ -252,7 +244,7 @@ public class DashboardController implements BaseController {
             return new Task<>() {
                 @Override
                 protected ObservableList<Appointment> call() throws Exception {
-                    return mainRepository.getAppointmentsForUserBySortingFilter(userId.get(), appointmentsSortingFilter.get());
+                    return mainRepository.getAppointmentsForUserByTimeFilter(userId.get(), appointmentsSortingFilter.get());
                 }
             };
         }

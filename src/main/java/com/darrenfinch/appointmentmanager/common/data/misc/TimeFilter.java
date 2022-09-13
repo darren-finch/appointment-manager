@@ -1,4 +1,4 @@
-package com.darrenfinch.appointmentmanager.common.utils;
+package com.darrenfinch.appointmentmanager.common.data.misc;
 
 public enum TimeFilter {
     WEEK("This week"),

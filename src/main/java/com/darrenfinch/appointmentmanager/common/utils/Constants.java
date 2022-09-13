@@ -1,14 +1,12 @@
 package com.darrenfinch.appointmentmanager.common.utils;
 
-import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.time.*;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Constants {

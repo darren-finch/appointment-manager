@@ -1,9 +1,9 @@
 package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
+import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
 import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
-import com.darrenfinch.appointmentmanager.common.utils.TimeFilter;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerHasAppointmentsException;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
@@ -118,19 +118,51 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
-    public ObservableList<Appointment> getAppointmentsForUserBySortingFilter(int userId, DashboardController.AppointmentsSortingFilter appointmentsSortingFilter) {
+    public ObservableList<Appointment> getAppointmentsForUserByTimeFilter(int userId, TimeFilter timeFilter) {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
-        String query = "SELECT *, EXTRACT(" + appointmentsSortingFilter.name() + " FROM Start) as orderBy FROM appointments WHERE User_ID = ? ORDER BY orderBy DESC";
-        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
-            statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                appointments.add(getAppointmentFromResultSet(resultSet));
+
+        if (timeFilter == TimeFilter.WEEK) {
+            String query = "SELECT * FROM appointments WHERE WEEK(CONVERT_TZ(Start, \"" + Constants.SERVER_TIME_ZONE_OFFSET + "\", ?)) = ? AND User_ID = ?";
+            try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+                statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
+                statement.setInt(2, timeHelper.systemTimeNow().get(ChronoField.ALIGNED_WEEK_OF_YEAR));
+                statement.setInt(3, userId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    appointments.add(getAppointmentFromResultSet(resultSet));
+                }
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            resultSet.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else if (timeFilter == TimeFilter.MONTH) {
+            String query = "SELECT * FROM appointments WHERE MONTH(CONVERT_TZ(Start, \"" + Constants.SERVER_TIME_ZONE_OFFSET + "\", ?)) = ? AND User_ID = ?";
+            try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+                statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
+                statement.setInt(2, timeHelper.systemTimeNow().get(ChronoField.MONTH_OF_YEAR));
+                statement.setInt(3, userId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    appointments.add(getAppointmentFromResultSet(resultSet));
+                }
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            String query = "SELECT * FROM appointments WHERE User_ID = ?";
+            try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+                statement.setInt(1, userId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    appointments.add(getAppointmentFromResultSet(resultSet));
+                }
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+
         return appointments;
     }
 
@@ -504,18 +536,16 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public ObservableList<NumberOfAppointmentsForContact> getNumberOfAppointmentsForContactAndTimeFilter(TimeFilter timeFilter) {
-        String query;
-
         ObservableList<NumberOfAppointmentsForContact> numberOfCustomerAppointmentsByContact = FXCollections.observableList(new ArrayList<>());
 
-        if (timeFilter == TimeFilter.WEEK) {
-            query = "SELECT c.Contact_Name, c.Email, COUNT(a.Appointment_ID) AS Number_Of_Appointments FROM appointments " +
+        if (timeFilter == com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter.WEEK) {
+            String query = "SELECT c.Contact_Name, c.Email, COUNT(a.Appointment_ID) AS Number_Of_Appointments FROM appointments " +
                     "a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE WEEK(CONVERT_TZ(a.Start, \"" +
                     Constants.SERVER_TIME_ZONE_OFFSET +
                     "\", ?)) = ? GROUP BY c.Contact_Name, c.Email, c.Contact_ID";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
                 statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
-                statement.setObject(2, timeHelper.systemTimeNow().get(ChronoField.ALIGNED_WEEK_OF_YEAR));
+                statement.setInt(2, timeHelper.systemTimeNow().get(ChronoField.ALIGNED_WEEK_OF_YEAR));
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     numberOfCustomerAppointmentsByContact.add(
@@ -526,14 +556,14 @@ public class MainRepositoryImpl implements MainRepository {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } else if (timeFilter == TimeFilter.MONTH) {
-            query = "SELECT c.Contact_Name, c.Email, COUNT(a.Appointment_ID) AS Number_Of_Appointments FROM appointments" +
+        } else if (timeFilter == com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter.MONTH) {
+            String query = "SELECT c.Contact_Name, c.Email, COUNT(a.Appointment_ID) AS Number_Of_Appointments FROM appointments" +
                     " a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE MONTH(CONVERT_TZ(a.Start, \"" +
                     Constants.SERVER_TIME_ZONE_OFFSET +
                     "\", ?)) = ? GROUP BY c.Contact_Name, c.Email, c.Contact_ID";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
                 statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
-                statement.setObject(2, timeHelper.systemTimeNow().get(ChronoField.MONTH_OF_YEAR));
+                statement.setInt(2, timeHelper.systemTimeNow().get(ChronoField.MONTH_OF_YEAR));
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     numberOfCustomerAppointmentsByContact.add(
@@ -545,7 +575,7 @@ public class MainRepositoryImpl implements MainRepository {
                 e.printStackTrace();
             }
         } else {
-            query = "SELECT c.Contact_Name, c.Email, COUNT(c.Contact_ID) as Number_Of_Appointments FROM appointments a" +
+            String query = "SELECT c.Contact_Name, c.Email, COUNT(c.Contact_ID) as Number_Of_Appointments FROM appointments a" +
                     " INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID GROUP BY c.Contact_Name, c.Email, c.Contact_ID";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
                 ResultSet resultSet = statement.executeQuery();
