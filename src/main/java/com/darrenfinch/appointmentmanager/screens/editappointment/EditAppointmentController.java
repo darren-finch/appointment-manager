@@ -8,6 +8,9 @@ import com.darrenfinch.appointmentmanager.common.data.entities.User;
 import com.darrenfinch.appointmentmanager.common.services.DialogManager;
 import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.common.services.UserManager;
+import com.darrenfinch.appointmentmanager.common.ui.listcells.ContactListCell;
+import com.darrenfinch.appointmentmanager.common.ui.listcells.CustomerListCell;
+import com.darrenfinch.appointmentmanager.common.ui.listcells.UserListCell;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -211,38 +214,5 @@ public class EditAppointmentController {
         };
 
         executorService.execute(validateModelDataTask);
-    }
-
-    private static class CustomerListCell extends ListCell<Customer> {
-        @Override
-        protected void updateItem(Customer customer, boolean empty) {
-            super.updateItem(customer, empty);
-            if (!empty && customer != null)
-                setText(customer.getName());
-            else
-                setText("");
-        }
-    }
-
-    private static class UserListCell extends ListCell<User> {
-        @Override
-        protected void updateItem(User user, boolean empty) {
-            super.updateItem(user, empty);
-            if (!empty && user != null)
-                setText(user.getName());
-            else
-                setText("");
-        }
-    }
-
-    private static class ContactListCell extends ListCell<Contact> {
-        @Override
-        protected void updateItem(Contact contact, boolean empty) {
-            super.updateItem(contact, empty);
-            if (!empty && contact != null)
-                setText(contact.getName());
-            else
-                setText("");
-        }
     }
 }

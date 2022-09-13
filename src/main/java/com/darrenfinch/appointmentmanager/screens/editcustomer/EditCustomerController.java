@@ -7,6 +7,8 @@ import com.darrenfinch.appointmentmanager.common.data.entities.FirstLevelDivisio
 import com.darrenfinch.appointmentmanager.common.services.DialogManager;
 import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
 import com.darrenfinch.appointmentmanager.common.services.UserManager;
+import com.darrenfinch.appointmentmanager.common.ui.listcells.CountryListCell;
+import com.darrenfinch.appointmentmanager.common.ui.listcells.FirstLevelDivisionListCell;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -172,27 +174,6 @@ public class EditCustomerController {
             screenNavigator.switchToDashboardScreen();
         } else {
             model.setError(model.getInvalidReasons().stream().reduce((prev, curr) -> prev + "\n" + curr).get());
-        }
-    }
-
-    private static class CountryListCell extends ListCell<Country> {
-        @Override
-        protected void updateItem(Country country, boolean empty) {
-            super.updateItem(country, empty);
-            if (!isEmpty() && country != null)
-                setText(country.getName());
-            else
-                setText("");
-        }
-    }
-    private static class FirstLevelDivisionListCell extends ListCell<FirstLevelDivision> {
-        @Override
-        protected void updateItem(FirstLevelDivision firstLevelDivision, boolean empty) {
-            super.updateItem(firstLevelDivision, empty);
-            if (!isEmpty() && firstLevelDivision != null)
-                setText(firstLevelDivision.getName());
-            else
-                setText("");
         }
     }
 }

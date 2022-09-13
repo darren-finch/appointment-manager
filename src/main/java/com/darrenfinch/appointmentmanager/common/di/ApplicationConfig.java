@@ -3,6 +3,7 @@ package com.darrenfinch.appointmentmanager.common.di;
 import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.MainRepositoryImpl;
 import com.darrenfinch.appointmentmanager.common.services.*;
+import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardModel;
 import com.darrenfinch.appointmentmanager.screens.editappointment.EditAppointmentController;
@@ -38,7 +39,7 @@ public class ApplicationConfig {
     private final TimeHelper timeHelper;
 
     public ApplicationConfig(Stage stage) {
-        ResourceBundle bundle = ResourceBundle.getBundle("ApplicationManager", Locale.getDefault());
+        ResourceBundle bundle = ResourceBundle.getBundle(Constants.RESOURCE_BUNDLE_BASE_NAME, Locale.getDefault());
 
         this.stringService = new StringService(bundle);
         this.screenNavigator = new ScreenNavigator(stage, bundle);

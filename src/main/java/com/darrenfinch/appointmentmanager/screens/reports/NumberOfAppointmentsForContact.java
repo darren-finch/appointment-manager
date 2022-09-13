@@ -1,16 +1,15 @@
 package com.darrenfinch.appointmentmanager.screens.reports;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
-public class NumberOfContactAppointmentsForMonth {
+import java.time.ZonedDateTime;
+
+public class NumberOfAppointmentsForContact {
     private final StringProperty contactName = new SimpleStringProperty();
     private final StringProperty email = new SimpleStringProperty();
     private final IntegerProperty numberOfAppointments = new SimpleIntegerProperty();
 
-    public NumberOfContactAppointmentsForMonth(String contactName, String email, int numberOfAppointments) {
+    public NumberOfAppointmentsForContact(String contactName, String email, int numberOfAppointments) {
         this.contactName.set(contactName);
         this.email.set(email);
         this.numberOfAppointments.set(numberOfAppointments);

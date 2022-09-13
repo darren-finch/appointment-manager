@@ -1,11 +1,19 @@
 package com.darrenfinch.appointmentmanager.common.utils;
 
-import java.io.File;
+import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Constants {
+    public static final String SERVER_TIME_ZONE_OFFSET = "+00:00";
+
     public static final String RESOURCE_BUNDLE_BASE_NAME = "ApplicationManager";
 
     public static final int APPOINTMENT_ALERT_THRESHOLD_MINUTES = 15;
@@ -20,7 +28,7 @@ public class Constants {
 
     public static final String STANDARD_DATE_TIME_FORMAT = STANDARD_DATE_FORMAT + " " + STANDARD_TIME_FORMAT;
 
-    public static final List<String> MONTHS = List.of(
+    public static final ObservableList<String> MONTHS = FXCollections.observableList(List.of(
             "January",
             "February",
             "March",
@@ -33,7 +41,7 @@ public class Constants {
             "October",
             "November",
             "December"
-    );
+    ));
 
     public static List<String> getHours() {
         ArrayList<String> hours = new ArrayList<>(12);
@@ -54,7 +62,6 @@ public class Constants {
     public static final List<String> AM_OR_PM = List.of("AM", "PM");
 
     public static void main(String[] args) {
-        File file = new File(".");
-        System.out.println(file.getAbsolutePath());
+        System.out.print(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("xxx")));
     }
 }

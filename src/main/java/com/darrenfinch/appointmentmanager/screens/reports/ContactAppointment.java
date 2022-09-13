@@ -4,7 +4,7 @@ import javafx.beans.property.*;
 
 import java.time.ZonedDateTime;
 
-public class ContactSchedule {
+public class ContactAppointment {
     private final StringProperty contactName = new SimpleStringProperty();
     private final StringProperty contactEmail = new SimpleStringProperty();
     private final IntegerProperty appointmentId = new SimpleIntegerProperty();
@@ -15,7 +15,7 @@ public class ContactSchedule {
     private final ObjectProperty<ZonedDateTime> endDateTime = new SimpleObjectProperty<>();
     private final IntegerProperty customerId = new SimpleIntegerProperty();
 
-    public ContactSchedule(String contactName, String contactEmail, int appointmentId, String title, String type, String description, ZonedDateTime startDateTime, ZonedDateTime endDateTime, int customerId) {
+    public ContactAppointment(String contactName, String contactEmail, int appointmentId, String title, String type, String description, ZonedDateTime startDateTime, ZonedDateTime endDateTime, int customerId) {
         this.contactName.set(contactName);
         this.contactEmail.set(contactEmail);
         this.appointmentId.set(appointmentId);

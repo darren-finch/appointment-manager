@@ -2,17 +2,21 @@ package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
 import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
+import com.darrenfinch.appointmentmanager.common.utils.Constants;
+import com.darrenfinch.appointmentmanager.common.utils.TimeFilter;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerHasAppointmentsException;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
-import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
-import com.darrenfinch.appointmentmanager.screens.reports.NumberOfContactAppointmentsForMonth;
-import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForTypeAndMonth;
+import com.darrenfinch.appointmentmanager.screens.reports.ContactAppointment;
+import com.darrenfinch.appointmentmanager.screens.reports.NumberOfAppointmentsForContact;
+import com.darrenfinch.appointmentmanager.screens.reports.NumberOfAppointmentsForCustomer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 
 public class MainRepositoryImpl implements MainRepository {
@@ -424,16 +428,15 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
-    public ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth(String type, String month) {
-        ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> numberOfCustomerAppointmentsByTypeAndMonth = FXCollections.observableList(new ArrayList<>());
-        String query = "SELECT c.Customer_ID, c.Customer_Name, COUNT(*) as Number_of_Appointments FROM appointments a INNER JOIN customers c ON a.Customer_ID = c.Customer_ID WHERE LCASE(a.Type) LIKE LCASE(?) AND LCASE(MONTHNAME(a.Start)) LIKE LCASE(?) GROUP BY c.Customer_ID, c.Customer_Name";
+    public ObservableList<NumberOfAppointmentsForCustomer> getNumberOfCustomerAppointmentsForType(String type) {
+        ObservableList<NumberOfAppointmentsForCustomer> numberOfAppointmentsForCustomersByType = FXCollections.observableList(new ArrayList<>());
+        String query = "SELECT c.Customer_ID, c.Customer_Name, COUNT(*) as Number_of_Appointments FROM appointments a INNER JOIN customers c ON a.Customer_ID = c.Customer_ID WHERE LCASE(a.Type) LIKE LCASE(?) GROUP BY c.Customer_ID, c.Customer_Name";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setString(1, type);
-            statement.setString(2, month);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                numberOfCustomerAppointmentsByTypeAndMonth.add(
-                        new NumberOfCustomerAppointmentsForTypeAndMonth(
+                numberOfAppointmentsForCustomersByType.add(
+                        new NumberOfAppointmentsForCustomer(
                                 resultSet.getInt("Customer_ID"),
                                 resultSet.getString("Customer_Name"),
                                 resultSet.getInt("Number_Of_Appointments")
@@ -444,17 +447,42 @@ public class MainRepositoryImpl implements MainRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return numberOfCustomerAppointmentsByTypeAndMonth;
+        return numberOfAppointmentsForCustomersByType;
     }
 
     @Override
-    public ObservableList<ContactSchedule> getContactSchedules() {
-        ObservableList<ContactSchedule> contactSchedules = FXCollections.observableList(new ArrayList<>());
-        String query = "SELECT * FROM contacts c INNER JOIN appointments a ON c.Contact_ID = a.Contact_ID";
-        try (PreparedStatement statement = dbConnection.prepareStatement(query); ResultSet resultSet = statement.executeQuery();) {
+    public ObservableList<NumberOfAppointmentsForCustomer> getNumberOfCustomerAppointmentsForMonth(String month) {
+        ObservableList<NumberOfAppointmentsForCustomer> numberOfAppointmentsForCustomersByMonth = FXCollections.observableList(new ArrayList<>());
+        String query = "SELECT c.Customer_ID, c.Customer_Name, COUNT(*) as Number_of_Appointments FROM appointments a INNER JOIN customers c ON a.Customer_ID = c.Customer_ID WHERE LCASE(MONTHNAME(a.Start)) LIKE LCASE(?) GROUP BY c.Customer_ID, c.Customer_Name";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setString(1, month);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                contactSchedules.add(
-                        new ContactSchedule(
+                numberOfAppointmentsForCustomersByMonth.add(
+                        new NumberOfAppointmentsForCustomer(
+                                resultSet.getInt("Customer_ID"),
+                                resultSet.getString("Customer_Name"),
+                                resultSet.getInt("Number_Of_Appointments")
+                        )
+                );
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return numberOfAppointmentsForCustomersByMonth;
+    }
+
+    @Override
+    public ObservableList<ContactAppointment> getScheduleForContact(int contactId) {
+        ObservableList<ContactAppointment> contactAppointments = FXCollections.observableList(new ArrayList<>());
+        String query = "SELECT * FROM contacts c INNER JOIN appointments a ON c.Contact_ID = a.Contact_ID WHERE a.Contact_ID = ?";
+        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+            statement.setInt(1, contactId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                contactAppointments.add(
+                        new ContactAppointment(
                                 resultSet.getString("Contact_Name"),
                                 resultSet.getString("Email"),
                                 resultSet.getInt("Appointment_ID"),
@@ -467,32 +495,79 @@ public class MainRepositoryImpl implements MainRepository {
                         )
                 );
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return contactSchedules;
-    }
-
-    @Override
-    public ObservableList<NumberOfContactAppointmentsForMonth> getNumberOfContactAppointmentsForMonth(String month) {
-        ObservableList<NumberOfContactAppointmentsForMonth> numberOfCustomerAppointmentsByContact = FXCollections.observableList(new ArrayList<>());
-        String query = "SELECT c.Contact_Name, c.Email, COUNT(c.Contact_ID) as Number_Of_Appointments FROM appointments a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE LCASE(MONTHNAME(a.Start)) LIKE LCASE(?) GROUP BY c.Contact_Name, c.Email, c.Contact_ID";
-        try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
-            statement.setString(1, month);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                numberOfCustomerAppointmentsByContact.add(
-                        new NumberOfContactAppointmentsForMonth(
-                                resultSet.getString("Contact_Name"),
-                                resultSet.getString("Email"),
-                                resultSet.getInt("Number_Of_Appointments")
-                        )
-                );
-            }
             resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return contactAppointments;
+    }
+
+    @Override
+    public ObservableList<NumberOfAppointmentsForContact> getNumberOfAppointmentsForContactAndTimeFilter(TimeFilter timeFilter) {
+        String query;
+
+        ObservableList<NumberOfAppointmentsForContact> numberOfCustomerAppointmentsByContact = FXCollections.observableList(new ArrayList<>());
+
+        if (timeFilter == TimeFilter.WEEK) {
+            query = "SELECT c.Contact_Name, c.Email, COUNT(a.Appointment_ID) AS Number_Of_Appointments FROM appointments " +
+                    "a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE WEEK(CONVERT_TZ(a.Start, \"" +
+                    Constants.SERVER_TIME_ZONE_OFFSET +
+                    "\", ?)) = ? GROUP BY c.Contact_Name, c.Email, c.Contact_ID";
+            try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+                statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
+                statement.setObject(2, timeHelper.systemTimeNow().get(ChronoField.ALIGNED_WEEK_OF_YEAR));
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    numberOfCustomerAppointmentsByContact.add(
+                            getNumberOfAppointmentsForContactFromResultSet(resultSet)
+                    );
+                }
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else if (timeFilter == TimeFilter.MONTH) {
+            query = "SELECT c.Contact_Name, c.Email, COUNT(a.Appointment_ID) AS Number_Of_Appointments FROM appointments" +
+                    " a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE MONTH(CONVERT_TZ(a.Start, \"" +
+                    Constants.SERVER_TIME_ZONE_OFFSET +
+                    "\", ?)) = ? GROUP BY c.Contact_Name, c.Email, c.Contact_ID";
+            try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+                statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
+                statement.setObject(2, timeHelper.systemTimeNow().get(ChronoField.MONTH_OF_YEAR));
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    numberOfCustomerAppointmentsByContact.add(
+                            getNumberOfAppointmentsForContactFromResultSet(resultSet)
+                    );
+                }
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            query = "SELECT c.Contact_Name, c.Email, COUNT(c.Contact_ID) as Number_Of_Appointments FROM appointments a" +
+                    " INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID GROUP BY c.Contact_Name, c.Email, c.Contact_ID";
+            try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    numberOfCustomerAppointmentsByContact.add(
+                            getNumberOfAppointmentsForContactFromResultSet(resultSet)
+                    );
+                }
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return numberOfCustomerAppointmentsByContact;
+    }
+
+    private NumberOfAppointmentsForContact getNumberOfAppointmentsForContactFromResultSet(ResultSet resultSet) throws SQLException {
+        return new NumberOfAppointmentsForContact(
+                resultSet.getString("Contact_Name"),
+                resultSet.getString("Email"),
+                resultSet.getInt("Number_Of_Appointments")
+        );
     }
 }

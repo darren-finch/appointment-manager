@@ -1,12 +1,13 @@
 package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
+import com.darrenfinch.appointmentmanager.common.utils.TimeFilter;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerHasAppointmentsException;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.dashboard.DashboardController;
-import com.darrenfinch.appointmentmanager.screens.reports.ContactSchedule;
-import com.darrenfinch.appointmentmanager.screens.reports.NumberOfContactAppointmentsForMonth;
-import com.darrenfinch.appointmentmanager.screens.reports.NumberOfCustomerAppointmentsForTypeAndMonth;
+import com.darrenfinch.appointmentmanager.screens.reports.ContactAppointment;
+import com.darrenfinch.appointmentmanager.screens.reports.NumberOfAppointmentsForContact;
+import com.darrenfinch.appointmentmanager.screens.reports.NumberOfAppointmentsForCustomer;
 import javafx.collections.ObservableList;
 
 /**
@@ -53,7 +54,8 @@ public interface MainRepository {
     ObservableList<Contact> getAllContacts();
 
     // Reports
-    ObservableList<NumberOfCustomerAppointmentsForTypeAndMonth> getNumberOfCustomerAppointmentsByTypeAndMonth(String type, String month);
-    ObservableList<ContactSchedule> getContactSchedules();
-    ObservableList<NumberOfContactAppointmentsForMonth> getNumberOfContactAppointmentsForMonth(String month);
+    ObservableList<NumberOfAppointmentsForCustomer> getNumberOfCustomerAppointmentsForType(String type);
+    ObservableList<NumberOfAppointmentsForCustomer> getNumberOfCustomerAppointmentsForMonth(String month);
+    ObservableList<ContactAppointment> getScheduleForContact(int contactId);
+    ObservableList<NumberOfAppointmentsForContact> getNumberOfAppointmentsForContactAndTimeFilter(TimeFilter timeFilter);
 }
