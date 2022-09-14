@@ -13,7 +13,6 @@ import javafx.collections.ObservableList;
  *
  */
 public interface MainRepository {
-    // TODO: REMOVE FROM PUBLIC INTERFACE
     void initializeStaticData();
 
     // APPOINTMENTS
@@ -51,7 +50,7 @@ public interface MainRepository {
 
     // Reports
     ObservableList<NumberOfAppointmentsForCustomer> getNumberOfCustomerAppointmentsForType(String type);
-    ObservableList<NumberOfAppointmentsForCustomer> getNumberOfCustomerAppointmentsForMonth(String month);
-    ObservableList<ContactAppointment> getScheduleForContact(int contactId);
+    ObservableList<NumberOfAppointmentsForCustomer> getNumberOfCustomerAppointmentsForMonthThisYear(String month);
+    ObservableList<ContactAppointment> getUpcomingScheduleForContact(int contactId);
     ObservableList<NumberOfAppointmentsForContact> getNumberOfAppointmentsForContactAndTimeFilter(TimeFilter timeFilter);
 }

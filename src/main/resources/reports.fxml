@@ -20,7 +20,7 @@
          <items>
             <HBox spacing="10.0">
                <children>
-                  <Button fx:id="backButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#back" text="Back" />
+                  <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#back" text="Back" />
                   <Label maxHeight="1.7976931348623157E308" text="Reports">
                      <font>
                         <Font size="18.0" />
@@ -67,7 +67,7 @@
                      <children>
                         <HBox spacing="20.0">
                            <children>
-                              <Label maxHeight="1.7976931348623157E308" text="Number Of Appointments For Each Customer By Month" />
+                              <Label maxHeight="1.7976931348623157E308" text="Number Of Appointments For Each Customer By Month This Year" />
                               <HBox HBox.hgrow="ALWAYS" />
                               <HBox spacing="10.0">
                                  <children>
@@ -102,7 +102,7 @@
                      <children>
                         <HBox spacing="20.0">
                            <children>
-                              <Label maxHeight="1.7976931348623157E308" text="Contact Schedule" />
+                              <Label maxHeight="1.7976931348623157E308" text="Contact Schedule (Upcoming Appointments Only)" />
                               <HBox HBox.hgrow="ALWAYS" />
                               <HBox spacing="10.0">
                                  <children>

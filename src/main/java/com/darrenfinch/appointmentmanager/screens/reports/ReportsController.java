@@ -141,8 +141,8 @@ public class ReportsController {
                 @Override
                 protected Void call() throws Exception {
                     ObservableList<NumberOfAppointmentsForCustomer> report1Data = mainRepository.getNumberOfCustomerAppointmentsForType(model.getReport1TypeFilter());
-                    ObservableList<NumberOfAppointmentsForCustomer> report2Data = mainRepository.getNumberOfCustomerAppointmentsForMonth(model.getReport2MonthFilter());
-                    ObservableList<ContactAppointment> report3Data = mainRepository.getScheduleForContact(model.getReport3ContactFilter().getId());
+                    ObservableList<NumberOfAppointmentsForCustomer> report2Data = mainRepository.getNumberOfCustomerAppointmentsForMonthThisYear(model.getReport2MonthFilter());
+                    ObservableList<ContactAppointment> report3Data = mainRepository.getUpcomingScheduleForContact(model.getReport3ContactFilter().getId());
                     ObservableList<NumberOfAppointmentsForContact> report4Data = mainRepository.getNumberOfAppointmentsForContactAndTimeFilter(model.getReport4TimeFilter());
 
                     Platform.runLater(() -> {
