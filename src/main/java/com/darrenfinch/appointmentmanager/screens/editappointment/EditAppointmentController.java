@@ -12,10 +12,13 @@ import com.darrenfinch.appointmentmanager.common.ui.listcells.ContactListCell;
 import com.darrenfinch.appointmentmanager.common.ui.listcells.CustomerListCell;
 import com.darrenfinch.appointmentmanager.common.ui.listcells.UserListCell;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
+import com.darrenfinch.appointmentmanager.screens.editcustomer.EditCustomerModel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -94,6 +97,9 @@ public class EditAppointmentController {
         }
     };
 
+    /**
+     * Constructs a new EditAppointmentController with all the necessary dependencies.
+     */
     public EditAppointmentController(ScreenNavigator screenNavigator, DialogManager dialogManager, UserManager userManager, MainRepository mainRepository, ExecutorService executorService, EditAppointmentModel model) {
         this.screenNavigator = screenNavigator;
         this.dialogManager = dialogManager;
@@ -103,6 +109,11 @@ public class EditAppointmentController {
         this.model = model;
     }
 
+    /**
+     * Sets up the initial data model, binds the view to the model, and starts any services that will fetch data from the database.
+     *
+     * Inside the implementation of this method, 3 inline lambdas are used to enhance readability since their parameters are self-explanatory.
+     */
     @FXML
     public void initialize() {
         setupArguments();
@@ -116,9 +127,12 @@ public class EditAppointmentController {
     }
 
     private void setupModelData() {
-        loadFormDataTask.setOnFailed(workerStateEvent -> {
-            model.setError("An error occurred when loading the appointment data.");
-            workerStateEvent.consume();
+        loadFormDataTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent workerStateEvent) {
+                model.setError("An error occurred when loading the appointment data.");
+                workerStateEvent.consume();
+            }
         });
         executorService.execute(loadFormDataTask);
     }
@@ -169,10 +183,20 @@ public class EditAppointmentController {
         errorLabel.textProperty().bind(model.errorProperty());
     }
 
+    /**
+     * Shows a confirmation dialog letting the user know that any unsaved changes will be lost. If the user presses okay, it navigates to the previous screen.
+     */
     public void goBack() {
         dialogManager.showConfirmationDialog("You will lose any unsaved data if you go back. Are you sure?", screenNavigator::goBack, null);
     }
 
+    /**
+     * Calls into the data model to ensure all the user-entered data is valid.
+     * If the data is valid, it either adds a new appointment to the database if the appointmentId argument was invalid,
+     * or it updates an existing appointment if the appointmentId argument was valid.
+     *
+     * @see EditAppointmentModel#isValid  EditAppointmentModel.isValid
+     */
     public void save() {
         if (!loadFormDataTask.isDone())
             return;

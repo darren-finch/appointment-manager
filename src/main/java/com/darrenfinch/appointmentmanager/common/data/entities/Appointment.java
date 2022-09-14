@@ -8,14 +8,14 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
- * The main class that this application centers around. The company that this app is built for needs some way to track
- * appointments with their customers so they built this app.
- * <p>
- * An Appointment has some meta data, as well as the start/end dates, then the IDs for the customer who we will meet with,
- * the user that created the appointment, and the contact that will meet the customer.
+ * An Appointment is a meeting between a contact and a customer.
  */
 public class Appointment {
 
+    /**
+     * A declaration of the types of Appointments you can make. This allows for filtering appointments by type via
+     * a combo box instead of a search box (which is trickier to write).
+     */
     public static final ObservableList<String> TYPES = FXCollections.observableList(List.of(
             "Planning Session",
             "Briefing",
@@ -38,6 +38,10 @@ public class Appointment {
     private final IntegerProperty userId = new SimpleIntegerProperty();
     private final IntegerProperty contactId = new SimpleIntegerProperty();
 
+    /**
+     * Constructs an Appointment with some starting values for its properties.
+     * The id can be anything, since the database auto-generates it. It is just used to keep track of the entity in the application.
+     */
     public Appointment(int id, String title, String description, String location, String type, ZonedDateTime startDateTime, ZonedDateTime endDateTime, int customerId, int userId, int contactId) {
         this.id.set(id);
         this.title.set(title);
@@ -51,123 +55,143 @@ public class Appointment {
         this.contactId.set(contactId);
     }
 
+    /**
+     * Gets the id value from the id property.
+     */
     public int getId() {
         return id.get();
     }
 
+    /**
+     * Gets the id property.
+     */
     public IntegerProperty idProperty() {
         return id;
     }
 
+    /**
+     * Gets the title value from the title property.
+     */
     public String getTitle() {
         return title.get();
     }
 
+    /**
+     * Gets the title property.
+     */
     public StringProperty titleProperty() {
         return title;
     }
 
+    /**
+     * Gets the description value from the description property.
+     */
     public String getDescription() {
         return description.get();
     }
 
+    /**
+     * Gets the description property.
+     */
     public StringProperty descriptionProperty() {
         return description;
     }
 
+    /**
+     * Gets the location value from the location property.
+     */
     public String getLocation() {
         return location.get();
     }
 
+    /**
+     * Gets the location property.
+     */
     public StringProperty locationProperty() {
         return location;
     }
 
+    /**
+     * Gets the type value from the type property.
+     */
     public String getType() {
         return type.get();
     }
 
+    /**
+     * Gets the type property.
+     */
     public StringProperty typeProperty() {
         return type;
     }
 
+    /**
+     * Gets the startDateTime value from the startDateTime property.
+     */
     public ZonedDateTime getStartDateTime() {
         return startDateTime.get();
     }
 
+    /**
+     * Gets the startDateTime property.
+     */
     public ObjectProperty<ZonedDateTime> startDateTimeProperty() {
         return startDateTime;
     }
 
+    /**
+     * Gets the endDateTime value from the endDateTime property.
+     */
     public ZonedDateTime getEndDateTime() {
         return endDateTime.get();
     }
 
+    /**
+     * Gets the endDateTime property.
+     */
     public ObjectProperty<ZonedDateTime> endDateTimeProperty() {
         return endDateTime;
     }
 
+    /**
+     * Gets the customer id value from the customer id property.
+     */
     public int getCustomerId() {
         return customerId.get();
     }
 
+    /**
+     * Gets the customer id property.
+     */
     public IntegerProperty customerIdProperty() {
         return customerId;
     }
 
+    /**
+     * Gets the user id value from the user id property.
+     */
     public int getUserId() {
         return userId.get();
     }
 
+    /**
+     * Gets the user id property.
+     */
     public IntegerProperty userIdProperty() {
         return userId;
     }
 
+    /**
+     * Gets the contact id value from the contact id property.
+     */
     public int getContactId() {
         return contactId.get();
     }
 
+    /**
+     * Gets the contact id property.
+     */
     public IntegerProperty contactIdProperty() {
         return contactId;
-    }
-
-    public void setId(int id) {
-        this.id.set(id);
-    }
-
-    public void setTitle(String title) {
-        this.title.set(title);
-    }
-
-    public void setDescription(String description) {
-        this.description.set(description);
-    }
-
-    public void setLocation(String location) {
-        this.location.set(location);
-    }
-
-    public void setType(String type) {
-        this.type.set(type);
-    }
-
-    public void setStartDateTime(ZonedDateTime startDateTime) {
-        this.startDateTime.set(startDateTime);
-    }
-
-    public void setEndDateTime(ZonedDateTime endDateTime) {
-        this.endDateTime.set(endDateTime);
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId.set(customerId);
-    }
-
-    public void setUserId(int userId) {
-        this.userId.set(userId);
-    }
-
-    public void setContactId(int contactId) {
-        this.contactId.set(contactId);
     }
 }

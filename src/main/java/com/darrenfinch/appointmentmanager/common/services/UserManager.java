@@ -14,6 +14,9 @@ public class UserManager {
     private final MainRepository mainRepository;
     private User currentUser = null;
 
+    /**
+     * Constructs the user manager.
+     */
     public UserManager(StringService stringService, LoginActivityLogger loginActivityLogger, TimeHelper timeHelper, MainRepository mainRepository) {
         this.stringService = stringService;
         this.loginActivityLogger = loginActivityLogger;
@@ -21,7 +24,12 @@ public class UserManager {
         this.mainRepository = mainRepository;
     }
 
-    public boolean loginWithUserNameAndPassword(String userName, String password) throws RuntimeException {
+    /**
+     * Attempts to log in with the specified username and password.
+     * If the login is unsuccessful, it will throw an Exception with the reason for the login failure.
+     */
+    // TODO REFACTOR WITH CUSTOM EXCEPTION
+    public boolean loginWithUserNameAndPassword(String userName, String password) throws Exception {
         try {
             User requestedUser = mainRepository.getUserByUserName(userName);
 
@@ -44,10 +52,16 @@ public class UserManager {
         }
     }
 
+    /**
+     * Logs out the current user.
+     */
     public void logout() {
         currentUser = null;
     }
 
+    /**
+     * Returns the current user.
+     */
     public User getCurrentUser() {
         return currentUser;
     }

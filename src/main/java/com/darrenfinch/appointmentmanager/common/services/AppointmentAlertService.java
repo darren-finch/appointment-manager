@@ -17,6 +17,9 @@ public class AppointmentAlertService {
     private final DialogManager dialogManager;
     private final MainRepository mainRepository;
 
+    /**
+     * Constructs the appointment alert service.
+     */
     public AppointmentAlertService(ExecutorService executorService, TimeHelper timeHelper, DialogManager dialogManager, MainRepository mainRepository) {
         this.executorService = executorService;
         this.timeHelper = timeHelper;
@@ -24,6 +27,9 @@ public class AppointmentAlertService {
         this.mainRepository = mainRepository;
     }
 
+    /**
+     * Alerts the user with a dialog box if there are any upcoming appointments within the time frame specified by <code>Constants.APPOINTMENT_ALERT_THRESHOLD_MINUTES</code>.
+     */
     public void alertUserOfPotentialUpcomingAppointments(int userId) {
         executorService.execute(new Task<>() {
             @Override

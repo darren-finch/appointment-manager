@@ -31,6 +31,9 @@ public class LoginController implements BaseController {
     private final TimeHelper timeHelper;
     private final LoginModel model;
 
+    /**
+     * Constructs a new LoginController with all the necessary dependencies.
+     */
     public LoginController(
             StringService stringService,
             ScreenNavigator screenNavigator,
@@ -47,6 +50,9 @@ public class LoginController implements BaseController {
         this.model = model;
     }
 
+    /**
+     * Sets up the initial data model and binds the view to the model. This screen has no background services to start on initialize.
+     */
     @FXML
     public void initialize() {
         locationLabel.textProperty().bind(model.locationProperty());
@@ -57,6 +63,18 @@ public class LoginController implements BaseController {
         model.setLocation(String.format(stringService.getString("location_display"), timeHelper.defaultZone().getId()));
     }
 
+    /**
+     * Tries to log in using the provided username and password.
+     * If these credentials are correct, the user manager will log in with the provided user credentials, and we will navigate to the dashboard screen.
+     * If these credentials are incorrect, a descriptive error message will be displayed below the login form.
+     *
+     * Inside the implementation of this method, a lambda is used to switch to the dashboard screen upon a successful login.
+     * This lambda was used because it enhances readability, shortens the code,
+     * and there is no parameter for the {@link ScreenNavigator#switchToDashboardScreen ScreenNavigator.switchToDashboardScreen} method, so it's easy to justify a lambda.
+     *
+     * Another lambda is also used to set the error property on the data model upon an unsuccessful login.
+     * Once again, this lambda enhances readability and shortens the code.
+     */
     @FXML
     public void login() {
         executorService.execute(new Task<Boolean>() {

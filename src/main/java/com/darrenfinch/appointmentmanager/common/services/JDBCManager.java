@@ -3,6 +3,7 @@ package com.darrenfinch.appointmentmanager.common.services;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+// TODO: REMOVE THIS
 public class JDBCManager {
     private final String protocol = "jdbc";
     private final String vendor = ":mysql:";

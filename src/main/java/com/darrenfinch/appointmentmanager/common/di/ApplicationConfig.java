@@ -14,18 +14,18 @@ import com.darrenfinch.appointmentmanager.screens.login.LoginController;
 import com.darrenfinch.appointmentmanager.screens.login.LoginModel;
 import com.darrenfinch.appointmentmanager.screens.reports.ReportsController;
 import com.darrenfinch.appointmentmanager.screens.reports.ReportsModel;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.JavaFXBuilderFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Holds the application's primary dependency graph.
+ */
 public class ApplicationConfig {
     private final StringService stringService;
     private final ScreenNavigator screenNavigator;
@@ -38,6 +38,9 @@ public class ApplicationConfig {
     private final AppointmentAlertService appointmentAlertService;
     private final TimeHelper timeHelper;
 
+    /**
+     * Constructs the primary dependency graph of the application and sets up the database connection.
+     */
     public ApplicationConfig(Stage stage) {
         ResourceBundle bundle = ResourceBundle.getBundle(Constants.RESOURCE_BUNDLE_BASE_NAME, Locale.getDefault());
 
@@ -87,46 +90,72 @@ public class ApplicationConfig {
         ScreenNavigator.setControllerBuilderMethods(controllerBuilderMethods);
     }
 
+    /**
+     * Gets the string service.
+     */
     public StringService getStringService() {
         return stringService;
     }
 
+    /**
+     * Gets the screen navigator.
+     */
     public ScreenNavigator getScreenNavigator() {
         return screenNavigator;
     }
 
+    /**
+     * Gets the dialog manager.
+     */
     public DialogManager getDialogManager() {
         return dialogManager;
     }
 
-    public JDBCManager getJdbcManager() {
-        return jdbcManager;
-    }
-
+    /**
+     * Gets the main repository.
+     */
     public MainRepository getMainRepository() {
         return mainRepository;
     }
 
+    /**
+     * Gets the login activity manager.
+     */
     public LoginActivityLogger getLoginActivityLogger() {
         return loginActivityLogger;
     }
 
+    /**
+     * Gets the user manager.
+     */
     public UserManager getUserManager() {
         return userManager;
     }
 
+    /**
+     * Gets the executor service.
+     */
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
+    /**
+     * Gets the appointment alert service.
+     */
     public AppointmentAlertService getAppointmentAlertService() {
         return appointmentAlertService;
     }
 
+    /**
+     * Gets the time helper.
+     */
     public TimeHelper getTimeHelper() {
         return timeHelper;
     }
 
+    /**
+     * Cleans up any services that require a resource cleanup. This should be called before the application closes.
+     */
     public void cleanup() {
         executorService.shutdown();
         jdbcManager.closeConnection();

@@ -24,36 +24,58 @@ public class ScreenNavigator {
 
     private final Stack<String> screenStack = new Stack<>();
 
-
+    /**
+     * Constructs the screen navigator with a stage for displaying scenes and a resource bundle for localizing resources.
+     */
     public ScreenNavigator(Stage stage, ResourceBundle screenBundle) {
         this.stage = stage;
         this.screenBundle = screenBundle;
     }
 
+    /**
+     * Sets a list of builder methods this screen navigator will use to build controllers with injected dependencies.
+     * NOTE: These methods MUST be specified before switching to any screens, or the application will crash because the
+     * screen navigator doesn't know how to build the controllers for each screen.
+     */
     public static void setControllerBuilderMethods(HashMap<Class<?>, Callback<Class<?>, Object>> newControllerBuilderMethods) {
         controllerBuilderMethods = newControllerBuilderMethods;
     }
 
+    /**
+     * Switches to the login screen.
+     */
     public void switchToLoginScreen() {
         switchToScreen("login.fxml");
     }
 
+    /**
+     * Switches to the dashboard screen.
+     */
     public void switchToDashboardScreen() {
         switchToScreen("dashboard.fxml");
     }
 
+    /**
+     * Switches to the edit customer screen. If a valid customerId is provided, the customer with that id will be populated into the form.
+     */
     public void switchToEditCustomerScreen(int customerId) {
         arguments.clear();
         arguments.put("customerId", customerId);
         switchToScreen("edit-customer.fxml");
     }
 
+    /**
+     * Switches to the edit appointment screen. If a valid appointmentId is provided, the appointment with that id will be populated into the form.
+     */
     public void switchToEditAppointmentScreen(int appointmentId) {
         arguments.clear();
         arguments.put("appointmentId", appointmentId);
         switchToScreen("edit-appointment.fxml");
     }
 
+    /**
+     * Switches to the reports screen.
+     */
     public void switchToReportsScreen() {
         switchToScreen("reports.fxml");
     }
@@ -62,16 +84,23 @@ public class ScreenNavigator {
         switchToScreen(screenResourceName, false);
     }
 
+    // Handles the heavy lifting for the simple methods provided to the public.
     private void switchToScreen(String screenResourceName, boolean goingBack) {
         if (currentController != null) {
+            // This allows the current controller to perform any cleanup necessary before going to the next screen.
             currentController.onStopRequest();
         }
 
         try {
+            // Build a loader with the requested screen name, the screen bundle for localized resources, and a standard JavaFXBuilderFactory.
+            // The final argument is the class of the controller to be loaded.
+            // We get the class from the HashMap of builder methods specified in the setControllerBuilderMethods method.
+            // If it doesn't exist, then throw an exception.
+            JavaFXBuilderFactory javaFXBuilderFactory = new JavaFXBuilderFactory();
             FXMLLoader injectedLoader = new FXMLLoader(
                     ScreenNavigator.class.getResource("/" + screenResourceName),
                     screenBundle,
-                    new JavaFXBuilderFactory(),
+                    javaFXBuilderFactory,
                     (controllerClass) -> {
                         try {
                             if (controllerBuilderMethods.containsKey(controllerClass)) {
@@ -83,6 +112,7 @@ public class ScreenNavigator {
                             throw new IllegalStateException(e);
                         }
                     });
+
             currentController = injectedLoader.getController();
             Parent root = injectedLoader.load();
             stage.setScene(new Scene(root));
@@ -101,10 +131,16 @@ public class ScreenNavigator {
         }
     }
 
+    /**
+     * Gets a value from the argument map. Used for passing values between screens.
+     */
     public Object getArgument(String key) {
         return arguments.get(key);
     }
 
+    /**
+     * Returns to the previous screen on the screen stack.
+     */
     public void goBack() {
         if (!screenStack.isEmpty()) {
             screenStack.pop();

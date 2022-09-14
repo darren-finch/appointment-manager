@@ -7,11 +7,16 @@ import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
 import com.darrenfinch.appointmentmanager.common.services.*;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.Callback;
 
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
@@ -38,6 +43,9 @@ public class DashboardController implements BaseController {
     private final GetAllCustomersService getAllCustomersService;
     private final GetAppointmentsForUserBySortingFilterService getAppointmentsForUserBySortingFilterService;
 
+    /**
+     * Constructs a new DashboardController with all the necessary dependencies.
+     */
     public DashboardController(
             ScreenNavigator screenNavigator,
             DialogManager dialogManager,
@@ -58,6 +66,13 @@ public class DashboardController implements BaseController {
         this.getAppointmentsForUserBySortingFilterService = new GetAppointmentsForUserBySortingFilterService(mainRepository);
     }
 
+    /**
+     * Sets up the initial data model, binds the view to the model, and starts any services that will fetch data from the database.
+     *
+     * Inside the implementation of this method, 2 inline lambdas are used to enhance readability since their parameters are self-explanatory.
+     * Any other places a lambda could have been used,
+     * they were not used because the use of a lambda would have caused potential confusion about the parameter types to the functional interface.
+     */
     @FXML
     public void initialize() {
         appointmentAlertService.alertUserOfPotentialUpcomingAppointments(userManager.getCurrentUser().getId());
@@ -83,9 +98,12 @@ public class DashboardController implements BaseController {
         toggleGroup.selectToggle(viewByWeekRadioButton); // assuming that we will sort by week on screen load
 
         // Bind viewByProperty of model to re-fetch appointments
-        model.timeFilterProperty().addListener((obs, oldVal, newVal) -> {
-            getAppointmentsForUserBySortingFilterService.setAppointmentsSortingFilter(newVal);
-            getAppointmentsForUserBySortingFilterService.restart();
+        model.timeFilterProperty().addListener(new ChangeListener<TimeFilter>() {
+            @Override
+            public void changed(ObservableValue<? extends TimeFilter> observableValue, TimeFilter oldVal, TimeFilter newVal) {
+                getAppointmentsForUserBySortingFilterService.setAppointmentsSortingFilter(newVal);
+                getAppointmentsForUserBySortingFilterService.restart();
+            }
         });
 
         // Bind items of table views to model properties
@@ -94,20 +112,33 @@ public class DashboardController implements BaseController {
 
         // Ensure date formatting is correct
         TableColumn<Appointment, String> startDateTimeColumn = (TableColumn<Appointment, String>) appointmentsTableView.getColumns().filtered(col -> col.getText().equals("Start")).get(0);
-        startDateTimeColumn.setCellValueFactory(appointmentStringCellDataFeatures -> {
-            SimpleStringProperty strProp = new SimpleStringProperty();
-            strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
-            return strProp;
+        startDateTimeColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Appointment, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Appointment, String> appointmentStringCellDataFeatures) {
+                SimpleStringProperty strProp = new SimpleStringProperty();
+                strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
+                return strProp;
+            }
         });
 
         TableColumn<Appointment, String> endDateTimeColumn = (TableColumn<Appointment, String>) appointmentsTableView.getColumns().filtered(col -> col.getText().equals("End")).get(0);
-        endDateTimeColumn.setCellValueFactory(appointmentStringCellDataFeatures -> {
-            SimpleStringProperty strProp = new SimpleStringProperty();
-            strProp.set(appointmentStringCellDataFeatures.getValue().getEndDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
-            return strProp;
+        endDateTimeColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Appointment, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Appointment, String> appointmentStringCellDataFeatures) {
+                SimpleStringProperty strProp = new SimpleStringProperty();
+                strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
+                return strProp;
+            }
         });
     }
 
+    /**
+     * Tries to delete the selected customer. If no customer is selected, it simply returns.
+     * If one is selected, it will show a confirmation dialog, then upon confirmation it will try to delete the customer.
+     * If the customer still has appointments assigned to him/her, then it will pop up a dialog stating that the customer's appointments must be deleted first.
+     *
+     * This function has a Runnable lambda to ease the cognitive load of reading this code and shorten the length of the method.
+     */
     public void deleteCustomer() {
         CustomerWithLocationData selectedCustomerWithLocationData = customersTableView.getSelectionModel().getSelectedItem();
         if (selectedCustomerWithLocationData == null)
@@ -115,18 +146,25 @@ public class DashboardController implements BaseController {
 
         dialogManager.showConfirmationDialog(
                 "Are you sure you want to delete this customer?",
+                // Here is the lambda.
                 () -> {
                     DeleteCustomerTask deleteCustomerTask = new DeleteCustomerTask(mainRepository, selectedCustomerWithLocationData.getCustomer().getId());
-                    deleteCustomerTask.setOnSucceeded(workerStateEvent -> {
-                        dialogManager.showAlertDialog("Customer with ID " + selectedCustomerWithLocationData.getCustomer().getId() + " was deleted successfully.");
+                    deleteCustomerTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                        @Override
+                        public void handle(WorkerStateEvent workerStateEvent) {
+                            dialogManager.showAlertDialog("Customer with ID " + selectedCustomerWithLocationData.getCustomer().getId() + " was deleted successfully.");
 
-                        getAllCustomersService.restart();
-                        getAppointmentsForUserBySortingFilterService.restart();
-                        workerStateEvent.consume();
+                            getAllCustomersService.restart();
+                            getAppointmentsForUserBySortingFilterService.restart();
+                            workerStateEvent.consume();
+                        }
                     });
-                    deleteCustomerTask.setOnFailed(workerStateEvent -> {
-                        dialogManager.showAlertDialog(workerStateEvent.getSource().getException().getMessage());
-                        workerStateEvent.consume();
+                    deleteCustomerTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
+                        @Override
+                        public void handle(WorkerStateEvent workerStateEvent) {
+                            dialogManager.showAlertDialog(workerStateEvent.getSource().getException().getMessage());
+                            workerStateEvent.consume();
+                        }
                     });
                     executorService.execute(deleteCustomerTask);
                 },
@@ -134,6 +172,9 @@ public class DashboardController implements BaseController {
         );
     }
 
+    /**
+     * Tries to navigate to the edit customer screen with the selected customer. If no customer is selected, this method does nothing.
+     */
     public void updateCustomer() {
         CustomerWithLocationData selectedCustomerWithLocationData = customersTableView.getSelectionModel().getSelectedItem();
         if (selectedCustomerWithLocationData == null)
@@ -142,10 +183,21 @@ public class DashboardController implements BaseController {
         screenNavigator.switchToEditCustomerScreen(selectedCustomerWithLocationData.getId());
     }
 
+    /**
+     * Navigates to the edit customer screen with an invalid id, which is the same as telling it that you are adding a new customer.
+     */
     public void addCustomer() {
         screenNavigator.switchToEditCustomerScreen(Constants.INVALID_ID);
     }
 
+    /**
+     * Tries to delete the selected appointment. If no appointment is selected, it simply returns.
+     * If one is selected, it will show a confirmation dialog, then upon confirmation it will try to delete the appointment.
+     *
+     * This function has a Runnable lambda to ease the cognitive load of reading this code and shorten the length of the method.
+     * Any other places a lambda could have been used,
+     * they were not used because the use of a lambda would have caused potential confusion about the parameter types to the functional interface.
+     */
     public void deleteAppointment() {
         Appointment selectedAppointment = appointmentsTableView.getSelectionModel().getSelectedItem();
         if (selectedAppointment != null) {
@@ -153,14 +205,17 @@ public class DashboardController implements BaseController {
                     "Are you sure you want to delete this appointment?",
                     () -> {
                         DeleteAppointmentTask deleteAppointmentTask = new DeleteAppointmentTask(mainRepository, selectedAppointment.getId());
-                        deleteAppointmentTask.setOnSucceeded(workerStateEvent -> {
-                            getAppointmentsForUserBySortingFilterService.restart();
-                            dialogManager.showAlertDialog(
-                                    "Appointment was deleted successfully."
-                                    + "\nID: " + selectedAppointment.getId()
-                                    + "\nType: " + selectedAppointment.getType()
-                            );
-                            workerStateEvent.consume();
+                        deleteAppointmentTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                            @Override
+                            public void handle(WorkerStateEvent workerStateEvent) {
+                                getAppointmentsForUserBySortingFilterService.restart();
+                                dialogManager.showAlertDialog(
+                                        "Appointment was deleted successfully."
+                                                + "\nID: " + selectedAppointment.getId()
+                                                + "\nType: " + selectedAppointment.getType()
+                                );
+                                workerStateEvent.consume();
+                            }
                         });
                         executorService.execute(deleteAppointmentTask);
                     },
@@ -169,6 +224,9 @@ public class DashboardController implements BaseController {
         }
     }
 
+    /**
+     * Tries to navigate to the edit appointment screen with the selected appointment. If no appointment is selected, it simply returns.
+     */
     public void updateAppointment() {
         Appointment selectedAppointment = appointmentsTableView.getSelectionModel().getSelectedItem();
         if (selectedAppointment != null) {
@@ -176,32 +234,56 @@ public class DashboardController implements BaseController {
         }
     }
 
+    /**
+     * Navigates to the edit appointment screen with an invalid id, which is the same as telling it that you are adding a new appointment.
+     */
     public void addAppointment() {
         screenNavigator.switchToEditAppointmentScreen(Constants.INVALID_ID);
     }
 
+    /**
+     * Navigates to the reports screen.
+     */
     public void goToReportsScreen() {
         screenNavigator.switchToReportsScreen();
     }
 
+    /**
+     * Logs out the current user and navigates back to the login screen.
+     */
     public void logout() {
         userManager.logout();
         screenNavigator.switchToLoginScreen();
     }
 
+    /**
+     * Called when the "This Week" radio is selected.
+     * This changes the time filter of the model and causes the appointments list to update automatically thanks to data binding.
+     */
     public void onViewByWeekSelected() {
         model.setTimeFilter(TimeFilter.WEEK);
     }
 
+    /**
+     * Called when the "This MONTH" radio is selected.
+     * This changes the time filter of the model and causes the appointments list to update automatically thanks to data binding.
+     */
     public void onViewByMonthSelected() {
         model.setTimeFilter(TimeFilter.MONTH);
     }
 
+    /**
+     * Called when the "All Time" radio is selected.
+     * This changes the time filter of the model and causes the appointments list to update automatically thanks to data binding.
+     */
     public void onViewByAllTimeSelected() {
         model.setTimeFilter(TimeFilter.ALL_TIME);
     }
 
-    public static class GetAllCustomersService extends Service<ObservableList<CustomerWithLocationData>> {
+    /**
+     * Gets all customers from the database.
+     */
+    private static class GetAllCustomersService extends Service<ObservableList<CustomerWithLocationData>> {
         private final MainRepository mainRepository;
 
         public GetAllCustomersService(MainRepository mainRepository) {
@@ -212,14 +294,17 @@ public class DashboardController implements BaseController {
         protected Task<ObservableList<CustomerWithLocationData>> createTask() {
             return new Task<>() {
                 @Override
-                protected ObservableList<CustomerWithLocationData> call() throws Exception {
+                protected ObservableList<CustomerWithLocationData> call() {
                     return mainRepository.getAllCustomersWithLocationData();
                 }
             };
         }
     }
 
-    public static class GetAppointmentsForUserBySortingFilterService extends Service<ObservableList<Appointment>> {
+    /**
+     * Gets all appointments from the database, filtered by the currently selected time filter.
+     */
+    private static class GetAppointmentsForUserBySortingFilterService extends Service<ObservableList<Appointment>> {
 
         private final MainRepository mainRepository;
         private final IntegerProperty userId = new SimpleIntegerProperty();
@@ -243,14 +328,17 @@ public class DashboardController implements BaseController {
         protected Task<ObservableList<Appointment>> createTask() {
             return new Task<>() {
                 @Override
-                protected ObservableList<Appointment> call() throws Exception {
+                protected ObservableList<Appointment> call() {
                     return mainRepository.getAppointmentsForUserByTimeFilter(userId.get(), appointmentsSortingFilter.get());
                 }
             };
         }
     }
 
-    public static class DeleteCustomerTask extends Task<Void> {
+    /**
+     * Tries to delete a customer from the database. It will throw a CustomerHasAppointmentsException if it tries to delete a customer with assigned appointments.
+     */
+    private static class DeleteCustomerTask extends Task<Void> {
 
         private final MainRepository mainRepository;
         private final int customerId;
@@ -267,7 +355,10 @@ public class DashboardController implements BaseController {
         }
     }
 
-    public static class DeleteAppointmentTask extends Task<Void> {
+    /**
+     * Deletes an appointment from the database.
+     */
+    private static class DeleteAppointmentTask extends Task<Void> {
 
         private final MainRepository mainRepository;
         private final int appointmentId;
@@ -278,7 +369,7 @@ public class DashboardController implements BaseController {
         }
 
         @Override
-        protected Void call() throws Exception {
+        protected Void call() {
             mainRepository.removeAppointment(appointmentId);
             return null;
         }
