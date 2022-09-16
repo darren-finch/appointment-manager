@@ -69,9 +69,12 @@ public class DashboardController implements BaseController {
     /**
      * Sets up the initial data model, binds the view to the model, and starts any services that will fetch data from the database.
      *
-     * Inside the implementation of this method, 2 inline lambdas are used to enhance readability since their parameters are self-explanatory.
-     * Any other places a lambda could have been used,
-     * they were not used because the use of a lambda would have caused potential confusion about the parameter types to the functional interface.
+     * Inside the implementation of this method, an inline lambda is used to filter the columns in the appointment table down to a single column named "Start".
+     * Another inline lambda is used to filter the columns in the appointment table down to a single column named "End".
+     *
+     * These lambdas enhance readability since their parameters are self-explanatory.
+     * Any other places a lambda could have been used, they were not used because the use of a lambda would have
+     * caused potential confusion about the parameter types to the functional interface.
      */
     @FXML
     public void initialize() {
@@ -195,8 +198,8 @@ public class DashboardController implements BaseController {
      * If one is selected, it will show a confirmation dialog, then upon confirmation it will try to delete the appointment.
      *
      * This function has a Runnable lambda to ease the cognitive load of reading this code and shorten the length of the method.
-     * Any other places a lambda could have been used,
-     * they were not used because the use of a lambda would have caused potential confusion about the parameter types to the functional interface.
+     * Any other places a lambda could have been used, they were not used because the use of a lambda would have
+     * caused potential confusion about the parameter types to the functional interface.
      */
     public void deleteAppointment() {
         Appointment selectedAppointment = appointmentsTableView.getSelectionModel().getSelectedItem();

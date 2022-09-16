@@ -113,6 +113,9 @@ public class EditAppointmentController {
      * Sets up the initial data model, binds the view to the model, and starts any services that will fetch data from the database.
      *
      * Inside the implementation of this method, 3 inline lambdas are used to enhance readability since their parameters are self-explanatory.
+     * One lambda is used to assign CustomerListCells to the Customer combo box dropdown.
+     * Another lambda is used to assign UserListCells to the User combo box dropdown.
+     * The final lambda is used to assign ContactListCells to the Contact combo box dropdown.
      */
     @FXML
     public void initialize() {

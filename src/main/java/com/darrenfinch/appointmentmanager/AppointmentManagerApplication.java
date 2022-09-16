@@ -7,6 +7,9 @@ public class AppointmentManagerApplication extends javafx.application.Applicatio
 
     private ApplicationConfig config;
 
+    /**
+     * Starts the application and initializes the application configuration, which contains the dependency graph.
+     */
     @Override
     public void start(Stage stage) {
         stage.setResizable(false);
@@ -16,10 +19,16 @@ public class AppointmentManagerApplication extends javafx.application.Applicatio
         config.getScreenNavigator().switchToLoginScreen();
     }
 
+    /**
+     * The main entry point for the application.
+     */
     public static void main(String[] args) {
         launch();
     }
 
+    /**
+     * Cleans up any resources that the application configuration needs to have cleaned up before quitting.
+     */
     @Override
     public void stop() {
         config.cleanup();

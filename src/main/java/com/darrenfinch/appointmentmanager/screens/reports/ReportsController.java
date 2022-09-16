@@ -10,12 +10,15 @@ import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.Callback;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -48,6 +51,9 @@ public class ReportsController {
 
     private boolean firstLoad = true;
 
+    /**
+     * Constructs a new ReportsController with all the necessary dependencies.
+     */
     public ReportsController(ScreenNavigator screenNavigator, ExecutorService executorService, MainRepository mainRepository, ReportsModel model) {
         this.screenNavigator = screenNavigator;
         this.executorService = executorService;
@@ -60,6 +66,18 @@ public class ReportsController {
         });
     }
 
+    /**
+     * Sets up the initial data model, binds the view to the model, and starts any services that will fetch data from the database.
+     *
+     * Inside the implementation of this method, 4 inline lambdas are used to enhance readability and conciseness, since their parameters are self-explanatory.
+     *
+     * <ol>
+     *   <li>One is used to create new ContactListCells for the Contact combo box dropdown.</li>
+     *   <li>Another one is used to create new TimeFilterListCells for the Time Filter combo box dropdown.</li>
+     *   <li>Another one is used to filter the columns in the ContactAppointment table down to a single column named "Start".</li>
+     *   <li>The final one is used to filter the columns in the ContactAppointment table down to a single column named "End".</li>
+     * </ol>
+     */
     @FXML
     public void initialize() {
         setupModelData();
@@ -95,45 +113,71 @@ public class ReportsController {
 
         // Ensure date formatting is correct
         TableColumn<ContactAppointment, String> startDateTimeColumn = (TableColumn<ContactAppointment, String>) report3TableView.getColumns().filtered(col -> col.getText().equals("Start Date/Time")).get(0);
-        startDateTimeColumn.setCellValueFactory(appointmentStringCellDataFeatures -> {
-            SimpleStringProperty strProp = new SimpleStringProperty();
-            strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
-            return strProp;
+        startDateTimeColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ContactAppointment, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<ContactAppointment, String> contactAppointmentStringCellDataFeatures) {
+                SimpleStringProperty strProp = new SimpleStringProperty();
+                strProp.set(contactAppointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
+                return strProp;
+            }
         });
 
         TableColumn<ContactAppointment, String> endDateTimeColumn = (TableColumn<ContactAppointment, String>) report3TableView.getColumns().filtered(col -> col.getText().equals("End Date/Time")).get(0);
-        endDateTimeColumn.setCellValueFactory(appointmentStringCellDataFeatures -> {
-            SimpleStringProperty strProp = new SimpleStringProperty();
-            strProp.set(appointmentStringCellDataFeatures.getValue().getEndDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
-            return strProp;
+        endDateTimeColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ContactAppointment, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<ContactAppointment, String> contactAppointmentStringCellDataFeatures) {
+                SimpleStringProperty strProp = new SimpleStringProperty();
+                strProp.set(contactAppointmentStringCellDataFeatures.getValue().getEndDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
+                return strProp;
+            }
         });
     }
 
     private void setupModelData() {
         model.initialize(mainRepository.getAllContacts());
 
-        report1TypeComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (!firstLoad)
-                refreshReportsService.restart();
+        report1TypeComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                refreshReports();
+            }
         });
-        report2MonthComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (!firstLoad)
-                refreshReportsService.restart();
+        report2MonthComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                refreshReports();
+            }
         });
-        report3ContactComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (!firstLoad)
-                refreshReportsService.restart();
+        report3ContactComboBox.valueProperty().addListener(new ChangeListener<Contact>() {
+            @Override
+            public void changed(ObservableValue<? extends Contact> observableValue, Contact contact, Contact t1) {
+                refreshReports();
+            }
         });
-        report4TimeFilterComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (!firstLoad)
-                refreshReportsService.restart();
+        report4TimeFilterComboBox.valueProperty().addListener(new ChangeListener<TimeFilter>() {
+            @Override
+            public void changed(ObservableValue<? extends TimeFilter> observableValue, TimeFilter timeFilter, TimeFilter t1) {
+                refreshReports();
+            }
         });
     }
 
+    private void refreshReports() {
+        if (!firstLoad)
+            refreshReportsService.restart();
+    }
+
+    /**
+     * Navigates to the previous screen. In this application it should be the dashboard.
+     */
     public void back() {
         screenNavigator.goBack();
     }
 
+    /**
+     * This service refreshes all the reports on this screen. It uses a Runnable lambda when setting the model data.
+     * This enhances readability and code conciseness.
+     */
     private class RefreshReportsService extends Service<Void> {
         @Override
         protected Task<Void> createTask() {

@@ -10,6 +10,8 @@ import com.darrenfinch.appointmentmanager.common.services.UserManager;
 import com.darrenfinch.appointmentmanager.common.ui.listcells.CountryListCell;
 import com.darrenfinch.appointmentmanager.common.ui.listcells.FirstLevelDivisionListCell;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -79,9 +81,18 @@ public class EditCustomerController {
     /**
      * Sets up the initial data model, binds the view to the model, and starts any services that will fetch data from the database.
      *
-     * Inside the implementation of this method, 4 inline lambdas are used to enhance readability since their parameters are self-explanatory.
-     * Any other places a lambda could have been used,
-     * they were not used because the use of a lambda would have caused potential confusion about the parameter types to the functional interface.
+     * Inside the implementation of this method, 4 inline lambdas are used to enhance readability and conciseness, since their parameters are self-explanatory.
+     *
+     * <ol>
+     *     <li>One is used in a forEach function to loop through each country in the database.</li>
+     *     <li>Another one is used to filter a list of first level divisions for a particular country down to the exact country
+     *     the customer we've gotten from the database is in.</li>
+     *     <li>Another one is used to create new CountryListCells for the country combo box dropdown.</li>
+     *     <li>The final one is used to create new FirstLevelDivisionCells for the first level division combo box dropdown.</li>
+     * </ol>
+     *
+     * Any other places a lambda could have been used, they were not used because the use of a lambda would have
+     * caused potential confusion about the parameter types to the functional interface.
      */
     @FXML
     public void initialize() {
@@ -102,9 +113,12 @@ public class EditCustomerController {
         model.setAllFirstLevelDivisionsForCountry(mainRepository.getFirstLevelDivisionsForCountry(model.getSelectedCountry()));
         model.setSelectedFirstLevelDivision(model.getAllFirstLevelDivisionsForCountry().get(0));
 
-        model.selectedCountryProperty().addListener((obs, oldVal, newVal) -> {
-            model.setAllFirstLevelDivisionsForCountry(mainRepository.getFirstLevelDivisionsForCountry(model.getSelectedCountry()));
-            model.setSelectedFirstLevelDivision(model.getAllFirstLevelDivisionsForCountry().get(0));
+        model.selectedCountryProperty().addListener(new ChangeListener<Country>() {
+            @Override
+            public void changed(ObservableValue<? extends Country> obs, Country oldVal, Country newVal) {
+                model.setAllFirstLevelDivisionsForCountry(mainRepository.getFirstLevelDivisionsForCountry(model.getSelectedCountry()));
+                model.setSelectedFirstLevelDivision(model.getAllFirstLevelDivisionsForCountry().get(0));
+            }
         });
 
         if (isEditingExistingCustomer) {
@@ -183,6 +197,9 @@ public class EditCustomerController {
      * or it updates an existing customer if the customerId argument was valid.
      *
      * @see EditCustomerModel#isValid()  EditCustomerModel.isValid()
+     *
+     * This function uses a lambda to reduce down the list of errors into a single string with each error on its own line.
+     * Once again, the readability of using the lambda is much higher than an entire functional interface.
      */
     public void save() {
         if (model.isValid()) {

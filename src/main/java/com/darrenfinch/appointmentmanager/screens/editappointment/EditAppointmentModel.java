@@ -668,6 +668,10 @@ public class EditAppointmentModel {
      * Once these checks have been performed, it returns a boolean stating whether the check was successful.
      * If the check was not successful, then a list of reasons for why it wasn't successful can be found
      * using the {@link EditAppointmentModel#getInvalidReasons}  getInvalidReasons} method.
+     *
+     * This method has 2 inline lambdas to help shorten the code and decrease the cognitive load of reading it.
+     * One lambda is a forEach lambda used to loop through the appointments assigned to the selected customer.
+     * And the other one is exactly the same, only it loops through the appointments assigned to the selected contact.
      */
     public boolean isValid(ValidationParameters validationParameters) {
         invalidReasons.clear();
