@@ -4,12 +4,32 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Constants {
+    /**
+     * The fully qualified name for the JDBC driver.
+     */
+    public static final String JDBC_DRIVER_PACKAGE_NAME = "com.mysql.cj.jdbc.Driver";
+
+    /**
+     * The connection url for the database.
+     */
+    public static final String DB_CONNECTION_STRING = "jdbc:mysql://localhost/client_schedule?connectionTimeZone=UTC";
+
+    /**
+     * The username used to log in to the database. It is a terrible practice to hardcode this into the code, but for this
+     * project, we will leave it as-is.
+     */
+    public static final String DB_USER_NAME = "sqlUser";
+
+    /**
+     * The password used to log in to the database. It is a terrible practice to hardcode this into the code, but for this
+     * project, we will leave it as-is.
+     */
+    public static final String DB_PASSWORD = "Passw0rd!";
+
     /**
      * The numerical offset of the database's time zone (should always be UTC).
      */

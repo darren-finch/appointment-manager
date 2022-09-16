@@ -2,13 +2,14 @@ package com.darrenfinch.appointmentmanager.common.services;
 
 import com.darrenfinch.appointmentmanager.common.data.MainRepository;
 import com.darrenfinch.appointmentmanager.common.data.entities.User;
+import com.darrenfinch.appointmentmanager.common.exceptions.InvalidPasswordException;
+import com.darrenfinch.appointmentmanager.common.exceptions.UserNotFoundException;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 
 import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
 
 public class UserManager {
-    private final StringService stringService;
     private final LoginActivityLogger loginActivityLogger;
     private final TimeHelper timeHelper;
     private final MainRepository mainRepository;
@@ -17,8 +18,7 @@ public class UserManager {
     /**
      * Constructs the user manager.
      */
-    public UserManager(StringService stringService, LoginActivityLogger loginActivityLogger, TimeHelper timeHelper, MainRepository mainRepository) {
-        this.stringService = stringService;
+    public UserManager(LoginActivityLogger loginActivityLogger, TimeHelper timeHelper, MainRepository mainRepository) {
         this.loginActivityLogger = loginActivityLogger;
         this.timeHelper = timeHelper;
         this.mainRepository = mainRepository;
@@ -28,28 +28,17 @@ public class UserManager {
      * Attempts to log in with the specified username and password.
      * If the login is unsuccessful, it will throw an Exception with the reason for the login failure.
      */
-    // TODO REFACTOR WITH CUSTOM EXCEPTION
-    public boolean loginWithUserNameAndPassword(String userName, String password) throws Exception {
-        try {
-            User requestedUser = mainRepository.getUserByUserName(userName);
+    public boolean loginWithUserNameAndPassword(String userName, String password) throws UserNotFoundException, InvalidPasswordException {
+        User requestedUser = mainRepository.getUserByUserName(userName);
 
-            if (requestedUser == null) {
-                loginActivityLogger.writeLoginAttempt(userName, timeHelper.systemTimeNow(), false);
-                throw new RuntimeException(stringService.getString("invalid_username"));
-            }
-
-            if (!requestedUser.getPassword().equals(password)) {
-                loginActivityLogger.writeLoginAttempt(userName, timeHelper.systemTimeNow(), false);
-                throw new RuntimeException(stringService.getString("invalid_password"));
-            }
-
-            currentUser = requestedUser;
-            loginActivityLogger.writeLoginAttempt(userName, timeHelper.systemTimeNow(), true);
-            return true;
-
-        } catch (Exception e) {
-            throw new RuntimeException(e.getLocalizedMessage());
+        if (!requestedUser.getPassword().equals(password)) {
+            loginActivityLogger.writeLoginAttempt(userName, timeHelper.systemTimeNow(), false);
+            throw new InvalidPasswordException();
         }
+
+        currentUser = requestedUser;
+        loginActivityLogger.writeLoginAttempt(userName, timeHelper.systemTimeNow(), true);
+        return true;
     }
 
     /**

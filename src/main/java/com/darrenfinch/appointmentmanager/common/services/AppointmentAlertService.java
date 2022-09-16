@@ -29,6 +29,9 @@ public class AppointmentAlertService {
 
     /**
      * Alerts the user with a dialog box if there are any upcoming appointments within the time frame specified by <code>Constants.APPOINTMENT_ALERT_THRESHOLD_MINUTES</code>.
+     *
+     * This method uses 2 Runnable lambdas to improve the readability, maintainability, and conciseness of the code.
+     * One of them shows the alert dialog if there are upcoming appointments, the other shows the alert dialog that says there are no upcoming appointments.
      */
     public void alertUserOfPotentialUpcomingAppointments(int userId) {
         executorService.execute(new Task<>() {

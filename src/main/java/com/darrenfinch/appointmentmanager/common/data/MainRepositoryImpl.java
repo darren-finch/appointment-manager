@@ -2,9 +2,10 @@ package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
 import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
+import com.darrenfinch.appointmentmanager.common.exceptions.UserNotFoundException;
 import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
-import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerHasAppointmentsException;
+import com.darrenfinch.appointmentmanager.common.exceptions.CustomerHasAppointmentsException;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.reports.ContactAppointment;
 import com.darrenfinch.appointmentmanager.screens.reports.NumberOfAppointmentsForContact;
@@ -17,6 +18,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainRepositoryImpl implements MainRepository {
     private final Connection dbConnection;
@@ -437,10 +439,13 @@ public class MainRepositoryImpl implements MainRepository {
         return users;
     }
 
-    // TODO: REFACTOR TO PROVIDE PROPER ERROR MSG
     @Override
-    public User getUserByUserName(String userName) {
-        return users.filtered(user -> user.getName().equals(userName)).get(0);
+    public User getUserByUserName(String userName) throws UserNotFoundException {
+        List<User> userList = users.filtered(user -> user.getName().equals(userName));
+        if (userList.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        return userList.get(0);
     }
 
     @Override

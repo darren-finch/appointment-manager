@@ -2,9 +2,9 @@ package com.darrenfinch.appointmentmanager.screens.login;
 
 import com.darrenfinch.appointmentmanager.common.BaseController;
 import com.darrenfinch.appointmentmanager.common.services.ScreenNavigator;
-import com.darrenfinch.appointmentmanager.common.services.StringService;
 import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import com.darrenfinch.appointmentmanager.common.services.UserManager;
+import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 
 public class LoginController implements BaseController {
@@ -24,7 +25,6 @@ public class LoginController implements BaseController {
     @FXML
     private Label errorLabel;
 
-    private final StringService stringService;
     private final ScreenNavigator screenNavigator;
     private final UserManager userManager;
     private final ExecutorService executorService;
@@ -35,14 +35,12 @@ public class LoginController implements BaseController {
      * Constructs a new LoginController with all the necessary dependencies.
      */
     public LoginController(
-            StringService stringService,
             ScreenNavigator screenNavigator,
             UserManager userManager,
             ExecutorService executorService,
             TimeHelper timeHelper,
             LoginModel model
     ) {
-        this.stringService = stringService;
         this.screenNavigator = screenNavigator;
         this.userManager = userManager;
         this.executorService = executorService;
@@ -60,7 +58,7 @@ public class LoginController implements BaseController {
         passwordPasswordField.textProperty().bindBidirectional(model.passwordProperty());
         errorLabel.textProperty().bind(model.errorProperty());
 
-        model.setLocation(String.format(stringService.getString("location_display"), timeHelper.defaultZone().getId()));
+        model.setLocation(String.format(ResourceBundle.getBundle(Constants.RESOURCE_BUNDLE_BASE_NAME).getString("location_display"), timeHelper.defaultZone().getId()));
     }
 
     /**

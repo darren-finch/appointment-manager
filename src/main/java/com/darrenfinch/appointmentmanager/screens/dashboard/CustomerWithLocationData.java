@@ -63,9 +63,7 @@ public class CustomerWithLocationData {
      * Gets the full address including division name, country name, and postal code.
      */
     public String getFullAddress() {
-        return customer.getAddress() + ", " + divisionName.get() + ", " + countryName.get();
-        // TODO: Implement this below and remove postal code column from tableview
-        // return customer.getAddress() + ", " + divisionName.get() + " " + postalCodeProperty().get() + ", " + countryName.get();
+        return getAddress() + ", " + getDivisionName() + " " + getPostalCode() + ", " + getCountryName();
     }
 
     /**

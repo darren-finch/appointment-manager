@@ -1,4 +1,4 @@
-package com.darrenfinch.appointmentmanager.screens.editappointment;
+package com.darrenfinch.appointmentmanager.common.exceptions;
 
 public class InvalidAppointmentTypeException extends Exception {
 
@@ -16,6 +16,6 @@ public class InvalidAppointmentTypeException extends Exception {
      */
     @Override
     public String getMessage() {
-        return "The loaded appointment did not have a valid appointment type, resetting to default value.";
+        return "The loaded appointment with id = " + appointmentId + " did not have a valid appointment type, resetting to default value.";
     }
 }

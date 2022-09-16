@@ -1,4 +1,4 @@
-package com.darrenfinch.appointmentmanager.screens.dashboard;
+package com.darrenfinch.appointmentmanager.common.exceptions;
 
 public class CustomerHasAppointmentsException extends Exception {
     private final int customerId;

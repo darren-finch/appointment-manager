@@ -4,6 +4,7 @@ import com.darrenfinch.appointmentmanager.common.data.entities.Appointment;
 import com.darrenfinch.appointmentmanager.common.data.entities.Contact;
 import com.darrenfinch.appointmentmanager.common.data.entities.Customer;
 import com.darrenfinch.appointmentmanager.common.data.entities.User;
+import com.darrenfinch.appointmentmanager.common.exceptions.InvalidAppointmentTypeException;
 import com.darrenfinch.appointmentmanager.common.services.TimeHelper;
 import com.darrenfinch.appointmentmanager.common.utils.Constants;
 import javafx.beans.property.ObjectProperty;

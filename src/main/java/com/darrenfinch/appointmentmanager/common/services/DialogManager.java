@@ -8,6 +8,8 @@ public class DialogManager {
 
     /**
      * Shows a dialog with a prompt, an okay button, and a cancel button.
+     *
+     * This method uses a lambda for a dialog callback because it was much easier to understand and read than a full class.
      */
     public void showConfirmationDialog(String confirmationPrompt, Runnable onOk, Runnable onCancel) {
         if (showingDialog) {
@@ -29,6 +31,8 @@ public class DialogManager {
 
     /**
      * Shows a dialog with a prompt and an okay button.
+     *
+     * This method uses a lambda for a dialog callback because it was much easier to understand and read than a full class.
      */
     public void showAlertDialog(String alertText) {
         if (showingDialog)

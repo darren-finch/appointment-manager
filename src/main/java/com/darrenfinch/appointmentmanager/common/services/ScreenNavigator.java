@@ -84,7 +84,12 @@ public class ScreenNavigator {
         switchToScreen(screenResourceName, false);
     }
 
-    // Handles the heavy lifting for the simple methods provided to the public.
+    /**
+     * Handles the heavy lifting for the simple methods provided to the public.
+     *
+     * Also this method uses a lambda as a callback that creates controllers for the FXML loader via the controllerBuilderMethods property.
+     * This was used to increase the readability of the code.
+     */
     private void switchToScreen(String screenResourceName, boolean goingBack) {
         if (currentController != null) {
             // This allows the current controller to perform any cleanup necessary before going to the next screen.

@@ -2,7 +2,8 @@ package com.darrenfinch.appointmentmanager.common.data;
 
 import com.darrenfinch.appointmentmanager.common.data.entities.*;
 import com.darrenfinch.appointmentmanager.common.data.misc.TimeFilter;
-import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerHasAppointmentsException;
+import com.darrenfinch.appointmentmanager.common.exceptions.UserNotFoundException;
+import com.darrenfinch.appointmentmanager.common.exceptions.CustomerHasAppointmentsException;
 import com.darrenfinch.appointmentmanager.screens.dashboard.CustomerWithLocationData;
 import com.darrenfinch.appointmentmanager.screens.reports.ContactAppointment;
 import com.darrenfinch.appointmentmanager.screens.reports.NumberOfAppointmentsForContact;
@@ -120,8 +121,10 @@ public interface MainRepository {
     /**
      * Gets a specific user by their username. It must be an exact match, since this is used for logging in.
      * This does not need to be put on a background thread because this function returns a static list without accessing the database.
+     *
+     * This method uses a lambda to filter the users down to the specific user that we're looking for. This lambda greatly improved code readability.
      */
-    User getUserByUserName(String userName);
+    User getUserByUserName(String userName) throws UserNotFoundException;
 
 
 
@@ -140,6 +143,9 @@ public interface MainRepository {
     /**
      * Gets all the first level divisions (such as states or provinces) in the database.
      * This does not need to be put on a background thread because this function returns a static list without accessing the database.
+     *
+     * This method uses a lambda to filter the first level divisions down to only the divisions that belong to the provided country.
+     * This lambda greatly improved code readability.
      */
     ObservableList<FirstLevelDivision> getFirstLevelDivisionsForCountry(Country country);
 
