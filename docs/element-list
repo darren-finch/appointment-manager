@@ -1,0 +1,16 @@
+module:com.darrenfinch.appointmentmanager
+com.darrenfinch.appointmentmanager
+com.darrenfinch.appointmentmanager.common
+com.darrenfinch.appointmentmanager.common.data
+com.darrenfinch.appointmentmanager.common.data.entities
+com.darrenfinch.appointmentmanager.common.data.misc
+com.darrenfinch.appointmentmanager.common.di
+com.darrenfinch.appointmentmanager.common.exceptions
+com.darrenfinch.appointmentmanager.common.services
+com.darrenfinch.appointmentmanager.common.ui.listcells
+com.darrenfinch.appointmentmanager.common.utils
+com.darrenfinch.appointmentmanager.screens.dashboard
+com.darrenfinch.appointmentmanager.screens.editappointment
+com.darrenfinch.appointmentmanager.screens.editcustomer
+com.darrenfinch.appointmentmanager.screens.login
+com.darrenfinch.appointmentmanager.screens.reports
