@@ -119,15 +119,14 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
-    public ObservableList<Appointment> getAppointmentsForUserByTimeFilter(int userId, TimeFilter timeFilter) {
+    public ObservableList<Appointment> getAppointmentsByTimeFilter(TimeFilter timeFilter) {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
 
         if (timeFilter == TimeFilter.WEEK) {
-            String query = "SELECT * FROM appointments WHERE WEEK(CONVERT_TZ(Start, \"" + Constants.DATABASE_TIME_ZONE_OFFSET + "\", ?)) = ? AND User_ID = ?";
+            String query = "SELECT * FROM appointments WHERE WEEK(CONVERT_TZ(Start, \"" + Constants.DATABASE_TIME_ZONE_OFFSET + "\", ?)) = ?";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
                 statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
                 statement.setInt(2, timeHelper.systemTimeNow().get(ChronoField.ALIGNED_WEEK_OF_YEAR));
-                statement.setInt(3, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     appointments.add(getAppointmentFromResultSet(resultSet));
@@ -137,11 +136,10 @@ public class MainRepositoryImpl implements MainRepository {
                 e.printStackTrace();
             }
         } else if (timeFilter == TimeFilter.MONTH) {
-            String query = "SELECT * FROM appointments WHERE MONTH(CONVERT_TZ(Start, \"" + Constants.DATABASE_TIME_ZONE_OFFSET + "\", ?)) = ? AND User_ID = ?";
+            String query = "SELECT * FROM appointments WHERE MONTH(CONVERT_TZ(Start, \"" + Constants.DATABASE_TIME_ZONE_OFFSET + "\", ?)) = ?";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
                 statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
                 statement.setInt(2, timeHelper.systemTimeNow().get(ChronoField.MONTH_OF_YEAR));
-                statement.setInt(3, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     appointments.add(getAppointmentFromResultSet(resultSet));
@@ -151,9 +149,8 @@ public class MainRepositoryImpl implements MainRepository {
                 e.printStackTrace();
             }
         } else {
-            String query = "SELECT * FROM appointments WHERE User_ID = ?";
+            String query = "SELECT * FROM appointments";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
-                statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     appointments.add(getAppointmentFromResultSet(resultSet));

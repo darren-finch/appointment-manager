@@ -83,7 +83,6 @@ public class DashboardController implements BaseController {
         // Initialize services
         getAllCustomersService.setExecutor(executorService);
         getAppointmentsForUserBySortingFilterService.setExecutor(executorService);
-        getAppointmentsForUserBySortingFilterService.setUserId(userManager.getCurrentUser().getId());
         getAppointmentsForUserBySortingFilterService.setAppointmentsSortingFilter(TimeFilter.WEEK);
 
         // Fill model
@@ -310,17 +309,11 @@ public class DashboardController implements BaseController {
     private static class GetAppointmentsForUserBySortingFilterService extends Service<ObservableList<Appointment>> {
 
         private final MainRepository mainRepository;
-        private final IntegerProperty userId = new SimpleIntegerProperty();
         private final ObjectProperty<TimeFilter> appointmentsSortingFilter = new SimpleObjectProperty<>();
 
         public GetAppointmentsForUserBySortingFilterService(MainRepository mainRepository) {
             this.mainRepository = mainRepository;
-            this.userId.set(Constants.INVALID_ID);
             this.appointmentsSortingFilter.set(TimeFilter.WEEK);
-        }
-
-        public void setUserId(int userId) {
-            this.userId.set(userId);
         }
 
         public void setAppointmentsSortingFilter(TimeFilter timeFilter) {
@@ -332,7 +325,7 @@ public class DashboardController implements BaseController {
             return new Task<>() {
                 @Override
                 protected ObservableList<Appointment> call() {
-                    return mainRepository.getAppointmentsForUserByTimeFilter(userId.get(), appointmentsSortingFilter.get());
+                    return mainRepository.getAppointmentsByTimeFilter(appointmentsSortingFilter.get());
                 }
             };
         }

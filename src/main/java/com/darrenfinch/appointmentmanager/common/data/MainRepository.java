@@ -37,7 +37,7 @@ public interface MainRepository {
     /**
      * Gets appointments assigned to a user id and filtered by the specified time filter.
      */
-    ObservableList<Appointment> getAppointmentsForUserByTimeFilter(int userId, TimeFilter timeFilter);
+    ObservableList<Appointment> getAppointmentsByTimeFilter(TimeFilter timeFilter);
 
     /**
      * Gets all appointments assigned to the customer id.
