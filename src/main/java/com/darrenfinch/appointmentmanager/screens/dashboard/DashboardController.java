@@ -128,7 +128,7 @@ public class DashboardController implements BaseController {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Appointment, String> appointmentStringCellDataFeatures) {
                 SimpleStringProperty strProp = new SimpleStringProperty();
-                strProp.set(appointmentStringCellDataFeatures.getValue().getStartDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
+                strProp.set(appointmentStringCellDataFeatures.getValue().getEndDateTime().format(DateTimeFormatter.ofPattern(Constants.STANDARD_DATE_TIME_FORMAT)));
                 return strProp;
             }
         });
