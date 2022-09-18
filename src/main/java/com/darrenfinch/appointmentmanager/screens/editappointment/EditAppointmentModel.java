@@ -648,6 +648,7 @@ public class EditAppointmentModel {
                 getDescription(),
                 getLocation(),
                 getType(),
+                getSelectedContact().getName(),
                 getSelectedStartDateTime(),
                 getSelectedEndDateTime(),
                 getSelectedCustomer().getId(),

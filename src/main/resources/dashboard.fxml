@@ -103,6 +103,9 @@
                                <TableColumn prefWidth="78.0" text="Location">
                                    <cellValueFactory><PropertyValueFactory property="location" /></cellValueFactory>
                                </TableColumn>
+                               <TableColumn prefWidth="68.67041015625" text="Contact">
+                                   <cellValueFactory><PropertyValueFactory property="contactName" /></cellValueFactory>
+                               </TableColumn>
                                <TableColumn prefWidth="67.0" text="Type">
                                    <cellValueFactory><PropertyValueFactory property="type" /></cellValueFactory>
                                </TableColumn>
@@ -117,9 +120,6 @@
                                </TableColumn>
                                <TableColumn prefWidth="53.0" text="User ID">
                                    <cellValueFactory><PropertyValueFactory property="userId" /></cellValueFactory>
-                               </TableColumn>
-                               <TableColumn prefWidth="68.67041015625" text="Contact ID">
-                                   <cellValueFactory><PropertyValueFactory property="contactId" /></cellValueFactory>
                                </TableColumn>
                            </columns>
                         </TableView>

@@ -31,6 +31,7 @@ public class Appointment {
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty description = new SimpleStringProperty();
     private final StringProperty location = new SimpleStringProperty();
+    private final StringProperty contactName = new SimpleStringProperty();
     private final StringProperty type = new SimpleStringProperty();
     private final ObjectProperty<ZonedDateTime> startDateTime = new SimpleObjectProperty<>();
     private final ObjectProperty<ZonedDateTime> endDateTime = new SimpleObjectProperty<>();
@@ -42,12 +43,13 @@ public class Appointment {
      * Constructs an Appointment with some starting values for its properties.
      * The id can be anything, since the database auto-generates it. It is just used to keep track of the entity in the application.
      */
-    public Appointment(int id, String title, String description, String location, String type, ZonedDateTime startDateTime, ZonedDateTime endDateTime, int customerId, int userId, int contactId) {
+    public Appointment(int id, String title, String description, String location, String type, String contactName, ZonedDateTime startDateTime, ZonedDateTime endDateTime, int customerId, int userId, int contactId) {
         this.id.set(id);
         this.title.set(title);
         this.description.set(description);
         this.location.set(location);
         this.type.set(type);
+        this.contactName.set(contactName);
         this.startDateTime.set(startDateTime);
         this.endDateTime.set(endDateTime);
         this.customerId.set(customerId);
@@ -123,6 +125,20 @@ public class Appointment {
      */
     public StringProperty typeProperty() {
         return type;
+    }
+
+    /**
+     * Gets the contact name value from the contact name property.
+     */
+    public String getContactName() {
+        return contactName.get();
+    }
+
+    /**
+     * Gets the contact name property.
+     */
+    public StringProperty contactNameProperty() {
+        return contactName;
     }
 
     /**

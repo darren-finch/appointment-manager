@@ -103,7 +103,7 @@ public class MainRepositoryImpl implements MainRepository {
     @Override
     public ObservableList<Appointment> getUpcomingAppointmentsForUser(int userId) {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
-        String query = "SELECT * FROM appointments WHERE User_ID = ? AND Start >= ?";
+        String query = "SELECT a.*, c.Contact_Name from appointments a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE User_ID = ? AND Start >= ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, userId);
             statement.setObject(2, timeHelper.systemTimeNow());
@@ -123,7 +123,7 @@ public class MainRepositoryImpl implements MainRepository {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
 
         if (timeFilter == TimeFilter.WEEK) {
-            String query = "SELECT * FROM appointments WHERE WEEK(CONVERT_TZ(Start, \"" + Constants.DATABASE_TIME_ZONE_OFFSET + "\", ?)) = ?";
+            String query = "SELECT a.*, c.Contact_Name from appointments a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE WEEK(CONVERT_TZ(Start, \"" + Constants.DATABASE_TIME_ZONE_OFFSET + "\", ?)) = ?";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
                 statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
                 statement.setInt(2, timeHelper.systemTimeNow().get(ChronoField.ALIGNED_WEEK_OF_YEAR));
@@ -136,7 +136,7 @@ public class MainRepositoryImpl implements MainRepository {
                 e.printStackTrace();
             }
         } else if (timeFilter == TimeFilter.MONTH) {
-            String query = "SELECT * FROM appointments WHERE MONTH(CONVERT_TZ(Start, \"" + Constants.DATABASE_TIME_ZONE_OFFSET + "\", ?)) = ?";
+            String query = "SELECT a.*, c.Contact_Name from appointments a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE MONTH(CONVERT_TZ(Start, \"" + Constants.DATABASE_TIME_ZONE_OFFSET + "\", ?)) = ?";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
                 statement.setString(1, timeHelper.systemTimeNow().format(DateTimeFormatter.ofPattern("xxx")));
                 statement.setInt(2, timeHelper.systemTimeNow().get(ChronoField.MONTH_OF_YEAR));
@@ -149,7 +149,7 @@ public class MainRepositoryImpl implements MainRepository {
                 e.printStackTrace();
             }
         } else {
-            String query = "SELECT * FROM appointments";
+            String query = "SELECT a.*, c.Contact_Name from appointments a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID";
             try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
@@ -167,7 +167,7 @@ public class MainRepositoryImpl implements MainRepository {
     @Override
     public ObservableList<Appointment> getAppointmentsForContact(int contactId) {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
-        String query = "SELECT * FROM appointments WHERE Contact_ID = ?";
+        String query = "SELECT a.*, c.Contact_Name from appointments a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE c.Contact_ID = ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, contactId);
             ResultSet resultSet = statement.executeQuery();
@@ -184,7 +184,7 @@ public class MainRepositoryImpl implements MainRepository {
     @Override
     public ObservableList<Appointment> getAppointmentsForCustomer(int customerId) {
         ObservableList<Appointment> appointments = FXCollections.observableList(new ArrayList<>());
-        String query = "SELECT * FROM appointments WHERE Customer_ID = ?";
+        String query = "SELECT a.*, c.Contact_Name from appointments a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE Customer_ID = ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, customerId);
             ResultSet resultSet = statement.executeQuery();
@@ -200,7 +200,7 @@ public class MainRepositoryImpl implements MainRepository {
 
     @Override
     public Appointment getAppointment(int appointmentId) {
-        String query = "SELECT * from appointments WHERE Appointment_ID = ?";
+        String query = "SELECT a.*, c.Contact_Name from appointments a INNER JOIN contacts c ON a.Contact_ID = c.Contact_ID WHERE Appointment_ID = ?";
         try (PreparedStatement statement = dbConnection.prepareStatement(query)) {
             statement.setInt(1, appointmentId);
             ResultSet resultSet = statement.executeQuery();
@@ -222,6 +222,7 @@ public class MainRepositoryImpl implements MainRepository {
                 resultSet.getString("Description"),
                 resultSet.getString("Location"),
                 resultSet.getString("Type"),
+                resultSet.getString("Contact_Name"),
                 resultSet.getTimestamp("Start").toInstant().atZone(timeHelper.defaultZone()),
                 resultSet.getTimestamp("End").toInstant().atZone(timeHelper.defaultZone()),
                 resultSet.getInt("Customer_ID"),
