@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Main-Class: com.darrenfinch.appointmentmanager.AppointmentManagerApplica
+ tion
+Class-Path: javafx-graphics-18.0.2-mac-aarch64.jar javafx-controls-18.0.
+ 2-mac-aarch64.jar javafx-fxml-18.0.2-mac-aarch64.jar javafx-base-18.0.2
+ -mac-aarch64.jar javafx-base-18.0.2.jar mysql-connector-java-8.0.30.jar
+  javafx-graphics-18.0.2.jar javafx-fxml-18.0.2.jar javafx-controls-18.0
+ .2.jar
+
